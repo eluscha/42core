@@ -2,12 +2,21 @@
 
 #include "libft.h"
 
-void ft_lstadd_front(t_list **lst, t_list *new)
+int ft_lstsize(t_list *lst)
 {
-	new->next = *lst;
+	t_list	*current;
+	int	count;
+
+	current = lst;
+	count = 0;
+	while (current)
+	{
+		count++;
+		current = current->next;
+	}
+	return (count);
 }
 
-/*
 #include <stdio.h>
 int main(void)
 {
@@ -20,6 +29,7 @@ int main(void)
 		printf("content of this node is %s\n", (char *)current->content);
 		current = current->next;
 	}
+	printf("ft_lstsize(node1) returns %i\n", ft_lstsize(node1));
+	printf("ft_lstsize(node2) returns %i\n", ft_lstsize(node2));
 	return (0);
 }
-*/
