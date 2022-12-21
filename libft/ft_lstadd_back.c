@@ -7,6 +7,7 @@ void ft_lstadd_back(t_list **lst, t_list *new)
 	ft_lstlast(*lst)->next = new;
 }
 
+/*
 #include <stdio.h>
 int main(void)
 {
@@ -19,3 +20,4 @@ int main(void)
 	printf("after addback func. ft_lstlast(node2) returns a node with content %s\n", (char *)ft_lstlast(node2)->content);
 	return (0);
 }
+*/

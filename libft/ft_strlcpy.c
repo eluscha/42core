@@ -36,6 +36,7 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 	return (i);
 }
 
+/*
 #include <bsd/string.h>
 int	main(void)
 {
@@ -48,3 +49,4 @@ int	main(void)
 	printf("return value is %i\n", res);
 	return (0);
 }
+*/
