@@ -10,18 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <stddef.h>
-
-size_t ft_strlen(const char *s)
-{
-	size_t	i;
-
-	i = 0;
-	while (*((char *)s + i) != '\0')
-		i++;
-	return (i);
-}
+#include "libft.h"
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
@@ -43,7 +32,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	return (ptr);
 }
 
-
+/*
 #include <stdio.h>
 int	main(void)
 {
@@ -53,3 +42,4 @@ int	main(void)
 	printf("%s\n", substr);
 	return (0);
 }
+*/

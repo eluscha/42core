@@ -16,6 +16,7 @@ void ft_lstiter(t_list *lst, void (*f)(void *))
 	}
 }
 
+/*
 void    equal(void *ptr)
 {	
 	((char *)ptr)[0] = '0';
@@ -48,3 +49,4 @@ int main(void)
 	}
 	return (0);
 }
+*/

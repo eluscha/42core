@@ -10,17 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-
-size_t ft_strlen(const char *s)
-{
-	size_t	i;
-
-	i = 0;
-	while (*((char *)s + i) != '\0')
-		i++;
-	return (i);
-}
+#include "libft.h"
 
 char *ft_strjoin(char const *s1, char const *s2)
 {
@@ -48,6 +38,7 @@ char *ft_strjoin(char const *s1, char const *s2)
 	return (strcat);
 }
 
+/*
 #include <stdio.h>
 int main(int argc, char **argv)
 {
@@ -61,3 +52,4 @@ int main(int argc, char **argv)
 	free(str2);
 	return (0);
 }
+*/

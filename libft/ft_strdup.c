@@ -10,18 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <stddef.h>
-
-size_t ft_strlen(const char *s)
-{
-	size_t	i;
-
-	i = 0;
-	while (*((char *)s + i) != '\0')
-		i++;
-	return (i);
-}
+#include "libft.h"
 
 char	*ft_strdup(const char *s)
 {
@@ -42,6 +31,7 @@ char	*ft_strdup(const char *s)
 	return (ptr);
 }
 
+/*
 #include <stdio.h>
 #include <string.h>
 int main(int argc, char **argv)
@@ -60,3 +50,4 @@ int main(int argc, char **argv)
 	free(ptr2);
 	return (0);
 }
+*/

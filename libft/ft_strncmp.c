@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
+#include "libft.h"
 
 int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
@@ -28,8 +28,9 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 	return (0);
 }
 
+/*
 #include <string.h>
-
+#include <stdio.h>
 int main(void)
 {
 	char *s1 = "Hey";
@@ -38,3 +39,4 @@ int main(void)
 	printf("strncmp(s1, s2, 3) gives %i\n", strncmp(s1, s2, 6));
 	printf("ft_strncmp(s1, s2, 3) gives %i\n", ft_strncmp(s1, s2, 6));
 }
+*/

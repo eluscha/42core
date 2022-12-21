@@ -10,6 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
+
 int ft_tolower(int c)
 {
 	if (c >= 65 && c <= 90)
@@ -17,6 +19,7 @@ int ft_tolower(int c)
 	return (c);
 }
 
+/*
 #include <stdio.h>
 #include <ctype.h>
 int main(int argc, char** argv)
@@ -26,3 +29,4 @@ int main(int argc, char** argv)
 	printf("tolower %c\n", tolower(argv[1][0]));
 	printf("ft_tolower %c\n", ft_tolower(argv[1][0]));
 }
+*/

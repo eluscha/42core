@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stddef.h>
+#include "libft.h"
 
 char	*ft_strnstr(const char *big, const char *little, size_t len)
 {
@@ -34,6 +34,7 @@ char	*ft_strnstr(const char *big, const char *little, size_t len)
 	return (NULL);
 }
 
+/*
 #include <stdio.h>
 #include <bsd/string.h>
 
@@ -47,4 +48,4 @@ int main(void)
     printf("found: %s\n", strnstr(big, little, 25));
     return 0;
 }
-
+*/

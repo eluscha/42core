@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
+#include "libft.h"
 
 void *ft_memcpy(void *dest, const void *src, size_t n)
 {
@@ -26,6 +26,7 @@ void *ft_memcpy(void *dest, const void *src, size_t n)
 
 /*
 #include <string.h>
+#include <stdio.h>
 int main(void)
 {
 	char src[50] = "Hi i am the source!";

@@ -1,17 +1,6 @@
 
 
-//#include <libft.h>
-#include <stddef.h>
-
-size_t ft_strlen(const char *s)
-{
-	size_t	i;
-
-	i = 0;
-	while (*((char *)s + i) != '\0')
-		i++;
-	return (i);
-}
+#include "libft.h"
 
 void ft_striteri(char *s, void (*f)(unsigned int, char*))
 {
@@ -28,13 +17,13 @@ void ft_striteri(char *s, void (*f)(unsigned int, char*))
 	return ;
 }
 
+/*
 void	example_f(unsigned int i, char *p_c)
 {
 	*p_c -= i;
 }
 
 #include <stdio.h>
-
 int main(int argc, char **argv)
 {
 	if (argc != 2)
@@ -43,3 +32,4 @@ int main(int argc, char **argv)
 	printf("argv[1] is now: %s\n", argv[1]);
 	return (0);
 }
+*/

@@ -1,5 +1,5 @@
 
-#include <stdlib.h>
+#include "libft.h"
 
 int	get_len(int n)
 {
@@ -42,7 +42,7 @@ char	*ft_itoa(int n)
 	return (str);
 }
 
-
+/*
 #include <stdio.h>
 #include <string.h>
 
@@ -57,3 +57,4 @@ int	main(int argc, char **argv)
 	free(str);
 	return (0);
 }
+*/

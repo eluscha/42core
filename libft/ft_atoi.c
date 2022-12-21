@@ -10,6 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
+
 int	str_to_num(char *ptr)
 {
 	int	i;
@@ -48,6 +50,7 @@ int ft_atoi(const char *nptr)
 	return (num);
 }
 
+/*
 #include <stdlib.h>
 #include <stdio.h>
 int main(int argc, char **argv)
@@ -66,3 +69,4 @@ int main(int argc, char **argv)
 	//printf("%i\n", ft_atoi("    ---++--929292hgg"));
 	return (0);
 }
+*/

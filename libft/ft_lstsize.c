@@ -17,6 +17,7 @@ int ft_lstsize(t_list *lst)
 	return (count);
 }
 
+/*
 #include <stdio.h>
 int main(void)
 {
@@ -33,3 +34,4 @@ int main(void)
 	printf("ft_lstsize(node2) returns %i\n", ft_lstsize(node2));
 	return (0);
 }
+*/

@@ -1,6 +1,6 @@
 
 
-#include <stdlib.h>
+#include "libft.h"
 
 int	get_count(const char *s, char c)
 {
@@ -106,8 +106,8 @@ char	**ft_split(char const *s, char c)
 	return (array);
 }
 
+/*
 #include <stdio.h>
-
 int main(int argc, char **argv)
 {
 	if (argc != 3)
@@ -124,3 +124,4 @@ int main(int argc, char **argv)
 		free(array);
 	return 0;
 }
+*/

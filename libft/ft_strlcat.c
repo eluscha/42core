@@ -10,17 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-
-int	ft_strlen(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i] != '\0')
-		i++;
-	return (i);
-}
+#include "libft.h"
 
 size_t	ft_strlcat(char *dst, const char *src, size_t size)
 {
@@ -42,6 +32,8 @@ size_t	ft_strlcat(char *dst, const char *src, size_t size)
 	return (destlen + srclen);
 }
 
+/*
+#include <stdio.h>
 #include <bsd/string.h>
 #define SIZE 34
 int main(void)
@@ -58,3 +50,4 @@ int main(void)
 	else
 		printf("ft_strlcat - String was fully copied and concatenated\n");
 }
+*/
