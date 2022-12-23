@@ -23,7 +23,7 @@ char	*ft_strnstr(const char *big, const char *little, size_t len)
 	while (big[i] != '\0' && i < len)
 	{
 		j = 0;
-		while (big[i + j] == little[j])
+		while (big[i + j] == little[j] && i + j < len)
 		{
 			if (little[j + 1] == '\0')
 				return ((char *)big + i);
@@ -34,18 +34,17 @@ char	*ft_strnstr(const char *big, const char *little, size_t len)
 	return (NULL);
 }
 
-/*
+
 #include <stdio.h>
-#include <bsd/string.h>
+//#include <bsd/string.h>
 
 int main(void)
 {
-	char *little = "needle";
-	char *big = "here comes the needle and then another needle in a haystack.\n";
+	char *little = "dolor";
+	char *big = "lorem ipsum dolor sit amet";
 
-    printf("found: %s\n", strnstr(big, little, 5));
-    printf("found: %s\n", strnstr(big, little, 15));
-    printf("found: %s\n", strnstr(big, little, 25));
+	//printf("strnstrn(big, little, 25) found: %s\n", strnstr(big, little, 25));
+	printf("ft_strnstrn(big, little, 25) found: %s\n", ft_strnstr(big, little, 15));
     return 0;
 }
-*/
+

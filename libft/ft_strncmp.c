@@ -24,7 +24,7 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 		i++;
 	}
 	if (i < n)
-		return (s1[i] - s2[i]);
+		return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 	return (0);
 }
 
@@ -33,10 +33,10 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 #include <stdio.h>
 int main(void)
 {
-	char *s1 = "Hey";
-	char *s2 = "Hello World";
+	char *s1 = "test\200";
+	char *s2 = "test\0";
 
-	printf("strncmp(s1, s2, 3) gives %i\n", strncmp(s1, s2, 6));
-	printf("ft_strncmp(s1, s2, 3) gives %i\n", ft_strncmp(s1, s2, 6));
+	printf("strncmp(s1, s2, 6) gives %i\n", strncmp(s1, s2, 6));
+	printf("ft_strncmp(s1, s2, 6) gives %i\n", ft_strncmp(s1, s2, 6));
 }
 */
