@@ -34,7 +34,7 @@ char	*ft_strnstr(const char *big, const char *little, size_t len)
 	return (NULL);
 }
 
-
+/*
 #include <stdio.h>
 //#include <bsd/string.h>
 
@@ -47,4 +47,4 @@ int main(void)
 	printf("ft_strnstrn(big, little, 25) found: %s\n", ft_strnstr(big, little, 15));
     return 0;
 }
-
+*/
