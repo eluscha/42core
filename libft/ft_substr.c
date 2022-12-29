@@ -6,7 +6,7 @@
 /*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/10 12:51:22 by eusatiko          #+#    #+#             */
-/*   Updated: 2022/12/10 13:44:15 by eusatiko         ###   ########.fr       */
+/*   Updated: 2022/12/29 13:10:34 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,12 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	size_t	bflen;
 	size_t	i;
 
-	if (ft_strlen(s) <= start)
-		return ("");
-	bflen = ft_strlen(s) - start < len ? ft_strlen(s) - start : len;
+	if (ft_strlen(s) < start)
+		bflen = 0;
+	else if (ft_strlen(s) - start < len)
+		bflen = ft_strlen(s) - start;
+	else
+		bflen = len;
 	ptr = malloc(bflen + 1);
 	if (ptr == NULL)
 		return (NULL);

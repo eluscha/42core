@@ -1,8 +1,18 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_lstclear.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/12/29 13:42:45 by eusatiko          #+#    #+#             */
+/*   Updated: 2022/12/29 13:43:26 by eusatiko         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "libft.h"
 
-void ft_lstclear(t_list **lst, void (*del)(void*))
+void	ft_lstclear(t_list **lst, void (*del)(void*))
 {
 	t_list	*current;
 	t_list	*next;
@@ -12,7 +22,7 @@ void ft_lstclear(t_list **lst, void (*del)(void*))
 	{
 		next = current->next;
 		ft_lstdelone(current, del);
-		current = next;	
+		current = next;
 	}
 	*lst = NULL;
 }

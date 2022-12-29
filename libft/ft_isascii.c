@@ -6,13 +6,13 @@
 /*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/05 10:23:39 by eusatiko          #+#    #+#             */
-/*   Updated: 2022/12/05 10:50:04 by eusatiko         ###   ########.fr       */
+/*   Updated: 2022/12/29 13:48:55 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int ft_isascii(int c)
+int	ft_isascii(int c)
 {
 	if (c >= 0 && c <= 127)
 		return (1);
@@ -29,9 +29,9 @@ int main(void)
    for (ch = 0x7c; ch <= 0x82; ch++) {
       printf("%#04x    ", ch);
       if (ft_isascii(ch))
-         printf("The character is %c, ft_isascii returns %i\n", ch, ft_isascii(ch));
+         printf("The character is %c, ft_isascii: %i\n", ch, ft_isascii(ch));
       else
-         printf("Cannot be represented by an ASCII character, ft_isascii returns %i\n", ft_isascii(ch));
+         printf("Not an ASCII char, ft_isascii returns %i\n", ft_isascii(ch));
    }
    return 0;
 }
@@ -48,11 +48,10 @@ int main(void)
 	{
 		printf("%#04x    ", ch);
  		if (isascii(ch))
-			printf("The character is %c, isascii returns %i\n", ch, isascii(ch));
+			printf("The character is %c, isascii: %i\n", ch, isascii(ch));
 		else
-			printf("Cannot be represented by an ASCII character, isascii returns %i\n", isascii(ch));
+			printf("Not an ASCII char, isascii returns %i\n", isascii(ch));
 	}
 	return 0;
 }
 */
-

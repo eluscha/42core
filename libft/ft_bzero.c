@@ -6,15 +6,15 @@
 /*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/07 08:53:18 by eusatiko          #+#    #+#             */
-/*   Updated: 2022/12/07 09:30:43 by eusatiko         ###   ########.fr       */
+/*   Updated: 2022/12/29 13:56:36 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void *ft_bzero(void *s, size_t n)
+void	*ft_bzero(void *s, size_t n)
 {
-	unsigned char* ptr;
+	unsigned char	*ptr;
 
 	ptr = s;
 	while (n)

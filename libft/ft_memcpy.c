@@ -6,21 +6,21 @@
 /*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/07 09:32:45 by eusatiko          #+#    #+#             */
-/*   Updated: 2022/12/07 10:19:17 by eusatiko         ###   ########.fr       */
+/*   Updated: 2022/12/29 13:50:57 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void *ft_memcpy(void *dest, const void *src, size_t n)
+void	*ft_memcpy(void *dest, const void *src, size_t n)
 {
-	unsigned char* ptr_to;
-	unsigned char* ptr_from;
+	unsigned char	*ptr_to;
+	unsigned char	*ptr_from;
 
 	ptr_to = dest;
-	ptr_from = (unsigned char*)src;
-	while (n--)
-		ptr_to[n] = ptr_from[n];
+	ptr_from = (unsigned char *)src;
+	while (n-- && (dest || src))
+		*ptr_to++ = *ptr_from++;
 	return (dest);
 }
 

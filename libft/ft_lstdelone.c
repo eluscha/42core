@@ -1,8 +1,18 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_lstdelone.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/12/29 12:58:06 by eusatiko          #+#    #+#             */
+/*   Updated: 2022/12/29 12:58:53 by eusatiko         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "libft.h"
 
-void ft_lstdelone(t_list *lst, void (*del)(void*))
+void	ft_lstdelone(t_list *lst, void (*del)(void*))
 {
 	if (lst && del)
 	{
@@ -28,7 +38,7 @@ int main(void)
 	t_list *node1 = ft_lstnew(str);
 	printf("node1 content: %s\n", (char *)node1->content);
 	ft_lstdelone(node1, del_str);
-	printf("after delone func. node1 content becomes: %s\n", (char *)node1->content);
+	printf("after delone node1 becomes: %s\n", (char *)node1->content);
 	return (0);
 }
 */

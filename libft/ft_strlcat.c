@@ -6,7 +6,7 @@
 /*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/07 11:46:45 by eusatiko          #+#    #+#             */
-/*   Updated: 2022/12/07 12:01:05 by eusatiko         ###   ########.fr       */
+/*   Updated: 2022/12/29 13:44:10 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ int main(void)
 	char src[] = "a potentially long string";
  	size_t res = ft_strlcat(dest, src, SIZE);
  	size_t res1 = ft_strlcat(dest1, src, SIZE);
-	printf("strlcat(dest1, src, SIZE) makes dest1: %s\nreturnes: %zu\n", dest1, res1);
-	printf("ft_strlcat(dest, src, SIZE) makes dest: %s\nreturnes: %zu\n", dest, res);
+	printf("strlcat makes dest1: %s\nreturnes: %zu\n", dest1, res1);
+	printf("ft_strlcat makes dest: %s\nreturnes: %zu\n", dest, res);
 	if (res > SIZE - 1)
 		printf("ft_strlcat - String truncated\n");
 	else

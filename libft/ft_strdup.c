@@ -6,7 +6,7 @@
 /*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/10 11:20:41 by eusatiko          #+#    #+#             */
-/*   Updated: 2022/12/10 11:55:06 by eusatiko         ###   ########.fr       */
+/*   Updated: 2022/12/29 13:42:27 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 char	*ft_strdup(const char *s)
 {
-	char	*ptr;
+	char		*ptr;
 	size_t		i;
 	size_t		len;
 

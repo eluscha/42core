@@ -1,14 +1,24 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_lstadd_front.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/12/29 13:10:50 by eusatiko          #+#    #+#             */
+/*   Updated: 2022/12/29 13:12:00 by eusatiko         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "libft.h"
 
-void ft_lstadd_front(t_list **lst, t_list *new)
+void	ft_lstadd_front(t_list **lst, t_list *new)
 {
 	if (lst && new)
-    {
-        new->next = *lst;
-        *lst = new;
-    }
+	{
+		new->next = *lst;
+		*lst = new;
+	}
 }
 
 /*

@@ -1,4 +1,14 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_split.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/12/29 13:51:43 by eusatiko          #+#    #+#             */
+/*   Updated: 2022/12/29 13:53:34 by eusatiko         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "libft.h"
 
@@ -98,9 +108,8 @@ char	**ft_split(char const *s, char c)
 			free_all(array, i);
 			return (NULL);
 		}
-		write_word(array[i], s, word_len, start_idx);
+		write_word(array[i++], s, word_len, start_idx);
 		j = start_idx + word_len;
-		i++;
 	}
 	array[i] = NULL;
 	return (array);
