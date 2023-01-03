@@ -12,7 +12,7 @@
 
 #include "libft.h"
 
-int	inset(char c, char const *set)
+static int	inset(char c, char const *set)
 {
 	int	i;
 
@@ -26,7 +26,7 @@ int	inset(char c, char const *set)
 	return (0);
 }
 
-int	count_trims(char const *s1, char const *set, size_t *left)
+static int	count_trims(char const *s1, char const *set, size_t *left)
 {
 	size_t	finallen;
 	size_t	i;

@@ -12,7 +12,7 @@
 
 #include "libft.h"
 
-int	str_to_num(char *ptr)
+static int	str_to_num(char *ptr)
 {
 	int	i;
 	int	num;	
