@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstmap.c                                        :+:      :+:    :+:   */
+/*   ft_lstmap_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 13:46:05 by eusatiko          #+#    #+#             */
-/*   Updated: 2022/12/29 13:46:14 by eusatiko         ###   ########.fr       */
+/*   Updated: 2023/01/04 14:00:03 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
 	t_list	*current;
 	t_list	*new_list;
 	t_list	*new_node;
+	void	*content;
 
 	if (!f || !del)
 		return (NULL);
@@ -24,9 +25,11 @@ t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
 	new_list = NULL;
 	while (current)
 	{
-		new_node = ft_lstnew(f(current->content));
+		content = f(current->content);
+		new_node = ft_lstnew(content);
 		if (!new_node)
 		{
+			free(content);
 			ft_lstclear(&new_list, del);
 			return (NULL);
 		}
@@ -35,11 +38,13 @@ t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
 	}
 	return (new_list);
 }
+
 /*
 void    *equal(void *ptr)
 {
 	(void)ptr;
-	char	*str = "same content";
+	char	*str = malloc(1);
+	str[0] = '\0';
 	return ((void *)str);
 }
 
@@ -79,6 +84,8 @@ int main(void)
 		printf("content of this node is %s\n", (char *)current->content);
  		current = current->next;
 	}
+	ft_lstclear(&node2, del_str);
+	ft_lstclear(&new_list, del_str);
 	return (0);
 }
 */

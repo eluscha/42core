@@ -6,14 +6,13 @@
 /*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 14:03:18 by eusatiko          #+#    #+#             */
-/*   Updated: 2023/01/03 09:13:31 by eusatiko         ###   ########.fr       */
+/*   Updated: 2023/01/04 14:00:22 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
 
-# include <stddef.h>
 # include <stdlib.h>
 # include <unistd.h>
 
