@@ -54,7 +54,10 @@ int ft_printf(const char *format, ...)
 		// Get the next argument from the va_list object using va_arg.
 		// The second argument is the type of the argument.
     		if (format[i] == '%')
+		{
+			// refresh tab ?
 			i = ft_eval_format(tab, format, i + 1); // evaluate format
+		}
 		else
 			ret += write(1, &format[i], 1);
 	}
@@ -101,9 +104,10 @@ int	ft_eval_format(t_print *tab, const char *format, int pos)
 			//no valid flags?
 	}
 	ft_convert(tab, format[pos]);
+	return (pos);
 }
 
-int	ft_convert(t_print *tab, char let)
+void	ft_convert(t_print *tab, char let)
 {
 	if (let == 'c')
    		ft_print_char(tab);
@@ -115,26 +119,27 @@ int	ft_convert(t_print *tab, char let)
 
 void	ft_print_char(t_print *tab)                       
 {                        
-    char a;                      
-                          
-    a = va_arg(tab->args, int);  // get next arg from the variadic function
-    ft_update_tab(tab, 1);      // calculate special cases and length                      
-    if (tab->wdt && !tab->dash)  // if width and not - flag
-        ft_right_cs(tab, 0);    // handle right alignment
-    tab->tl += write(1, &a, 1);  // print char
-    if (tab->wdt && tab->dash)   // if width and - flag      
-        ft_left_cs(tab, 0);      // handle left alignment                 
+	char a;
+                  
+	a = va_arg(tab->args, int);  // get next arg from the variadic function
+	//ft_update_tab(tab, 1);      // calculate special cases and length                      
+	//if (tab->wdt && !tab->dash)  // if width and not - flag
+		//ft_right_cs(tab, 0);    // handle right alignment
+	tab->tl += write(1, &a, 1);  // print char
+	//if (tab->wdt && tab->dash)   // if width and - flag      
+ 		//ft_left_cs(tab, 0);      // handle left alignment                 
 }
 
 void	ft_print_str(t_print *tab)
 {
 	char	*str = va_arg(tab->args, char *);
 	int	len = ft_strlen(str);
-	if (tab->wdt && !tab->dash)  // if width and not - flag
-		 ft_right_cs(tab, 0);    // handle right alignment
+	//ft_update_tab(tab, len);      // calculate special cases and length    
+	//if (tab->wdt && !tab->dash)  // if width and not - flag
+		//ft_right_cs(tab, 0);    // handle right alignment
 	tab->tl += write(1, str, len);  // print char
-	if (tab->wdt && tab->dash)   // if width and - flag      
-		ft_left_cs(tab, 0);
+	//if (tab->wdt && tab->dash)   // if width and - flag      
+		//ft_left_cs(tab, 0);
 }
 
 void	ft_print_integer(t_print *tab)
@@ -142,11 +147,12 @@ void	ft_print_integer(t_print *tab)
 	int	i = va_arg(tab->args, int);
 	char	*str = ft_itoa(i);
 	int	len = ft_strlen(str);
-	if (tab->wdt && !tab->dash)  // if width and not - flag
-		ft_right_cs(tab, 0);    // handle right alignment
+	//ft_update_tab(tab, len);      // calculate special cases and length    
+	//if (tab->wdt && !tab->dash)  // if width and not - flag
+		//ft_right_cs(tab, 0);    // handle right alignment
 	tab->tl += write(1, str, len);  // print char
-	if (tab->wdt && tab->dash)   // if width and - flag      
-		ft_left_cs(tab, 0);
+	//if (tab->wdt && tab->dash)   // if width and - flag      
+		//ft_left_cs(tab, 0);
 	free(str);
 }
 
