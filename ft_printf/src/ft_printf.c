@@ -3,6 +3,7 @@
 #include "ft_printf.h"
 #include "libft.h"
 
+/* Inspired by tutorial https://csnotes.medium.com/ft-printf-tutorial-42project-f09b6dc1cd0e */
 
 #include <stdio.h>
 
@@ -22,19 +23,6 @@
 }    t_print;
 */
 
-void	ft_initialise_tab(t_print *tab)                       
-{                       
-	tab->wdt = 0;        //we set everything to 0, false        
-	tab->prc = 0;
-	tab->zero = 0;
-	tab->pnt = 0;                        
-	tab->tl = 0;                        
-	tab->dash = 0;                        
-	tab->perc = 0;                        
-	tab->sp = 0;
-	tab->plus = 0;                        
-}
-
 void	ft_refresh_tab(t_print *tab)
 {
 	tab->wdt = 0;        //we set everything to 0, false        
@@ -45,6 +33,7 @@ void	ft_refresh_tab(t_print *tab)
 	tab->perc = 0;
  	tab->sp = 0;
  	tab->plus = 0;
+	tab->sharp = 0;
 }
 
 int	ft_printf(const char *format, ...)
@@ -54,7 +43,7 @@ int	ft_printf(const char *format, ...)
 	tab = (t_print *)malloc(sizeof(t_print));                        
    	if (!tab)
 		return (-1);
-	ft_initialise_tab(tab);
+	tab->tl = 0;
 
 	// Declare a va_list type variable named 'args' (va_list args) - was done in the tab object
   	// Initialize the va_list object using va_start.
@@ -110,7 +99,7 @@ int	ft_eval_format(t_print *tab, const char *format, int pos)
 			while (format[pos] >= '0' && format[pos] <= '9')
 				tab->prc = tab->prc * 10 + (format[pos++] - 48);
 		}
-		if (!tab->pnt && format[pos] >= '1' && format[pos] <= '9')
+		if (format[pos] >= '1' && format[pos] <= '9')
 		{
 			while(format[pos] >= '0' && format[pos] <= '9')
 				tab->wdt = tab->wdt * 10 + (format[pos++] - 48);
@@ -152,6 +141,7 @@ void	ft_convert(t_print *tab, char let)
    		ft_print_char(tab);
 	else if (let == 's')
 		ft_print_str(tab);
+	//else if (let == 'p')	
 	else if (let == 'd' || let == 'i')
    		ft_print_integer(tab);
 }
@@ -171,7 +161,7 @@ int	ft_print_offset(t_print *tab, int len, int left)
 
 void	ft_print_char(t_print *tab)                       
 {                        
-	char a;
+	unsigned char a;
                   
 	a = va_arg(tab->args, int);  // get next arg from the variadic function
 	//ft_warning(tab, 'c');                     
@@ -196,17 +186,57 @@ void	ft_print_str(t_print *tab)
 		tab->tl += ft_print_offset(tab, len, 0);
 }
 
+char	*ft_str_prc(char *str, int prc)
+{
+	int len_str;
+	int neg = 0;
+	int zeros;
+	char	*new_str;
+	if (str[0] == '-')
+		neg = 1;
+	len_str = ft_strlen(str) - neg;
+	if (prc > len_str)
+		zeros = prc - len_str;
+	else
+		return (NULL);
+	new_str = malloc((zeros + len_str + neg + 1) * sizeof(char));
+	if (!new_str)
+		return (NULL);
+	int i = 0;
+	if (neg)
+		new_str[0] = '-';
+	while (i < zeros)
+		new_str[neg + i++] = '0';
+	while (str[i - zeros + neg])
+	{
+		new_str[neg + i] = str[i - zeros + neg];
+		i++;
+	}
+	new_str[neg + i] = '\0';
+	return (new_str);
+}
+
 void	ft_print_integer(t_print *tab)
 {
 	int	i = va_arg(tab->args, int);
 	char	*str = ft_itoa(i);
+	char	*str_prc;
+	if (tab->pnt)
+	{
+		str_prc = ft_str_prc(str, tab->prc);
+		if (str_prc)
+		{
+			free(str);
+			str = str_prc;
+		}
+	}	
 	int	len = ft_strlen(str);
-	//ft_update_tab(tab, len);      // calculate special cases and length    
-	//if (tab->wdt && !tab->dash)  // if width and not - flag
-		//ft_right_cs(tab, 0);    // handle right alignment
+	//ft_warning(tab, 'id');    
+	if (tab->wdt && !tab->dash)  // if width and not - flag
+		tab->tl += ft_print_offset(tab, len, 1);
 	tab->tl += write(1, str, len);  // print char
-	//if (tab->wdt && tab->dash)   // if width and - flag      
-		//ft_left_cs(tab, 0);
+	if (tab->wdt && tab->dash)
+		tab->tl += ft_print_offset(tab, len, 0);
 	free(str);
 }
 

@@ -21,7 +21,7 @@ typedef struct s_print
 	int	sharp;
 }    t_print;
 
-void	ft_initialise_tab(t_print *);
+void    ft_refresh_tab(t_print *);
 int     ft_printf(const char *, ...);
 char	ft_isconversion(char);
 int	ft_eval_format(t_print *, const char *, int);
