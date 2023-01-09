@@ -1,7 +1,7 @@
 
 #include "libft.h"
 
-static int	get_len(unsigned int n, int baselen)
+static int	get_len(unsigned long n, int baselen)
 {
 	int	len;
     
@@ -36,7 +36,7 @@ char	*ft_uitoa(unsigned int n)
 	return (str);
 }
 
-char	*ft_uitoa_hex(unsigned int n, int lower)
+char	*ft_uitoa_hex(unsigned long n, int lower)
 {
 	char	*str;
 	int		i;

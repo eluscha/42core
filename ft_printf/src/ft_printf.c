@@ -141,7 +141,6 @@ void	ft_convert(t_print *tab, char let)
    		ft_print_char(tab);
 	else if (let == 's')
 		ft_print_str(tab);
-	//else if (let == 'p')	
 	else if (let == 'd' || let == 'i')
    		ft_print_integer(tab);
 	else if (let == 'u')
@@ -150,6 +149,8 @@ void	ft_convert(t_print *tab, char let)
 		ft_print_hex(tab, 1);
 	else if (let == 'X')
 		ft_print_hex(tab, 0);
+	else if (let == 'p')
+		ft_print_ptr(tab);
 }
 
 int	ft_print_offset(t_print *tab, int len, int left)
@@ -267,6 +268,7 @@ void	ft_print_uint(t_print *tab)
 	tab->tl += write(1, str, len);  // print char
 	if (tab->wdt && tab->dash)
 		tab->tl += ft_print_offset(tab, len, 0);
+	free(str);
 }
 
 void	ft_print_hex(t_print *tab, int lower)
@@ -284,11 +286,50 @@ void	ft_print_hex(t_print *tab, int lower)
 		}
 	}	
 	int	len = ft_strlen(str);
+	if (tab->sharp && i)
+		len += 2;
 	//ft_warning(tab, 'id');    
 	if (tab->wdt && !tab->dash)  // if width and not - flag
 		tab->tl += ft_print_offset(tab, len, 1);
-	tab->tl += write(1, str, len);  // print char
+	if (tab->sharp && i && lower)
+		tab->tl += write(1, "0x", 2);
+	else if (tab->sharp && i)
+		tab->tl += write(1, "0X", 2);
+	tab->tl += write(1, str, ft_strlen(str));  // print char
 	if (tab->wdt && tab->dash)
 		tab->tl += ft_print_offset(tab, len, 0);
+	free(str);
+}
+
+void	ft_print_ptr(t_print *tab)
+{
+	unsigned long	i = va_arg(tab->args, unsigned long);
+	char	*str = ft_uitoa_hex(i, 1);
+	char	*str_prc;
+	if (tab->pnt)
+	{
+		str_prc = ft_str_prc(str, tab->prc);
+		if (str_prc)
+		{
+			free(str);
+			str = str_prc;
+		}
+	}	
+	int	len = ft_strlen(str) + 2;
+	if (!i)
+	{
+		free(str);
+		str = ft_strdup("(nil)");
+		len = 5;
+	}
+	//ft_warning(tab, 'id');    
+	if (tab->wdt && !tab->dash)  // if width and not - flag
+		tab->tl += ft_print_offset(tab, len, 1);
+	if (i)
+		tab->tl += write(1, "0x", 2);
+	tab->tl += write(1, str, ft_strlen(str));  // print char
+	if (tab->wdt && tab->dash)
+		tab->tl += ft_print_offset(tab, len, 0);
+	free(str);
 }
 
