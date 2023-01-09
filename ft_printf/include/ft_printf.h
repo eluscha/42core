@@ -29,5 +29,9 @@ void	ft_convert(t_print *, char);
 void	ft_print_char(t_print *);
 void	ft_print_str(t_print *);
 void	ft_print_integer(t_print *);
+void	ft_print_uint(t_print *);
+char	*ft_uitoa(unsigned int n);
+void	ft_print_hex(t_print *, int);
+char	*ft_uitoa_hex(unsigned int n, int);
 
 #endif
