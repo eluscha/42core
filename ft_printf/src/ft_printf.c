@@ -5,24 +5,6 @@
 
 /* Inspired by tutorial https://csnotes.medium.com/ft-printf-tutorial-42project-f09b6dc1cd0e */
 
-#include <stdio.h>
-
-/*typedef struct s_print                       
-{                        
-	va_list	args;    // arg to print out                    
-	int	wdt;        // width                
-	int	prc;        // precision              
-	int	zero;       // zero padding               
-	int	pnt;        // .     
-	int	dash;       // -               
-	int	tl;         // total_length (return value)              
-	int	perc;       // %               
-	int	sp;         // space flag ' '
-	int	plus;
-	int	sharp;
-}    t_print;
-*/
-
 void	ft_refresh_tab(t_print *tab)
 {
 	tab->wdt = 0;        //we set everything to 0, false        
@@ -30,7 +12,6 @@ void	ft_refresh_tab(t_print *tab)
  	tab->zero = 0;
  	tab->pnt = 0;
  	tab->dash = 0;
-	tab->perc = 0;
  	tab->sp = 0;
  	tab->plus = 0;
 	tab->sharp = 0;
@@ -98,38 +79,25 @@ int	ft_eval_format(t_print *tab, const char *format, int pos)
 				pos++;
 			while (format[pos] >= '0' && format[pos] <= '9')
 				tab->prc = tab->prc * 10 + (format[pos++] - 48);
+			continue ;
 		}
 		if (format[pos] >= '1' && format[pos] <= '9')
 		{
 			while(format[pos] >= '0' && format[pos] <= '9')
 				tab->wdt = tab->wdt * 10 + (format[pos++] - 48);
+			continue ;
 		}
   		if (format[pos] == '-')
-		{
 			tab->dash = 1;
-			tab->zero = 0;
-			pos++;
-		}
-		if (!tab->dash && format[pos] == '0')
-		{
+		else if (format[pos] == '0')
 			tab->zero = 1;
-			pos++;
-		}
-		if (format[pos] == '#')
-		{
+		else if (format[pos] == '#')
 			tab->sharp = 1;
-			pos++;
-		}
-		if (format[pos] == '+')
-		{
+		else if (format[pos] == '+')
 			tab->plus = 1;
-			pos++;
-		}
-		if (format[pos] == ' ')
-		{
+		else if (format[pos] == ' ')
 			tab->sp = 1;
-			pos++;
-		}
+		pos++;
 	}
 	ft_convert(tab, format[pos]);
 	return (pos);
@@ -139,6 +107,8 @@ void	ft_convert(t_print *tab, char let)
 {
 	if (let == 'c')
    		ft_print_char(tab);
+	if (let == '%')
+		ft_print_prc(tab);
 	else if (let == 's')
 		ft_print_str(tab);
 	else if (let == 'd' || let == 'i')
@@ -172,10 +142,19 @@ void	ft_print_char(t_print *tab)
                   
 	a = va_arg(tab->args, int);  // get next arg from the variadic function
 	//ft_warning(tab, 'c');                     
-	//printf("(we are in print_char and char is %c)", a);
 	if (tab->wdt && !tab->dash)  // if width and not - flag
 		tab->tl += ft_print_offset(tab, 1, 1);    // handle right alignment
 	tab->tl += write(1, &a, 1);  // print char
+	if (tab->wdt && tab->dash)   // if width and - flag      
+ 		tab->tl += ft_print_offset(tab, 1, 0);    // handle left alignment                 
+}
+
+void	ft_print_prc(t_print *tab)                       
+{                        
+	//ft_warning(tab, 'c');                     
+	if (tab->wdt && !tab->dash)  // if width and not - flag
+		tab->tl += ft_print_offset(tab, 1, 1);    // handle right alignment
+	tab->tl += write(1, "%", 1);  // print char %
 	if (tab->wdt && tab->dash)   // if width and - flag      
  		tab->tl += ft_print_offset(tab, 1, 0);    // handle left alignment                 
 }
@@ -228,6 +207,7 @@ void	ft_print_integer(t_print *tab)
 	int	i = va_arg(tab->args, int);
 	char	*str = ft_itoa(i);
 	char	*str_prc;
+	char	*sign_str;
 	if (tab->pnt)
 	{
 		str_prc = ft_str_prc(str, tab->prc);
@@ -236,9 +216,26 @@ void	ft_print_integer(t_print *tab)
 			free(str);
 			str = str_prc;
 		}
-	}	
+	}
+	if (i > 0 && tab->plus)
+	{
+		sign_str = ft_strjoin("+", str_prc);
+		if (sign_str)
+		{
+			free(str);
+			str = sign_str;
+		}
+	}
+	else if (i > 0 && tab->sp)
+	{
+		sign_str = ft_strjoin(" ", str_prc);
+		if (sign_str)
+		{
+			free(str);
+			str = sign_str;
+		}
+	}
 	int	len = ft_strlen(str);
-	//ft_warning(tab, 'id');    
 	if (tab->wdt && !tab->dash)  // if width and not - flag
 		tab->tl += ft_print_offset(tab, len, 1);
 	tab->tl += write(1, str, len);  // print char

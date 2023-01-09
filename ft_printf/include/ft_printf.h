@@ -9,13 +9,12 @@
 typedef struct s_print                       
 {                        
 	va_list	args;    // arg to print out                    
+	int	tl;         // total_length (return value)              
 	int	wdt;        // width                
 	int	prc;        // precision              
 	int	zero;       // zero padding               
 	int	pnt;        // .     
 	int	dash;       // -               
-	int	tl;         // total_length (return value)              
-	int	perc;       // %               
 	int	sp;         // space flag ' '
 	int	plus;
 	int	sharp;
@@ -34,5 +33,6 @@ char	*ft_uitoa(unsigned int n);
 void	ft_print_hex(t_print *, int);
 char	*ft_uitoa_hex(unsigned long n, int);
 void	ft_print_ptr(t_print *);
+void    ft_print_prc(t_print *);
 
 #endif
