@@ -1,13 +1,22 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_printf.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/01/10 15:17:25 by eusatiko          #+#    #+#             */
+/*   Updated: 2023/01/10 15:25:49 by eusatiko         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "ft_printf.h"
-#include "libft.h"
 
 /* Inspired by tutorial https://csnotes.medium.com/ft-printf-tutorial-42project-f09b6dc1cd0e */
 
 void	ft_refresh_tab(t_print *tab)
 {
-	tab->wdt = 0;        //we set everything to 0, false        
+	tab->wdt = 0;       
  	tab->prc = 0;
  	tab->zero = 0;
  	tab->pnt = 0;
@@ -19,36 +28,27 @@ void	ft_refresh_tab(t_print *tab)
 
 int	ft_printf(const char *format, ...)
 {
-	t_print *tab;
-               
+	t_print	*tab;
+	int		i;
+	int		ret;
+        
 	tab = (t_print *)malloc(sizeof(t_print));                        
    	if (!tab)
 		return (-1);
 	tab->tl = 0;
-
-	// Declare a va_list type variable named 'args' (va_list args) - was done in the tab object
-  	// Initialize the va_list object using va_start.
- 	// The second argument is the name of the last non-variadic parameter.
   	va_start(tab->args, format);
-
-	int i = -1;
-	int ret = 0;
+  	ret = 0;
+  	i = -1;
 	while (format[++i])
 	{
-		//printf("i is %i\n", i);
-		// Get the next argument from the va_list object using va_arg.
-		// The second argument is the type of the argument.
     		if (format[i] == '%')
 		{
-			//printf("found %%\n");
 			ft_refresh_tab(tab);
-			i = ft_eval_format(tab, format, i + 1); // evaluate format
-			//printf("i is now %i\n", i);
+			i = ft_eval_format(tab, format, i + 1);
 		}
 		else
 			ret += write(1, &format[i], 1);
 	}
-	// Clean up the va_list object using va_end.
 	va_end(tab->args);
 	ret += tab->tl;
 	free(tab);
@@ -73,7 +73,7 @@ int	ft_eval_format(t_print *tab, const char *format, int pos)
 	{
 		if (format[pos] == '.')
 		{
-			tab->pnt = 1; //we set it to true, or 1
+			tab->pnt = 1;
 			pos++;
 			while (format[pos] == '0')
 				pos++;

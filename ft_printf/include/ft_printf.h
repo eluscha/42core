@@ -15,6 +15,7 @@
 
 # include <stdarg.h>
 # include <unistd.h>
+# include "libft.h"
 
 typedef struct s_print
 {
@@ -46,8 +47,9 @@ void	ft_print_uint(t_print *tab);
 char	*ft_uitoa(unsigned int n);
 void	ft_print_hex(t_print *tab, int lower);
 char	*ft_uitoa_hex(unsigned long n, int lower);
-int		ft_handle_prefix(t_print *tab, char *str, unsigned int i, int lower);
+char	*ft_handle_prefix(t_print *tab, char *str, unsigned int i, int lower);
 void	ft_print_ptr(t_print *tab);
+char	*ft_update_ptrstr(char *str, unsigned long i);
 void	ft_print_prc(t_print *tab);
 
 #endif

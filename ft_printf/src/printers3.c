@@ -1,5 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   printers3.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/01/10 15:15:25 by eusatiko          #+#    #+#             */
+/*   Updated: 2023/01/10 15:17:12 by eusatiko         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
-#include "libft.h"
 
 void	ft_print_hex(t_print *tab, int lower)
 {
@@ -10,38 +21,40 @@ void	ft_print_hex(t_print *tab, int lower)
 
 	i = va_arg(tab->args, unsigned int);
 	str = ft_uitoa_hex(i, lower);
+	str_prc = NULL;
 	if (tab->pnt)
-	{
 		str_prc = ft_str_prc(str, tab->prc);
-		if (str_prc)
-		{
-			free(str);
-			str = str_prc;
-		}
+	if (str_prc)
+	{
+		free(str);
+		str = str_prc;
 	}
+	str = ft_handle_prefix(tab, str, i, lower);
 	if (!str)
 		return ;
-	len = ft_handle_prefix(tab, str, i, lower);
+	len = ft_strlen(str);
 	if (tab->wdt && !tab->dash)
 		tab->tl += ft_print_offset(tab, len, 1);
-	tab->tl += write(1, str, ft_strlen(str));
+	tab->tl += write(1, str, len);
 	if (tab->wdt && tab->dash)
 		tab->tl += ft_print_offset(tab, len, 0);
 	free(str);
 }
 
-int	ft_handle_prefix(t_print *tab, char *str, unsigned int i, int lower)
+char	*ft_handle_prefix(t_print *tab, char *str, unsigned int i, int lower)
 {
-	int	len;
+	char	*new_str;
+	char	*prefix;
 
-	len = ft_strlen(str);
-	if (tab->sharp && i)
-		len += 2;
-	if (tab->sharp && i && lower)
-		tab->tl += write(1, "0x", 2);
-	else if (tab->sharp && i)
-		tab->tl += write(1, "0X", 2);
-	return (len);
+	if (!str || !tab->sharp || !i)
+		return (str);
+	if (lower)
+		prefix = "0x";
+	else
+		prefix = "0X";
+	new_str = ft_strjoin(prefix, str);
+	free(str);
+	return (new_str);
 }
 
 void	ft_print_ptr(t_print *tab)
@@ -53,30 +66,38 @@ void	ft_print_ptr(t_print *tab)
 
 	i = va_arg(tab->args, unsigned long);
 	str = ft_uitoa_hex(i, 1);
+	str_prc = NULL;
 	if (tab->pnt)
-	{
 		str_prc = ft_str_prc(str, tab->prc);
-		if (str_prc)
-		{
-			free(str);
-			str = str_prc;
-		}
-	}
-	if (!str)
-		return ;
-	len = ft_strlen(str) + 2;
-	if (!i)
+	if (str_prc)
 	{
 		free(str);
-		str = ft_strdup("(nil)");
-		len = 5;
+		str = str_prc;
 	}
+	str = ft_update_ptrstr(str, i);
+	if (!str)
+		return ;
+	len = ft_strlen(str);
 	if (tab->wdt && !tab->dash)
 		tab->tl += ft_print_offset(tab, len, 1);
-	if (i)
-		tab->tl += write(1, "0x", 2);
-	tab->tl += write(1, str, ft_strlen(str));
+	tab->tl += write(1, str, len);
 	if (tab->wdt && tab->dash)
 		tab->tl += ft_print_offset(tab, len, 0);
 	free(str);
+}
+
+char	*ft_update_ptrstr(char *str, unsigned long i)
+{
+	char	*new_str;
+
+	if (!str)
+		return (NULL);
+	if (!i)
+	{
+		free(str);
+		return (ft_strdup("(nil)"));
+	}
+	new_str = ft_strjoin("0x", str);
+	free(str);
+	return (new_str);
 }
