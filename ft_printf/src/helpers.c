@@ -43,9 +43,9 @@ char	*ft_uitoa_hex(unsigned long n, int lower)
     char    *base;
 
     if (lower)
-        base = ft_strdup("0123456789abcdef");
+        base = "0123456789abcdef";
     else
-        base = ft_strdup("0123456789ABCDEF");
+        base = "0123456789ABCDEF";
 	i = get_len(n, 16);
 	str = malloc(i + 1);
 	if (str == NULL)
@@ -61,7 +61,6 @@ char	*ft_uitoa_hex(unsigned long n, int lower)
 		str[i--] = base[n % 16];
 		n /= 16;
 	}
-    free(base);
 	return (str);
 }
 

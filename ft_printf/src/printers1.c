@@ -1,0 +1,53 @@
+#include "ft_printf.h"
+#include "libft.h"
+
+int	ft_print_offset(t_print *tab, int len, int left)
+{
+	int		amount;
+	int		i;	
+	char	c;
+
+	amount = tab->wdt - len;
+	i = 0;
+	c = ' ';
+	if (tab->zero && left)
+		c = '0';
+	while (i++ < amount)
+		write(1, &c, 1);
+	return (amount);
+}
+
+void	ft_print_char(t_print *tab)
+{
+	unsigned char	a;
+
+	a = va_arg(tab->args, int);
+	if (tab->wdt && !tab->dash)
+		tab->tl += ft_print_offset(tab, 1, 1);
+	tab->tl += write(1, &a, 1);
+	if (tab->wdt && tab->dash)
+		tab->tl += ft_print_offset(tab, 1, 0);
+}
+
+void	ft_print_prc(t_print *tab)
+{
+	if (tab->wdt && !tab->dash)
+		tab->tl += ft_print_offset(tab, 1, 1);
+	tab->tl += write(1, "%", 1);
+	if (tab->wdt && tab->dash)
+		tab->tl += ft_print_offset(tab, 1, 0);
+}
+
+void	ft_print_str(t_print *tab)
+{
+	char	*str;
+	int		len;
+
+	str = va_arg(tab->args, char *);
+	len = ft_strlen(str);
+	if (tab->wdt && !tab->dash)
+		tab->tl += ft_print_offset(tab, len, 1);
+	tab->tl += write(1, str, len);
+	if (tab->wdt && tab->dash)
+		tab->tl += ft_print_offset(tab, len, 0);
+}
