@@ -6,7 +6,6 @@ char	*ft_str_prc(char *str, int prc)
 	int		len_str;
 	int		neg;
 	int		zeros;
-	int		i;
 	char	*new_str;
 
 	if (!str)
