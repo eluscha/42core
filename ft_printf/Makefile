@@ -9,7 +9,7 @@ AR			= ar rcs
 
 #Sources
 
-SRC_FILES = ft_printf helpers printers1 printers2 printers3
+SRC_FILES = ft_printf helpers printers1 printers2 printers3 is_conversion
 
 SRCS = $(addprefix $(SRC_DIR), $(addsuffix .c, $(SRC_FILES)))
 OBJS = $(SRCS:.c=.o) 

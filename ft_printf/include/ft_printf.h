@@ -35,6 +35,7 @@ void	ft_refresh_tab(t_print *tab);
 int		ft_printf(const char *format, ...);
 char	ft_isconversion(char let);
 int		ft_eval_format(t_print *tab, const char *format, int pos);
+void	ft_record_flags(t_print *tab, const char *format, int pos);
 void	ft_convert(t_print *tab, char let);
 int		ft_print_offset(t_print *tab, int len, int left);
 void	ft_print_char(t_print *tab);
