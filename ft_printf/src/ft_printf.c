@@ -14,18 +14,6 @@
 
 /* Inspo from csnotes.medium.com/ft-printf-tutorial-42project-f09b6dc1cd0e */
 
-void	ft_refresh_tab(t_print *tab)
-{
-	tab->wdt = 0;
-	tab->prc = 0;
-	tab->zero = 0;
-	tab->pnt = 0;
-	tab->dash = 0;
-	tab->sp = 0;
-	tab->plus = 0;
-	tab->sharp = 0;
-}
-
 int	ft_printf(const char *format, ...)
 {
 	t_print	*tab;
@@ -80,6 +68,21 @@ int	ft_eval_format(t_print *tab, const char *format, int pos)
 	}
 	ft_convert(tab, format[pos]);
 	return (pos);
+}
+
+char	ft_isconversion(char let)
+{	
+	char	*set;
+	int		i;
+
+	set = "cspdiuxX%";
+	i = -1;
+	while (set[++i])
+	{
+		if (set[i] == let)
+			return (let);
+	}
+	return (0);
 }
 
 void	ft_record_flags(t_print *tab, const char *format, int pos)

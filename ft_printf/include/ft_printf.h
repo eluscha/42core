@@ -32,6 +32,7 @@ typedef struct s_print
 }	t_print;
 
 void	ft_refresh_tab(t_print *tab);
+void	ft_update_tab(t_print *tab);
 int		ft_printf(const char *format, ...);
 char	ft_isconversion(char let);
 int		ft_eval_format(t_print *tab, const char *format, int pos);

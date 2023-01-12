@@ -64,6 +64,7 @@ void	ft_print_integer(t_print *tab)
 	str = ft_itoa(i);
 	if (!str)
 		return ;
+	ft_update_tab(tab);
 	str = ft_signed_full_str(tab, str, i);
 	if (!str)
 		return ;
@@ -112,14 +113,14 @@ void	ft_print_uint(t_print *tab)
 
 	i = va_arg(tab->args, unsigned int);
 	str = ft_uitoa(i);
+	ft_update_tab(tab);
+	str_prc = NULL;
 	if (tab->pnt)
-	{
 		str_prc = ft_str_prc(str, tab->prc);
-		if (str_prc)
-		{
-			free(str);
-			str = str_prc;
-		}
+	if (str_prc)
+	{
+		free(str);
+		str = str_prc;
 	}
 	if (!str)
 		return ;
