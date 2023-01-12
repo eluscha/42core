@@ -55,7 +55,11 @@ void	ft_print_str(t_print *tab)
 	int		len;
 
 	str = va_arg(tab->args, char *);
+	if (!str)
+		str = "(null)";
 	len = ft_strlen(str);
+	if (tab->pnt && tab->prc < len)
+		len = tab->prc;
 	if (tab->wdt && !tab->dash)
 		tab->tl += ft_print_offset(tab, len, 1);
 	tab->tl += write(1, str, len);
