@@ -11,48 +11,54 @@
 /* ************************************************************************** */
 
 #include "ft_printf.h"
+//#include <stdio.h>
 
-char	*ft_str_prc(char *str, int prc, int is_zero)
+char	*ft_str_prc(t_print *tab, char *str)
 {
 	int		len_str;
-	int		neg;
+	int		sgn;
 	int		zeros;
 	char	*new_str;
 
 	if (!str)
 		return (NULL);
-	neg = 0;
-	if (str[0] == '-')
-		neg = 1;
-	len_str = ft_strlen(str) - neg;
-	if (prc > len_str)
-		zeros = prc - len_str;
-	else if (!prc && is_zero)
+	sgn = 0;
+	if (tab->sign)
+		sgn = 1; 
+	len_str = ft_strlen(str);
+	if (tab->prc > len_str)
+		zeros = tab->prc - len_str;
+	else if (!tab->prc && tab->is_zero)
 		return (ft_strdup(""));
 	else
-		return (NULL);
-	new_str = malloc((zeros + len_str + neg + 1) * sizeof(char));
+		return (str);
+	new_str = malloc((zeros + len_str + sgn + 1) * sizeof(char));
 	if (!new_str)
 		return (NULL);
-	new_str = ft_generate_full_str(new_str, str, neg, zeros);
+	new_str = ft_generate_full_str(new_str, str, tab->sign, zeros);
 	return (new_str);
 }
 
-char	*ft_generate_full_str(char *new_str, char *str, int neg, int zeros)
+char	*ft_generate_full_str(char *new_str, char *str, char sign, int zeros)
 {
-	int	i;	
+	int	i;
+	int	sgn;
 
-	if (neg)
-		new_str[0] = '-';
+	sgn = 0;
+	if (sign)
+	{
+		new_str[0] = sign;
+		sgn = 1;
+	}
 	i = 0;
 	while (i < zeros)
-		new_str[neg + i++] = '0';
-	while (str[i - zeros + neg])
+		new_str[sgn + i++] = '0';
+	while (str[i - zeros])
 	{
-		new_str[neg + i] = str[i - zeros + neg];
+		new_str[sgn + i] = str[i - zeros];
 		i++;
 	}
-	new_str[neg + i] = '\0';
+	new_str[sgn + i] = '\0';
 	return (new_str);
 }
 
@@ -61,54 +67,31 @@ void	ft_print_integer(t_print *tab)
 	int		i;
 	int		len;
 	char	*str;
+	char	*new_str;
 
 	i = va_arg(tab->args, int);
-	if (i < 0)
-		tab->neg = 1;
-	else if (!i)
-		tab->is_zero = 1;
 	str = ft_itoa(i);
 	if (!str)
 		return ;
+	new_str = NULL;
+	if (i < 0 && str)
+	{
+		tab->neg = 1;
+		new_str = ft_strdup(str+1);
+		free(str);
+		str = new_str;
+	}
+	else if (!i)
+		tab->is_zero = 1;
 	ft_update_tab(tab);
-	str = ft_signed_full_str(tab, str, i);
-	if (!str)
-		return ;
+	str = ft_str_prc(tab, str);
 	len = ft_strlen(str);
 	if (tab->wdt && !tab->dash)
-		tab->tl += ft_print_offset(tab, len, 1);
-	tab->tl += write(1, &str[tab->neg && tab->zero], len - (tab->neg && tab->zero));
+		ft_print_offset(tab, len, 1);
+	tab->tl += write(1, &str[tab->sign && tab->zero], len - (tab->sign && tab->zero));
 	if (tab->wdt && tab->dash)
-		tab->tl += ft_print_offset(tab, len, 0);
+		ft_print_offset(tab, len, 0);
 	free(str);
-}
-
-char	*ft_signed_full_str(t_print *tab, char *str, int i)
-{
-	char	*new_str;
-	char	*prefix;
-
-	new_str = NULL;
-	if (tab->pnt)
-		new_str = ft_str_prc(str, tab->prc, tab->is_zero);
-	if (new_str)
-	{
-		free(str);
-		str = new_str;
-		new_str = NULL;
-	}
-	if (tab->plus)
-		prefix = "+";
-	else if (tab->sp)
-		prefix = " ";
-	if (i > 0 && (tab->plus || tab->sp))
-		new_str = ft_strjoin(prefix, str);
-	if (new_str)
-	{
-		free(str);
-		str = new_str;
-	}
-	return (str);
 }
 
 void	ft_print_uint(t_print *tab)
@@ -125,7 +108,7 @@ void	ft_print_uint(t_print *tab)
 	ft_update_tab(tab);
 	str_prc = NULL;
 	if (tab->pnt)
-		str_prc = ft_str_prc(str, tab->prc, tab->is_zero);
+		str_prc = ft_str_prc(tab, str);
 	if (str_prc)
 	{
 		free(str);
@@ -135,9 +118,9 @@ void	ft_print_uint(t_print *tab)
 		return ;
 	len = ft_strlen(str);
 	if (tab->wdt && !tab->dash)
-		tab->tl += ft_print_offset(tab, len, 1);
+		ft_print_offset(tab, len, 1);
 	tab->tl += write(1, str, len);
 	if (tab->wdt && tab->dash)
-		tab->tl += ft_print_offset(tab, len, 0);
+		ft_print_offset(tab, len, 0);
 	free(str);
 }

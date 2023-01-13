@@ -26,7 +26,7 @@ void	ft_print_hex(t_print *tab, int lower)
 	str = ft_uitoa_hex(i, lower);
 	str_prc = NULL;
 	if (tab->pnt)
-		str_prc = ft_str_prc(str, tab->prc, tab->is_zero);
+		str_prc = ft_str_prc(tab, str);
 	if (str_prc)
 	{
 		free(str);
@@ -37,10 +37,10 @@ void	ft_print_hex(t_print *tab, int lower)
 		return ;
 	len = ft_strlen(str);
 	if (tab->wdt && !tab->dash)
-		tab->tl += ft_print_offset(tab, len, 1);
+		ft_print_offset(tab, len, 1);
 	tab->tl += write(1, str, len);
 	if (tab->wdt && tab->dash)
-		tab->tl += ft_print_offset(tab, len, 0);
+		ft_print_offset(tab, len, 0);
 	free(str);
 }
 
@@ -71,7 +71,7 @@ void	ft_print_ptr(t_print *tab)
 	str = ft_uitoa_hex(i, 1);
 	str_prc = NULL;
 	if (tab->pnt)
-		str_prc = ft_str_prc(str, tab->prc, tab->is_zero);
+		str_prc = ft_str_prc(tab, str);
 	if (str_prc)
 	{
 		free(str);
@@ -82,10 +82,10 @@ void	ft_print_ptr(t_print *tab)
 		return ;
 	len = ft_strlen(str);
 	if (tab->wdt && !tab->dash)
-		tab->tl += ft_print_offset(tab, len, 1);
+		ft_print_offset(tab, len, 1);
 	tab->tl += write(1, str, len);
 	if (tab->wdt && tab->dash)
-		tab->tl += ft_print_offset(tab, len, 0);
+		ft_print_offset(tab, len, 0);
 	free(str);
 }
 
