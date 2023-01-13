@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-char	*ft_str_prc(char *str, int prc)
+char	*ft_str_prc(char *str, int prc, int is_zero)
 {
 	int		len_str;
 	int		neg;
@@ -27,6 +27,8 @@ char	*ft_str_prc(char *str, int prc)
 	len_str = ft_strlen(str) - neg;
 	if (prc > len_str)
 		zeros = prc - len_str;
+	else if (!prc && is_zero)
+		return (ft_strdup(""));
 	else
 		return (NULL);
 	new_str = malloc((zeros + len_str + neg + 1) * sizeof(char));
@@ -61,6 +63,10 @@ void	ft_print_integer(t_print *tab)
 	char	*str;
 
 	i = va_arg(tab->args, int);
+	if (i < 0)
+		tab->neg = 1;
+	else if (!i)
+		tab->is_zero = 1;
 	str = ft_itoa(i);
 	if (!str)
 		return ;
@@ -71,7 +77,7 @@ void	ft_print_integer(t_print *tab)
 	len = ft_strlen(str);
 	if (tab->wdt && !tab->dash)
 		tab->tl += ft_print_offset(tab, len, 1);
-	tab->tl += write(1, str, len);
+	tab->tl += write(1, &str[tab->neg && tab->zero], len - (tab->neg && tab->zero));
 	if (tab->wdt && tab->dash)
 		tab->tl += ft_print_offset(tab, len, 0);
 	free(str);
@@ -84,11 +90,12 @@ char	*ft_signed_full_str(t_print *tab, char *str, int i)
 
 	new_str = NULL;
 	if (tab->pnt)
-		new_str = ft_str_prc(str, tab->prc);
+		new_str = ft_str_prc(str, tab->prc, tab->is_zero);
 	if (new_str)
 	{
 		free(str);
 		str = new_str;
+		new_str = NULL;
 	}
 	if (tab->plus)
 		prefix = "+";
@@ -112,11 +119,13 @@ void	ft_print_uint(t_print *tab)
 	char			*str_prc;
 
 	i = va_arg(tab->args, unsigned int);
+	if (!i)
+		tab->is_zero = 1;
 	str = ft_uitoa(i);
 	ft_update_tab(tab);
 	str_prc = NULL;
 	if (tab->pnt)
-		str_prc = ft_str_prc(str, tab->prc);
+		str_prc = ft_str_prc(str, tab->prc, tab->is_zero);
 	if (str_prc)
 	{
 		free(str);

@@ -23,9 +23,11 @@ int	ft_print_offset(t_print *tab, int len, int left)
 	c = ' ';
 	if (tab->zero && left)
 		c = '0';
+	if (tab->neg && tab->zero)
+		write(1, "-", 1);
 	while (i++ < amount)
 		write(1, &c, 1);
-	return (amount);
+	return (amount + (tab->neg && tab->zero));
 }
 
 void	ft_print_char(t_print *tab)

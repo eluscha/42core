@@ -20,16 +20,19 @@ void	ft_print_hex(t_print *tab, int lower)
 	char			*str_prc;
 
 	i = va_arg(tab->args, unsigned int);
+	ft_update_tab(tab);
+	if (!i)
+		tab->is_zero = 1;
 	str = ft_uitoa_hex(i, lower);
 	str_prc = NULL;
 	if (tab->pnt)
-		str_prc = ft_str_prc(str, tab->prc);
+		str_prc = ft_str_prc(str, tab->prc, tab->is_zero);
 	if (str_prc)
 	{
 		free(str);
 		str = str_prc;
 	}
-	str = ft_handle_prefix(tab, str, i, lower);
+	str = ft_handle_prefix(tab, str, lower);
 	if (!str)
 		return ;
 	len = ft_strlen(str);
@@ -41,12 +44,12 @@ void	ft_print_hex(t_print *tab, int lower)
 	free(str);
 }
 
-char	*ft_handle_prefix(t_print *tab, char *str, unsigned int i, int lower)
+char	*ft_handle_prefix(t_print *tab, char *str, int lower)
 {
 	char	*new_str;
 	char	*prefix;
 
-	if (!str || !tab->sharp || !i)
+	if (!str || !tab->sharp || tab->is_zero)
 		return (str);
 	if (lower)
 		prefix = "0x";
@@ -68,7 +71,7 @@ void	ft_print_ptr(t_print *tab)
 	str = ft_uitoa_hex(i, 1);
 	str_prc = NULL;
 	if (tab->pnt)
-		str_prc = ft_str_prc(str, tab->prc);
+		str_prc = ft_str_prc(str, tab->prc, tab->is_zero);
 	if (str_prc)
 	{
 		free(str);

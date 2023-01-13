@@ -2,6 +2,8 @@
 
 void	ft_refresh_tab(t_print *tab)
 {
+	tab->neg = 0;
+	tab->is_zero = 0;
 	tab->wdt = 0;
 	tab->prc = 0;
 	tab->zero = 0;
@@ -25,4 +27,6 @@ void	ft_update_tab(t_print *tab)
 		tab->zero = 0;
 	if (tab->plus && tab->sp)
 		tab->sp = 0;
+	if (!tab->wdt)
+		tab->zero = 0;
 }

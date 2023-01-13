@@ -21,6 +21,8 @@ typedef struct s_print
 {
 	va_list	args;
 	int		tl;
+	int		neg;
+	int		is_zero;
 	int		wdt;
 	int		prc;
 	int		zero;
@@ -41,7 +43,7 @@ void	ft_convert(t_print *tab, char let);
 int		ft_print_offset(t_print *tab, int len, int left);
 void	ft_print_char(t_print *tab);
 void	ft_print_str(t_print *tab);
-char	*ft_str_prc(char *str, int prc);
+char	*ft_str_prc(char *str, int prc, int is_zero);
 char	*ft_generate_full_str(char *new_str, char *str, int neg, int zeros);
 char	*ft_signed_full_str(t_print *tab, char *str, int i);
 void	ft_print_integer(t_print *tab);
@@ -49,7 +51,7 @@ void	ft_print_uint(t_print *tab);
 char	*ft_uitoa(unsigned int n);
 void	ft_print_hex(t_print *tab, int lower);
 char	*ft_uitoa_hex(unsigned long n, int lower);
-char	*ft_handle_prefix(t_print *tab, char *str, unsigned int i, int lower);
+char	*ft_handle_prefix(t_print *tab, char *str, int lower);
 void	ft_print_ptr(t_print *tab);
 char	*ft_update_ptrstr(char *str, unsigned long i);
 void	ft_print_prc(t_print *tab);
