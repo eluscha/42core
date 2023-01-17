@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   modify_tab.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/01/17 13:12:25 by eusatiko          #+#    #+#             */
+/*   Updated: 2023/01/17 13:12:28 by eusatiko         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
 
 void	ft_refresh_tab(t_print *tab)
@@ -14,11 +26,6 @@ void	ft_refresh_tab(t_print *tab)
 	tab->plus = 0;
 	tab->sharp = 0;
 }
-
-// If a precision is given with a numeric conversion (d, i, o, u, i, x, and X), the 0
-// flag is ignored.
-// A - overrides a 0 if both are given.
-// A + overrides a space if both are used.
 
 void	ft_update_tab(t_print *tab)
 {

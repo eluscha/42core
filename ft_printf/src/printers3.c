@@ -17,47 +17,44 @@ void	ft_print_hex(t_print *tab, int lower)
 	unsigned int	i;
 	int				len;
 	char			*str;
-	char			*str_prc;
+	char			*fullstr;
+	int				pref;
 
 	i = va_arg(tab->args, unsigned int);
 	ft_update_tab(tab);
 	if (!i)
 		tab->is_zero = 1;
 	str = ft_uitoa_hex(i, lower);
-	str_prc = NULL;
-	if (tab->pnt)
-		str_prc = ft_str_prc(tab, str);
-	if (str_prc)
-	{
-		free(str);
-		str = str_prc;
-	}
-	str = ft_handle_prefix(tab, str, lower);
-	if (!str)
+	fullstr = ft_full_string(tab, str);
+	free(str);
+	if (!fullstr)
 		return ;
-	len = ft_strlen(str);
+	len = ft_strlen(fullstr) + 2 * (tab->sharp && !tab->is_zero);
+	pref = ft_write_prefix(tab, lower, 1);
 	if (tab->wdt && !tab->dash)
 		ft_print_offset(tab, len, 1);
-	tab->tl += write(1, str, len);
+	if (!pref)
+		pref = ft_write_prefix(tab, lower, 0);
+	tab->tl += write(1, fullstr, len - pref);
 	if (tab->wdt && tab->dash)
 		ft_print_offset(tab, len, 0);
-	free(str);
+	free(fullstr);
 }
 
-char	*ft_handle_prefix(t_print *tab, char *str, int lower)
+int	ft_write_prefix(t_print *tab, int lower, int check_zero)
 {
-	char	*new_str;
 	char	*prefix;
 
-	if (!str || !tab->sharp || tab->is_zero)
-		return (str);
+	if (!tab->sharp || tab->is_zero)
+		return (0);
+	if (check_zero && !tab->zero)
+		return (0);
 	if (lower)
 		prefix = "0x";
 	else
 		prefix = "0X";
-	new_str = ft_strjoin(prefix, str);
-	free(str);
-	return (new_str);
+	tab->tl += write(1, prefix, 2);
+	return (2);
 }
 
 void	ft_print_ptr(t_print *tab)
@@ -71,7 +68,7 @@ void	ft_print_ptr(t_print *tab)
 	str = ft_uitoa_hex(i, 1);
 	str_prc = NULL;
 	if (tab->pnt)
-		str_prc = ft_str_prc(tab, str);
+		str_prc = ft_full_string(tab, str);
 	if (str_prc)
 	{
 		free(str);
