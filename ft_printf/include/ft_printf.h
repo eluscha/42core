@@ -22,7 +22,7 @@ typedef struct s_print
 	va_list	args;
 	int		tl;
 	int		neg;
-	char		sign;
+	char	sign;
 	int		is_zero;
 	int		wdt;
 	int		prc;
@@ -51,7 +51,7 @@ void	ft_print_uint(t_print *tab);
 char	*ft_uitoa(unsigned int n);
 void	ft_print_hex(t_print *tab, int lower);
 char	*ft_uitoa_hex(unsigned long n, int lower);
-int	ft_write_prefix(t_print *tab, int lower, int check_zero);
+int		ft_write_prefix(t_print *tab, int lower, int check_zero);
 void	ft_print_ptr(t_print *tab);
 char	*ft_update_ptrstr(char *str, unsigned long i);
 void	ft_print_prc(t_print *tab);

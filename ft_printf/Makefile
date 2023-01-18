@@ -45,7 +45,7 @@ re:				fclean all
 			@echo "Cleaned and rebuilt everything for ft_printf!"
 
 norm:
-			@norminette $(SRCS) $(LIBFT) | grep "Error"
-			@norminette -R CheckDefine $(INCLUDE) | grep "Error"
+			@norminette $(SRCS) $(LIBFT)
+			@norminette -R CheckDefine $(INCLUDE)
 
 .PHONY:		all clean fclean re norm
