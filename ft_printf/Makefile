@@ -27,7 +27,7 @@ $(NAME):	$(OBJS)
 			@$(AR) $(NAME) $(OBJS)
 			@echo "ft_printf compiled!"
 
-.c.o:		$(SRCS) 
+.c.o:
 			@echo "Compiling: $<"
 			@$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 

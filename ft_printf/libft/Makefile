@@ -13,7 +13,7 @@ OBJS_B = $(SRCS_B:.c=.o)
 
 all: $(NAME)
 
-.c.o: $(SRCS)
+.c.o:
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(NAME): $(OBJS)
