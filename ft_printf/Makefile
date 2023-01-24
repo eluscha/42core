@@ -18,6 +18,8 @@ OBJS = $(SRCS:.c=.o)
 
 all:		$(NAME)
 
+bonus:		$(NAME)
+
 $(NAME):	$(OBJS)
 			@make -C $(LIBFT)
 			@cp $(LIBFT)/libft.a .
