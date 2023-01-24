@@ -12,8 +12,8 @@ int main(void)
 	printf("%i\n", a);
 	b = printf("char %-5c, sign %20%, str %12s, %-s, int %7.0d, uint %.15u, hex %.0x and %#-12X, ptr %15p%16p\n", 'm', "right", "left", 0, -1, 0, -1, ptr, ptr);
 	printf("%i\n", b);
-	a = ft_printf("%#8.5x", 34);
+	a = ft_printf("% 08.3d", -838);
 	printf("\n%i\n", a);
-	b = printf("%#8.5x", 34);
+	b = printf("% 08.3d", -838);
 	printf("\n%i\n", b);
 }
