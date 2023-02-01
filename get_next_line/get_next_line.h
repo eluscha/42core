@@ -6,7 +6,7 @@
 /*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:45:22 by eusatiko          #+#    #+#             */
-/*   Updated: 2023/01/25 11:57:31 by eusatiko         ###   ########.fr       */
+/*   Updated: 2023/02/01 10:40:34 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef FT_GNL_H
@@ -24,5 +24,6 @@ char    *ft_strchr(const char *s, int c);
 size_t  ft_strlcpy(char *dst, const char *src, size_t size);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strdup(const char *s);
+size_t	ft_strlen(const char *s);
 
 #endif

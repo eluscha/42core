@@ -6,7 +6,7 @@
 /*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:43:08 by eusatiko          #+#    #+#             */
-/*   Updated: 2023/01/25 14:36:30 by eusatiko         ###   ########.fr       */
+/*   Updated: 2023/02/01 11:15:05 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,13 @@ char	*get_next_line(int fd)
 	if (!static_bf)
 		return (NULL);
 	line = ft_save_line(&static_bf);	//line part (before \n)
+	if (!line)
+	{
+		if (ft_strlen(static_bf) != 0)
+			line = ft_strjoin(static_bf, "\n");
+		free(static_bf);
+		static_bf = NULL;
+	}
 	return (line);
 }
 
@@ -39,13 +46,16 @@ char	*ft_fill_bf(int fd, char *static_bf)
 	if (!static_bf)
 		static_bf = ft_calloc(1, sizeof(char)); //empty string
 	temp_bf = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+	//protect here ?
 	bytes_read = 1; //any value bigger than 0
 	while (bytes_read > 0)	//while we read over 0 bytes and did not find '\n'
 	{
 		bytes_read = read(fd, temp_bf, BUFFER_SIZE);
-		if (bytes_read == -1)
+		if (bytes_read <= 0)
 		{
 			free(temp_bf);
+			if (bytes_read == 0)
+				return (static_bf);
 			return (NULL);
 		}
 		temp_bf[bytes_read] = '\0'; // null-terminate the string in the temporary buffer
@@ -74,39 +84,25 @@ char	*ft_join(char *static_bf, char *temp_bf)
 
 char	*ft_save_line(char **static_adr)
 {
-	int		len;
 	int		i;
 	char	*line;
 	char	*remainder;
 
-	//printf("we are in ft_save_line\n");
-	//printf("*static_adr is %s\n", *static_adr);
-
-	len = 0;
 	i = 0;
-	while (*(*static_adr + i) != '\0' && i < 10) 
+	while (*(*static_adr + i) != '\0') 
 	{
-		//printf("char is %c\n", **static_adr);
-		if (*(*static_adr + i) == '\n') // || *(*static_adr + i) == EOF ? 
-		{
-			len = i + 1;
-			break ;
-		}
+		if (*(*static_adr + i) == '\n')
+			break;
 		i++;
 	}
-	//printf("len is %i\n", len);
-	if (!len)
-		line = NULL;
-	else
-		line = malloc((len + 1) * sizeof(char));
+	//printf("i is %i and len is ft_strlen(*static_adr) is %i\n", i, ft_strlen(*static_adr));
+	line = NULL;
+	if (i != (int)ft_strlen(*static_adr))
+		line = malloc((i + 2) * sizeof(char));
 	if (!line)
-	{
-		free(*static_adr);
 		return (NULL);
-	}
-	ft_strlcpy(line, *static_adr, len + 1);
-	//printf("line is (%s)\n", line);
-	remainder = ft_strdup(*(static_adr) + len);
+	ft_strlcpy(line, *static_adr, i + 2);
+	remainder = ft_strdup(*(static_adr) + i + 1);
 	free(*static_adr);
 	*static_adr = remainder;
 	return (line);
