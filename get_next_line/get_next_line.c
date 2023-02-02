@@ -6,7 +6,7 @@
 /*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:43:08 by eusatiko          #+#    #+#             */
-/*   Updated: 2023/02/01 11:15:05 by eusatiko         ###   ########.fr       */
+/*   Updated: 2023/02/02 09:49:33 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ char	*get_next_line(int fd)
 	if (!line)
 	{
 		if (ft_strlen(static_bf) != 0)
-			line = ft_strjoin(static_bf, "\n");
+			line = ft_strjoin(static_bf, "\0");
 		free(static_bf);
 		static_bf = NULL;
 	}
