@@ -10,7 +10,7 @@ int main(int argc, char **argv)
 	if (argc != 2)
 		return (1);
 	fildes = open(argv[1], O_RDONLY);
-	line = get_next_line(fildes);
+	/*line = get_next_line(fildes);
 	while (line)
 	{
 		printf("%s", line);
@@ -19,4 +19,21 @@ int main(int argc, char **argv)
 	}
 	close(fildes);
 	return (0);	
+	*/
+	line = get_next_line(fildes, 0);
+	printf("next line: %s", line);
+	free(line);
+	line = get_next_line(fildes, 1);
+	printf("next line: %s", line);
+	//free(line);
+	close(fildes);
+	fildes = open(argv[1], O_RDONLY);
+	line = get_next_line(fildes, 0);
+	printf("next line: %s", line);
+	free(line);
+	//line = get_next_line(fildes, 0);
+	//printf("next line: %s", line);
+	//free(line);
+	close(fildes);
+	return (0);
 }

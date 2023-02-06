@@ -6,7 +6,7 @@
 /*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:43:08 by eusatiko          #+#    #+#             */
-/*   Updated: 2023/02/02 09:49:33 by eusatiko         ###   ########.fr       */
+/*   Updated: 2023/02/06 15:03:31 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 
 #include <stdio.h>
 
-char	*get_next_line(int fd)
+char	*get_next_line(int fd, int error)
 {
 	static char	*static_bf;	//has to keep the value between function calls, a pointer to heap
 	char	*line;	//line value is new for every function call
 	
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) == -1)
 		return (NULL);
-	static_bf = ft_fill_bf(fd, static_bf); //read from remainder (if present) and file (using calloc (malloc), free)
+	static_bf = ft_fill_bf(fd, static_bf, error); //read from remainder (if present) and file (using calloc (malloc), free)
 	if (!static_bf)
 		return (NULL);
 	line = ft_save_line(&static_bf);	//line part (before \n)
@@ -35,7 +35,7 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-char	*ft_fill_bf(int fd, char *static_bf)
+char	*ft_fill_bf(int fd, char *static_bf, int error)
 {
 	char	*temp_bf;
 	int		bytes_read;
@@ -44,18 +44,27 @@ char	*ft_fill_bf(int fd, char *static_bf)
 	
 	//if static_bf was not initialized yet - the value will always be NULL ?
 	if (!static_bf)
+	{
+		printf("we will now initialize static_bf\n");
 		static_bf = ft_calloc(1, sizeof(char)); //empty string
+	}
 	temp_bf = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	//protect here ?
 	bytes_read = 1; //any value bigger than 0
 	while (bytes_read > 0)	//while we read over 0 bytes and did not find '\n'
 	{
-		bytes_read = read(fd, temp_bf, BUFFER_SIZE);
-		if (bytes_read <= 0)
+		if (error)
+			bytes_read = -1;
+		else 
+			bytes_read = read(fd, temp_bf, BUFFER_SIZE);
+		printf("bytes_read is %i\n", bytes_read);
+		if (bytes_read == 0 || bytes_read == -1)
 		{
 			free(temp_bf);
 			if (bytes_read == 0)
 				return (static_bf);
+			printf("we will now free static_bf and set it to NULL\n");
+			free(static_bf);
 			return (NULL);
 		}
 		temp_bf[bytes_read] = '\0'; // null-terminate the string in the temporary buffer
