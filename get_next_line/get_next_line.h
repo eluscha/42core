@@ -15,8 +15,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-char	*get_next_line(int fd, int error);
-char    *ft_fill_bf(int fd, char *static_bf, int error);
+char	*get_next_line(int fd);
+char    *ft_fill_bf(int fd, char *static_bf);
 char	*ft_join(char *static_bf, char *temp_bf);
 char    *ft_save_line(char **static_adr);
 void    *ft_calloc(size_t nmemb, size_t size);
