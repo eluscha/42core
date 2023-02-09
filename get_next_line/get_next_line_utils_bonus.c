@@ -1,35 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:48:16 by eusatiko          #+#    #+#             */
-/*   Updated: 2023/01/25 14:36:04 by eusatiko         ###   ########.fr       */
+/*   Updated: 2023/02/09 12:56:39 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 //#include <stdio.h>
-
-void	*ft_calloc(size_t nmemb, size_t size)
-{
-	void	*ptr;
-	size_t	i;
-
-	ptr = malloc(nmemb * size);
-	if (ptr == NULL)
-		return (NULL);
-	i = 0;
-	while (i < nmemb * size)
-	{
-		*((char *)ptr + i) = 0;
-		i++;
-	}
-	return (ptr);
-}
 
 char	*ft_strchr(const char *s, int c)
 {
@@ -125,5 +108,3 @@ char	*ft_strdup(const char *s)
 	}
 	return (ptr);
 }
-
-
