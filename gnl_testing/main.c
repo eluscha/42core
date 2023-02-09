@@ -18,5 +18,10 @@ int main(int argc, char **argv)
 		line = get_next_line(fildes);
 	}
 	close(fildes);
+	/*do
+	{
+		line = get_next_line(fildes);
+		printf("we are in do while loop\n");
+	} while (line != NULL);	*/
 	return (0);	
 }

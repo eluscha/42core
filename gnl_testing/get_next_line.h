@@ -6,7 +6,7 @@
 /*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:45:22 by eusatiko          #+#    #+#             */
-/*   Updated: 2023/02/06 14:56:14 by eusatiko         ###   ########.fr       */
+/*   Updated: 2023/02/09 15:03:10 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef GET_NEXT_LINE_H
@@ -14,6 +14,10 @@
 
 # include <unistd.h>
 # include <stdlib.h>
+
+#ifndef BUFFER_SIZE
+# define BUFFER_SIZE 1
+#endif
 
 char	*get_next_line(int fd);
 char	*ft_fill_bf(int fd, char *static_bf);

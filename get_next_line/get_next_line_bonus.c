@@ -6,7 +6,7 @@
 /*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:43:08 by eusatiko          #+#    #+#             */
-/*   Updated: 2023/02/09 13:02:02 by eusatiko         ###   ########.fr       */
+/*   Updated: 2023/02/09 15:10:22 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,8 @@ char	*ft_join(char *static_bf, char *temp_bf, int bytes_read)
 
 	if (!static_bf)
 		static_bf = ft_strdup("");
+	if (!static_bf)
+		return (NULL);
 	temp_bf[bytes_read] = '\0';
 	joined = ft_strjoin(static_bf, temp_bf);
 	free(static_bf);

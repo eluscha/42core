@@ -6,7 +6,7 @@
 /*   By: eusatiko <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 11:43:08 by eusatiko          #+#    #+#             */
-/*   Updated: 2023/02/09 13:01:44 by eusatiko         ###   ########.fr       */
+/*   Updated: 2023/02/09 15:05:55 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,7 @@ char	*get_next_line(int fd)
 	static char	*static_bf;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
-	{
-		if (static_bf)
-			free(static_bf);
-		static_bf = NULL;
 		return (NULL);
-	}
 	static_bf = ft_fill_bf(fd, static_bf);
 	if (!static_bf)
 		return (NULL);
@@ -46,8 +41,7 @@ char	*ft_fill_bf(int fd, char *static_bf)
 	temp_bf = malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!temp_bf)
 	{
-		if (static_bf)
-			free(static_bf);
+		free(static_bf);
 		return (NULL);
 	}
 	temp_bf[0] = '\0';
@@ -73,6 +67,8 @@ char	*ft_join(char *static_bf, char *temp_bf, int bytes_read)
 
 	if (!static_bf)
 		static_bf = ft_strdup("");
+	if (!static_bf)
+		return (NULL);
 	temp_bf[bytes_read] = '\0';
 	joined = ft_strjoin(static_bf, temp_bf);
 	free(static_bf);
