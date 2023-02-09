@@ -14,23 +14,6 @@
 
 //#include <stdio.h>
 
-void	*ft_calloc(size_t nmemb, size_t size)
-{
-	void	*ptr;
-	size_t	i;
-
-	ptr = malloc(nmemb * size);
-	if (ptr == NULL)
-		return (NULL);
-	i = 0;
-	while (i < nmemb * size)
-	{
-		*((char *)ptr + i) = 0;
-		i++;
-	}
-	return (ptr);
-}
-
 char	*ft_strchr(const char *s, int c)
 {
 	int	i;
