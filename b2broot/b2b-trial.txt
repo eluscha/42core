@@ -1,0 +1,4 @@
+host: eusatiko42
+username: eusatiko
+encrypt and pwd: B2b_2011-eu
+old_pwd: 123Aa-_b2b
