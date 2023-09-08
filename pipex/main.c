@@ -3,7 +3,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/wait.h>
-//#include 
+#include <errno.h>
+
 
 int main(void)
 {
@@ -45,9 +46,10 @@ int main(void)
             perror("Could not execve");
         return (-1);
     }
-    wait(NULL); //waits for any 1 child, ideally should be changed to wait for both
     //printf("child2 finished\n");
     close(fd[0]);
     close(fd[1]);
+    if (wait(NULL) != -1 || errno != ECHILD)
+        return (-1); //waits for any 1 child, ideally should be changed to wait for both
     return 0;
 }
