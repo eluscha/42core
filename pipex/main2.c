@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <sys/wait.h>
+#include <string.h>
 
 int main() {
     int pipefd[2];
@@ -28,20 +30,20 @@ int main() {
         close(pipefd[0]);
         
         // Now you can use wc or any other command that reads from stdin
-        execlp("wc", "wc", NULL);
+        execlp("wc", "wc", "-l", NULL);
         perror("execlp");
         return 1;
     } else {  // Parent process
         // Close the read end of the pipe
         close(pipefd[0]);
         
-        // Write data to the write end of the pipe (e.g., some text)
-        const char* data = "Hello, world!\n";
-        write(pipefd[1], data, strlen(data));
-        
-        // Close the write end of the pipe
+        dup2(pipefd[1],1);
+
         close(pipefd[1]);
-        
+
+        execlp("ls", "ls", "-l", NULL);
+        perror("execlp");
+    
         // Wait for the child process to finish
         wait(NULL);
     }
