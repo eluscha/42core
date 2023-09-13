@@ -56,7 +56,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (strcat);
 }
 
-char *parser(char *cmd, char **envp)
+char *get_cmd(char *cmd, char **envp)
 {
     char **dirs;
     char *slash_cmd = ft_strjoin("/", cmd); //free in the end
@@ -95,20 +95,24 @@ char *parser(char *cmd, char **envp)
 
 int main(int argc, char **argv, char **envp)
 {
-    char *full_cmd = parser(argv[2], envp);
+    char **cmd_args = ft_split(argv[2], ' ');
+    char *full_cmd = get_cmd(cmd_args[0], envp);
+    int i = 0;
     if (full_cmd)
     {
         int pid = fork();
         if (pid == 0)
         {
-            char *args[] = {NULL};
             char *env[] = {NULL};
-            execve(full_cmd, args, env);
+            execve(full_cmd, cmd_args, env);
         }
         wait(NULL);
         free(full_cmd);
-        return 0;
     }
-    printf("No such command!\n");
+    else
+        printf("No such command!\n");
+    while(cmd_args[i])
+        free(cmd_args[i++]);
+    free(cmd_args);
     return 1;
 }

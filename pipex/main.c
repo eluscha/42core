@@ -26,8 +26,7 @@ int main(void)
             perror("Could not execve");
 	    return (-1);
     }
-    //wait(NULL);
-    printf("i am parent\n");
+    //printf("i am parent\n");
     pid = fork();	
     //printf("my pid is %d and pid1 is %d\n", pid, pid1);
     if (pid == 0)
@@ -53,3 +52,4 @@ int main(void)
         return (-1); //waits for any 1 child, ideally should be changed to wait for both
     return 0;
 }
+ 
