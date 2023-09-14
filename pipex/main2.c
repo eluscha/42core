@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <fcntl.h>
+#include <errno.h>
 #include "ft_split.c"
 
 int	ft_strncmp(const char *s1, const char *s2, size_t n)
@@ -93,14 +95,51 @@ char *get_cmd(char *cmd, char **envp)
     return full_cmd;
 }
 
-int main(int argc, char **argv, char **envp)
+
+/*
+int first_cmd(int argc, char **argv, char **envp, char ***args_adr, char **cmd_adr)
 {
-    char **cmd_args = ft_split(argv[2], ' ');
-    char *full_cmd = get_cmd(cmd_args[0], envp);
+    
+    char *env[] = {NULL};
+    *args_adr = ft_split(argv[2], ' ');
+    *cmd_adr = get_cmd(cmd_args[0], envp);
     int i = 0;
     if (full_cmd)
     {
         int pid = fork();
+        if (pid == 0)
+        {
+            close(fd[0]);
+            dup2(fd[1],1);
+	        close(fd[1]);
+            if (execve(full_cmd, cmd_args, env) == -1)
+                perror("Could not execve");
+        }
+        wait(NULL);
+        free(full_cmd);close(fd[1]);
+        int fd_file2 = open("file2", O_WRONLY | O_CREAT, 0777);
+        char *args[] = {"wc", "-l", NULL};
+        char *env[] = {NULL};
+        dup2(fd[0],0); //instead of stdin will be pipe read end
+        dup2(fd_file2, 1); //instead of stdout will be file2
+        close(fd_file2);
+        close(fd[0]);
+        if (execve("/usr/bin/wc", args, env) == -1)
+            perror("Could not execve");
+        return (-1);
+    }
+}
+
+
+int last_cmd(int argc, char **argv, char **envp)
+{
+    char **cmd_args = ft_split(argv[argc - 2], ' ');
+    char *full_cmd = get_cmd(cmd_args[0], envp);
+    int i = 0;
+    if (full_cmd)
+    {
+        int pid = fork();        {
+
         if (pid == 0)
         {
             char *env[] = {NULL};
@@ -115,4 +154,55 @@ int main(int argc, char **argv, char **envp)
         free(cmd_args[i++]);
     free(cmd_args);
     return 1;
+}
+}
+*/
+
+int main(int argc, char **argv, char **envp)
+{
+    int fd[2];
+    pipe(fd);
+    char **cmd_args1 = ft_split(argv[2], ' ');
+    char *full_cmd1 = get_cmd(cmd_args1[0], envp);
+    char **cmd_args2 = ft_split(argv[argc - 2], ' ');
+    char *full_cmd2 = get_cmd(cmd_args2[0], envp);
+    char *env[] = {NULL};
+    int i = 0;
+
+    int pid = fork();
+    if (pid == 0)
+    {
+        //Child1
+	    close(fd[0]);
+        int fd_file1 = open(argv[1], O_RDONLY);
+        dup2(fd_file1,0); //instead of stdin will be file1
+        dup2(fd[1],1); //instead of stdout will be pipe write end
+	    close(fd_file1);
+        close(fd[1]);
+        if (execve(full_cmd1, cmd_args1, env) == -1)
+            perror("Could not execve");
+	    return (-1);
+    }
+    pid = fork();	
+    if (pid == 0)
+    {
+        //Child2
+        close(fd[1]);
+        int fd_file2 = open("file2", O_WRONLY | O_CREAT, 0777);
+        dup2(fd[0],0); //instead of stdin will be pipe read end
+        dup2(fd_file2, 1); //instead of stdout will be file2
+        close(fd_file2);
+        close(fd[0]);
+        if (execve(full_cmd2, cmd_args2, env) == -1)
+            perror("Could not execve");
+        return (-1);
+    };
+    close(fd[0]);
+    close(fd[1]);
+    //free stuff! 
+    if (wait(NULL) != -1 || errno != ECHILD)
+        return (-1); //waits for any 1 child, ideally should be changed to wait for both
+    
+    
+    return 0;
 }
