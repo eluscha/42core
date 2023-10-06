@@ -158,13 +158,28 @@ int last_cmd(int argc, char **argv, char **envp)
 }
 */
 
+void free_arrays(char ***cmd_args, char **full_cmd, int len)
+{
+    int i = 0;
+    int j;
+    while (i < len)
+    {
+        free(full_cmd[i]);
+        j = 0;
+        while (cmd_args[i][j])
+            free(cmd_args[i][j++]);
+        free(cmd_args[i]);
+        i++;    
+    }
+    return ;
+} 
+
 int main(int argc, char **argv, char **envp)
 {
     int pipes[argc - 4][2];
     int i = 0;
     while (i < argc - 4)
         pipe(pipes[i++]);
-    
     char **cmd_args[argc - 3];
     char *full_cmd[argc - 3];
     i = 0;
@@ -261,11 +276,13 @@ int main(int argc, char **argv, char **envp)
             perror("Could not execve");
         return (-1);
     };
-    close(pipes[0][0]);
-    close(pipes[0][1]);
-    close(pipes[1][0]);
-    close(pipes[1][1]);
-    //free stuff! 
+    i = -1;
+    while (++i < argc - 4)
+    {
+        close(pipes[i][0]);
+        close(pipes[i][1]);
+    }
+    free_arrays(cmd_args, full_cmd, argc - 3); 
     if (wait(NULL) != -1 || errno != ECHILD)
         return (-1); //waits for any 1 child, ideally should be changed to wait for both
     return 0;
