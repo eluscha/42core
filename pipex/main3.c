@@ -96,69 +96,6 @@ char *get_cmd(char *cmd, char **envp)
     return full_cmd;
 }
 
-
-/*
-int first_cmd(int argc, char **argv, char **envp, char ***args_adr, char **cmd_adr)
-{
-    
-    char *env[] = {NULL};
-    *args_adr = ft_split(argv[2], ' ');
-    *cmd_adr = get_cmd(cmd_args[0], envp);
-    int i = 0;
-    if (full_cmd)
-    {
-        int pid = fork();
-        if (pid == 0)
-        {
-            close(fd[0]);
-            dup2(fd[1],1);
-	        close(fd[1]);
-            if (execve(full_cmd, cmd_args, env) == -1)
-                perror("Could not execve");
-        }
-        wait(NULL);
-        free(full_cmd);close(fd[1]);
-        int fd_file2 = open("file2", O_WRONLY | O_CREAT, 0777);
-        char *args[] = {"wc", "-l", NULL};
-        char *env[] = {NULL};
-        dup2(fd[0],0); //instead of stdin will be pipe read end
-        dup2(fd_file2, 1); //instead of stdout will be file2
-        close(fd_file2);
-        close(fd[0]);
-        if (execve("/usr/bin/wc", args, env) == -1)
-            perror("Could not execve");
-        return (-1);
-    }
-}
-
-
-int last_cmd(int argc, char **argv, char **envp)
-{
-    char **cmd_args = ft_split(argv[argc - 2], ' ');
-    char *full_cmd = get_cmd(cmd_args[0], envp);
-    int i = 0;
-    if (full_cmd)
-    {
-        int pid = fork();        {
-
-        if (pid == 0)
-        {
-            char *env[] = {NULL};
-            execve(full_cmd, cmd_args, env);
-        }
-        wait(NULL);
-        free(full_cmd);
-    }
-    else
-        printf("No such command!\n");
-    while(cmd_args[i])
-        free(cmd_args[i++]);
-    free(cmd_args);
-    return 1;
-}
-}
-*/
-
 void free_arrays(char ***cmd_args, char **full_cmd, int len)
 {
     int i = 0;
