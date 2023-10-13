@@ -144,7 +144,13 @@ int main(int argc, char **argv, char **envp)
     }
     char *env[] = {NULL};
 
-    int pid = fork();
+    int pid;
+    pid = fork();
+    if (pid == -1)
+    {
+        perror("Fork: ");
+        exit(1);
+    }
     if (pid == 0)
     {
         //Child1
@@ -174,7 +180,12 @@ int main(int argc, char **argv, char **envp)
     int pipe_num = 1;
     while (pipe_num < argc - 4)
     {
-        pid = fork();	
+        pid = fork();
+        if (pid == -1)
+        {
+            perror("Fork: ");
+            exit(1);
+        }	
         if (pid == 0)
         {
         //Child_mid
@@ -207,7 +218,12 @@ int main(int argc, char **argv, char **envp)
         pipe_num++;
     }
 
-    pid = fork();	
+    pid = fork();
+    if (pid == -1)
+    {
+        perror("Fork: ");
+        exit(1);
+    }	
     if (pid == 0)
     {
         //Child_last
