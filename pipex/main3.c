@@ -229,18 +229,14 @@ int main(int argc, char **argv, char **envp)
         dup2(pipes[0][1],1); //instead of stdout will be first pipe write end
 	    close(fd_file1);
         close(pipes[0][1]);
-        printf("we are here\n");
         if (execve(full_cmd[0], cmd_args[0], env) == -1)
-        {
             perror(argv[2]);
-        }
-	    exit(1);
+        exit(1);
     }
 
     int pipe_num = 1;
     while (pipe_num < argc - 4)
     {
-        printf("inside while loop \n");
         pid = fork();	
         if (pid == 0)
         {
@@ -269,7 +265,7 @@ int main(int argc, char **argv, char **envp)
         close(pipes[pipe_num][1]);
         if (execve(full_cmd[pipe_num], cmd_args[pipe_num], env) == -1)
             perror(argv[pipe_num + 2]);
-        return (-1);
+        exit(1);
         }
         pipe_num++;
     }
@@ -293,7 +289,7 @@ int main(int argc, char **argv, char **envp)
         close(pipes[pipe_num - 1][0]);
         if (execve(full_cmd[pipe_num], cmd_args[pipe_num], env) == -1)
             perror(argv[pipe_num + 2]);
-        return (-1);
+        exit(1);
     };
     i = -1;
     while (++i < argc - 4)
