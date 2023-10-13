@@ -4,6 +4,7 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <string.h> 
 #include "ft_split.c"
 
 int	ft_strncmp(const char *s1, const char *s2, size_t n)
@@ -164,11 +165,15 @@ void free_arrays(char ***cmd_args, char **full_cmd, int len)
     int j;
     while (i < len)
     {
-        free(full_cmd[i]);
+        if (full_cmd[i])
+            free(full_cmd[i]);
         j = 0;
-        while (cmd_args[i][j])
-            free(cmd_args[i][j++]);
-        free(cmd_args[i]);
+        if (cmd_args[i])
+        {
+            while (cmd_args[i][j])
+                free(cmd_args[i][j++]);
+            free(cmd_args[i]);
+        }
         i++;    
     }
     return ;
@@ -176,10 +181,21 @@ void free_arrays(char ***cmd_args, char **full_cmd, int len)
 
 int main(int argc, char **argv, char **envp)
 {
+    if (argc < 5)
+    {
+        printf("Invalid number of argumets\n");
+        return (1);
+    }
     int pipes[argc - 4][2];
     int i = 0;
     while (i < argc - 4)
-        pipe(pipes[i++]);
+    {
+        if (pipe(pipes[i++]) == -1)
+        {
+            printf("%s\n", strerror(errno));
+            return (1);
+        }
+    }
     char **cmd_args[argc - 3];
     char *full_cmd[argc - 3];
     i = 0;
@@ -204,13 +220,21 @@ int main(int argc, char **argv, char **envp)
 
 	    close(pipes[0][0]); //we do not need to read from pipe
         int fd_file1 = open(argv[1], O_RDONLY);
+        if (fd_file1 == -1)
+        {
+            perror(argv[1]);
+            exit(1);
+        }
         dup2(fd_file1,0); //instead of stdin will be file1
         dup2(pipes[0][1],1); //instead of stdout will be first pipe write end
 	    close(fd_file1);
         close(pipes[0][1]);
+        printf("we are here\n");
         if (execve(full_cmd[0], cmd_args[0], env) == -1)
-            perror("Could not execve");
-	    return (-1);
+        {
+            perror(argv[2]);
+        }
+	    exit(1);
     }
 
     int pipe_num = 1;
@@ -244,21 +268,16 @@ int main(int argc, char **argv, char **envp)
         close(pipes[pipe_num][0]);
         close(pipes[pipe_num][1]);
         if (execve(full_cmd[pipe_num], cmd_args[pipe_num], env) == -1)
-            perror("Could not execve");
+            perror(argv[pipe_num + 2]);
         return (-1);
         }
         pipe_num++;
     }
 
-    
-
-    //wait(NULL);
-
     pid = fork();	
     if (pid == 0)
     {
         //Child_last
-        printf("pipe_num is: %d\n", pipe_num);
         i = -1;
         while (++i < pipe_num - 1)
         {
@@ -273,7 +292,7 @@ int main(int argc, char **argv, char **envp)
         close(fd_file2);
         close(pipes[pipe_num - 1][0]);
         if (execve(full_cmd[pipe_num], cmd_args[pipe_num], env) == -1)
-            perror("Could not execve");
+            perror(argv[pipe_num + 2]);
         return (-1);
     };
     i = -1;
