@@ -30,4 +30,8 @@ fclean: clean
 
 re: clean all
 
+norm:
+	@norminette $(SRCS) $(SRCS_B)
+	@norminette -R CheckDefine libft.h
+
 .PHONY: bonus all clean fclean re

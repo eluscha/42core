@@ -43,7 +43,7 @@ re:				fclean all
 
 norm:
 			@norminette $(SRCS)
+			@norminette -R CheckDefine $(INCLUDE)
 			@make norm -C $(LIBFT)
-			@norminette -R CheckDefine pipex.h
 
 .PHONY:		all clean fclean re norm
