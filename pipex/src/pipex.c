@@ -1,11 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/wait.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <string.h> 
-#include "ft_split.c"
+#include "pipex.h"
 
 int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {

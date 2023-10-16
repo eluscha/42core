@@ -10,6 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
+
 static int	get_count(const char *s, char c)
 {
 	int	i;
@@ -112,3 +114,23 @@ char	**ft_split(char const *s, char c)
 	array[i] = NULL;
 	return (array);
 }
+
+/*
+#include <stdio.h>
+int main(int argc, char **argv)
+{
+	if (argc != 3)
+		return (1);
+	int i = 0;
+	char **array = ft_split(argv[1], argv[2][0]);
+	while (array[i] != NULL)
+	{
+		printf("array[%i] is %s\n", i, array[i]);
+		free(array[i]);
+		i++;
+	}
+	if (array != NULL)
+		free(array);
+	return 0;
+}
+*/
