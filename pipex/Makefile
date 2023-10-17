@@ -20,8 +20,7 @@ bonus:		$(NAME)
 
 $(NAME):	$(OBJS)
 			@make -C $(LIBFT)
-			@mv $(LIBFT)/libft.a .
-			$(CC) $(OBJS) libft.a -ldl -o $(NAME)
+			$(CC) $(OBJS) $(LIBFT)/libft.a -ldl -o $(NAME)
 			@echo "pipex compiled!"
 
 .c.o:
@@ -29,14 +28,14 @@ $(NAME):	$(OBJS)
 			@$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 clean:
-			@$(RM) -f $(OBJS)
+			@rm -f $(OBJS)
 			@echo "pipex object files cleaned!"
 			@make clean -C $(LIBFT)
+			@echo "libft executable files cleaned"
 
 fclean:			clean
 			@rm -f $(NAME)
-			@echo "pipex executable files cleaned!"
-			@make clean -C $(LIBFT)
+			@make fclean -C $(LIBFT)
 
 re:				fclean all
 			@echo "Cleaned and rebuilt everything for pipex!"

@@ -187,7 +187,7 @@ int	main(int argc, char **argv, char **envp)
 			close(pipes[i][1]);
 		}
 		close(pipes[pipe_num - 1][1]);
-		int fd_file2 = open("file2", O_WRONLY | O_CREAT, 0777);
+		int fd_file2 = open("file2", O_TRUNC | O_WRONLY | O_CREAT, 0777);
 		dup2(pipes[pipe_num - 1][0],0); //instead of stdin will be pipe read end
 		dup2(fd_file2, 1); //instead of stdout will be file2
 		close(fd_file2);
