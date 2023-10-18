@@ -146,14 +146,89 @@ char	***create_arrays(int ac, char **av, char ***adr, char **envp)
 	return cmd_args;
 }
 
+void	first_child(int ac, char **av, int **pipes)
+{
+	int	i;
+
+	i = 0;
+	while (++i < ac - 4)
+	{
+		close(pipes[i][0]);
+		close(pipes[i][1]);
+	}
+	close(pipes[0][0]); //we do not need to read from pipe
+	int fd_file1 = open(av[1], O_RDONLY);
+	if (fd_file1 == -1)
+	{
+		perror(av[1]);
+		exit(1);
+	}
+	dup2(fd_file1,0); //instead of stdin will be file1
+	dup2(pipes[0][1],1); //instead of stdout will be first pipe write end
+	close(fd_file1);
+	close(pipes[0][1]);
+}
+
+void	mid_child(int pipe_num, int ac, int **pipes)
+{
+	int	i;
+
+	i = -1;
+	while (++i < pipe_num - 1)
+	{
+		close(pipes[i][0]);
+		close(pipes[i][1]);
+	}
+	i++;
+	while (++i < ac - 4)
+	{
+		close(pipes[i][0]);
+		close(pipes[i][1]);
+	}
+	close(pipes[pipe_num - 1][1]);
+	close(pipes[pipe_num][0]);
+	dup2(pipes[pipe_num - 1][0],0); //instead of stdin will be pipe read end
+	dup2(pipes[pipe_num][1], 1); //instead of stdout will be pipe write end
+	close(pipes[pipe_num][0]);
+	close(pipes[pipe_num][1]);
+}
+
+void	last_child(int ac, char **av, int **pipes)
+{
+	int	i;
+
+	i = -1;
+	while (++i < ac - 5)
+	{
+		close(pipes[i][0]);
+		close(pipes[i][1]);
+	}
+		close(pipes[ac - 5][1]);
+		int fd_file2 = open(av[ac - 1], O_TRUNC | O_WRONLY | O_CREAT, 0777);
+		dup2(pipes[ac - 5][0],0); //instead of stdin will be pipe read end
+		dup2(fd_file2, 1); //instead of stdout will be file2
+		close(fd_file2);
+		close(pipes[ac - 5][0]);
+}
+
+void	close_pipes(int start, int end, int **pipes)
+{
+	int i;
+
+	i = start;
+	while (++i < end)
+	{
+		close(pipes[i][0]);
+		close(pipes[i][1]);
+	}
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	int		**pipes;
 	char	***cmd_args;
 	char	**full_cmd;
-	char	*env[1]; // not needed ?
 	int		pipe_num;
-	int		i;
 	int		pid;
 
 	if (argc < 5)
@@ -162,7 +237,6 @@ int	main(int argc, char **argv, char **envp)
 		return (1);
 	}
 	pipes = create_pipes(argc);
-	env[0] = NULL;
 	cmd_args =  create_arrays(argc, argv, &full_cmd, envp);
 	if (!cmd_args)
 	{
@@ -177,26 +251,8 @@ int	main(int argc, char **argv, char **envp)
 	}
 	if (pid == 0)
 	{
-		//Child1
-		i = 0;
-		while (++i < argc - 4)
-		{
-			close(pipes[i][0]);
-			close(pipes[i][1]);
-		}
-
-		close(pipes[0][0]); //we do not need to read from pipe
-		int fd_file1 = open(argv[1], O_RDONLY);
-		if (fd_file1 == -1)
-		{
-			perror(argv[1]);
-			exit(1);
-		}
-		dup2(fd_file1,0); //instead of stdin will be file1
-		dup2(pipes[0][1],1); //instead of stdout will be first pipe write end
-		close(fd_file1);
-		close(pipes[0][1]);
-		if (execve(full_cmd[0], cmd_args[0], env) == -1)
+		first_child(argc, argv, pipes);
+		if (execve(full_cmd[0], cmd_args[0], envp) == -1)
 			perror(argv[2]);
 		exit(1);
 	}
@@ -211,26 +267,8 @@ int	main(int argc, char **argv, char **envp)
 		}	
 		if (pid == 0)
 		{
-		//Child_mid
-			i = -1;
-			while (++i < pipe_num - 1)
-			{
-				close(pipes[i][0]);
-				close(pipes[i][1]);
-			}
-			i++;
-			while (++i < argc - 4)
-			{
-				close(pipes[i][0]);
-				close(pipes[i][1]);
-			}
-			close(pipes[pipe_num - 1][1]);
-			close(pipes[pipe_num][0]);
-			dup2(pipes[pipe_num - 1][0],0); //instead of stdin will be pipe read end
-			dup2(pipes[pipe_num][1], 1); //instead of stdout will be pipe write end
-			close(pipes[pipe_num][0]);
-			close(pipes[pipe_num][1]);
-			if (execve(full_cmd[pipe_num], cmd_args[pipe_num], env) == -1)
+			mid_child(pipe_num, argc, pipes);
+			if (execve(full_cmd[pipe_num], cmd_args[pipe_num], envp) == -1)
 				perror(argv[pipe_num + 2]);
 			exit(1);
 		}
@@ -244,32 +282,15 @@ int	main(int argc, char **argv, char **envp)
 	}
 	if (pid == 0)
 	{
-		//Child_last
-		i = -1;
-		while (++i < pipe_num - 1)
-		{
-			close(pipes[i][0]);
-			close(pipes[i][1]);
-		}
-		close(pipes[pipe_num - 1][1]);
-		int fd_file2 = open("file2", O_TRUNC | O_WRONLY | O_CREAT, 0777);
-		dup2(pipes[pipe_num - 1][0],0); //instead of stdin will be pipe read end
-		dup2(fd_file2, 1); //instead of stdout will be file2
-		close(fd_file2);
-		close(pipes[pipe_num - 1][0]);
-		if (execve(full_cmd[pipe_num], cmd_args[pipe_num], env) == -1)
+		last_child(argc, argv, pipes);
+		if (execve(full_cmd[pipe_num], cmd_args[pipe_num], envp) == -1)
 			perror(argv[pipe_num + 2]);
 		exit(1);
 	};
-	i = -1;
-	while (++i < argc - 4)
-	{
-		close(pipes[i][0]);
-		close(pipes[i][1]);
-	}
+	close_pipes(-1, argc - 4, pipes);
 	free_arrays(cmd_args, full_cmd, argc - 3);
 	free_pipes(pipes, argc); 
 	if (wait(NULL) != -1 || errno != ECHILD)
-		return (-1); //waits for any 1 child, ideally should be changed to wait for both
+		return (-1);
 	return (0);
 }
