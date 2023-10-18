@@ -69,40 +69,105 @@ void	free_arrays(char ***cmd_args, char **full_cmd, int len)
 		}
 		i++;
 	}
+	free(cmd_args);
+	free(full_cmd);
 	return ;
+}
+
+int	**create_pipes(int ac)
+{
+	int	**pipes;
+	int i;
+
+	pipes = ft_calloc(sizeof(int *), ac - 4);
+	if (!pipes)
+	{
+		ft_printf("failed ft_calloc\n");
+		exit(EXIT_FAILURE);
+	}
+	i = 0;
+	while (i < ac - 4)
+	{
+		pipes[i] = malloc(sizeof(int) * 2);
+		if (!pipes[i])
+		{
+			ft_printf("pipes[%d]: failed malloc\n", i);
+			break ;
+		}
+		else if (pipe(pipes[i++]) == -1)
+		{
+			printf("%s\n", strerror(errno));
+			break;
+		}
+	}
+	return (pipes);
+}
+
+void	free_pipes(int **pipes, int argc)
+{
+	int	i;
+
+	i = 0;
+	while (i < argc - 4)
+	{
+		if (!pipes[i])
+			break ;
+		else
+			free(pipes[i++]);
+	}
+	free(pipes);
+}
+
+char	***create_arrays(int ac, char **av, char ***adr, char **envp)
+{
+	char	***cmd_args;
+	char	**full_cmd;
+	int		i;
+
+	cmd_args = ft_calloc(sizeof(char **), ac - 3);
+	full_cmd = ft_calloc(sizeof(char*), ac - 3);
+	if (!cmd_args || !full_cmd)
+	{
+		ft_printf("failed ft_calloc\n");
+		if (cmd_args)
+			free(cmd_args);
+		if (full_cmd)
+			free(full_cmd);
+		return(NULL);
+	}
+	i = 0;
+	while (i < ac - 3)
+	{
+		cmd_args[i] = ft_split(av[2 + i], ' ');
+		full_cmd[i] = get_cmd(cmd_args[i][0], envp);
+		i++;
+	}
+	*adr = full_cmd;
+	return cmd_args;
 }
 
 int	main(int argc, char **argv, char **envp)
 {
-	int		pipes[argc - 4][2];
-	char	**cmd_args[argc - 3];
-	char	*full_cmd[argc - 3];
-	char	*env[1];
+	int		**pipes;
+	char	***cmd_args;
+	char	**full_cmd;
+	char	*env[1]; // not needed ?
 	int		pipe_num;
 	int		i;
 	int		pid;
 
-	env[0] = NULL;
 	if (argc < 5)
 	{
-		printf("Invalid number of argumets\n");
+		ft_printf("Invalid number of argumets\n");
 		return (1);
 	}
-	i = 0;
-	while (i < argc - 4)
+	pipes = create_pipes(argc);
+	env[0] = NULL;
+	cmd_args =  create_arrays(argc, argv, &full_cmd, envp);
+	if (!cmd_args)
 	{
-		if (pipe(pipes[i++]) == -1)
-		{
-			printf("%s\n", strerror(errno));
-			return (1);
-		}
-	}
-	i = 0;
-	while (i < argc - 3)
-	{
-		cmd_args[i] = ft_split(argv[2 + i], ' ');
-		full_cmd[i] = get_cmd(cmd_args[i][0], envp);
-		i++;
+		free_pipes(pipes, argc);
+		return (1);
 	}
 	pid = fork();
 	if (pid == -1)
@@ -202,7 +267,8 @@ int	main(int argc, char **argv, char **envp)
 		close(pipes[i][0]);
 		close(pipes[i][1]);
 	}
-	free_arrays(cmd_args, full_cmd, argc - 3); 
+	free_arrays(cmd_args, full_cmd, argc - 3);
+	free_pipes(pipes, argc); 
 	if (wait(NULL) != -1 || errno != ECHILD)
 		return (-1); //waits for any 1 child, ideally should be changed to wait for both
 	return (0);
