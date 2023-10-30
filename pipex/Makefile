@@ -7,7 +7,7 @@ CFLAGS		= -Wall -Werror -Wextra -I
 
 #Sources
 
-SRC_FILES = pipex children
+SRC_FILES = pipex children cleanup prep error
 
 SRCS = $(addprefix $(SRC_DIR), $(addsuffix .c, $(SRC_FILES)))
 OBJS = $(SRCS:.c=.o) 
