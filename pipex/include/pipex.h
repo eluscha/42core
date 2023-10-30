@@ -23,4 +23,8 @@
 # include "ft_printf.h"
 # include "libft.h"
 
+void	first_child(int ac, char **av, int **pipes, char ***cmds, char **envp);
+void	mid_child(int pnum, int ac, int **pipes, char ***cmds, char **envp);
+void	last_child(int ac, char **av, int **pipes, char ***cmds, char **envp);
+
 #endif

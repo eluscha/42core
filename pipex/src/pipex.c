@@ -50,27 +50,24 @@ char	*get_cmd(char *cmd, char **envp)
 	return (full_cmd);
 }
 
-void	free_arrays(char ***cmd_args, char **full_cmd, int len)
+void	free_arrays(char ***cmds, int len)
 {
 	int	i;
 	int	j;
 
-	i = 0;
-	while (i < len)
+	i = -1;
+	while (++i < len)
 	{
-		if (full_cmd[i])
-			free(full_cmd[i]);
-		j = 0;
-		if (cmd_args[i])
-		{
-			while (cmd_args[i][j])
-				free(cmd_args[i][j++]);
-			free(cmd_args[i]);
-		}
-		i++;
+		if (!cmds[i])
+			continue ;
+		if (cmds[i][0])
+			free(cmds[i][0]);
+		j = 1;
+		while (cmds[i][j])
+			free(cmds[i][j++]);
+		free(cmds[i]);
 	}
-	free(cmd_args);
-	free(full_cmd);
+	free(cmds);
 	return ;
 }
 
@@ -79,7 +76,7 @@ int	**create_pipes(int ac)
 	int	**pipes;
 	int i;
 
-	pipes = ft_calloc(sizeof(int *), ac - 4);
+	pipes = ft_calloc(ac - 4, sizeof(int *));
 	if (!pipes)
 	{
 		ft_printf("failed ft_calloc\n");
@@ -118,97 +115,48 @@ void	free_pipes(int **pipes, int argc)
 	free(pipes);
 }
 
-char	***create_arrays(int ac, char **av, char ***adr, char **envp)
+char **fill_cmd(char *cmd_str, char **envp)
 {
-	char	***cmd_args;
-	char	**full_cmd;
+	char **cmd_args;
+	char **ret_ptr;
+	int i;
+
+	cmd_args = ft_split(cmd_str, ' ');
+	if (!cmd_args)
+		return (NULL);
+	i = 0;
+	while (cmd_args[i])
+		i++;
+	ret_ptr = malloc(sizeof(char *) * (i + 2));
+	if (!ret_ptr)
+	{
+		free(cmd_args);
+		return (NULL);
+	}
+	ret_ptr[0] = get_cmd(cmd_args[0], envp);;
+	i = -1;
+	while (cmd_args[++i]) 
+		ret_ptr[i + 1] = cmd_args[i];
+	ret_ptr[i + 1] = NULL;
+	free(cmd_args);
+	return (ret_ptr);
+}
+
+char	***create_arrays(int ac, char **av, char **envp)
+{
+	char	***cmds;
 	int		i;
 
-	cmd_args = ft_calloc(sizeof(char **), ac - 3);
-	full_cmd = ft_calloc(sizeof(char*), ac - 3);
-	if (!cmd_args || !full_cmd)
+	cmds = ft_calloc(ac - 3, sizeof(char **));
+	if (!cmds)
 	{
 		ft_printf("failed ft_calloc\n");
-		if (cmd_args)
-			free(cmd_args);
-		if (full_cmd)
-			free(full_cmd);
 		return(NULL);
 	}
-	i = 0;
-	while (i < ac - 3)
-	{
-		cmd_args[i] = ft_split(av[2 + i], ' ');
-		full_cmd[i] = get_cmd(cmd_args[i][0], envp);
-		i++;
-	}
-	*adr = full_cmd;
-	return cmd_args;
-}
-
-void	first_child(int ac, char **av, int **pipes)
-{
-	int	i;
-
-	i = 0;
-	while (++i < ac - 4)
-	{
-		close(pipes[i][0]);
-		close(pipes[i][1]);
-	}
-	close(pipes[0][0]); //we do not need to read from pipe
-	int fd_file1 = open(av[1], O_RDONLY);
-	if (fd_file1 == -1)
-	{
-		perror(av[1]);
-		exit(1);
-	}
-	dup2(fd_file1,0); //instead of stdin will be file1
-	dup2(pipes[0][1],1); //instead of stdout will be first pipe write end
-	close(fd_file1);
-	close(pipes[0][1]);
-}
-
-void	mid_child(int pipe_num, int ac, int **pipes)
-{
-	int	i;
-
 	i = -1;
-	while (++i < pipe_num - 1)
-	{
-		close(pipes[i][0]);
-		close(pipes[i][1]);
-	}
-	i++;
-	while (++i < ac - 4)
-	{
-		close(pipes[i][0]);
-		close(pipes[i][1]);
-	}
-	close(pipes[pipe_num - 1][1]);
-	close(pipes[pipe_num][0]);
-	dup2(pipes[pipe_num - 1][0],0); //instead of stdin will be pipe read end
-	dup2(pipes[pipe_num][1], 1); //instead of stdout will be pipe write end
-	close(pipes[pipe_num][0]);
-	close(pipes[pipe_num][1]);
-}
-
-void	last_child(int ac, char **av, int **pipes)
-{
-	int	i;
-
-	i = -1;
-	while (++i < ac - 5)
-	{
-		close(pipes[i][0]);
-		close(pipes[i][1]);
-	}
-		close(pipes[ac - 5][1]);
-		int fd_file2 = open(av[ac - 1], O_TRUNC | O_WRONLY | O_CREAT, 0777);
-		dup2(pipes[ac - 5][0],0); //instead of stdin will be pipe read end
-		dup2(fd_file2, 1); //instead of stdout will be file2
-		close(fd_file2);
-		close(pipes[ac - 5][0]);
+	while (++i < ac - 3)
+		cmds[i] = fill_cmd(av[2 + i], envp);
+	return cmds;
 }
 
 void	close_pipes(int start, int end, int **pipes)
@@ -226,36 +174,31 @@ void	close_pipes(int start, int end, int **pipes)
 int	main(int argc, char **argv, char **envp)
 {
 	int		**pipes;
-	char	***cmd_args;
-	char	**full_cmd;
+	char	***cmds;
 	int		pipe_num;
 	int		pid;
 
 	if (argc < 5)
 	{
-		ft_printf("Invalid number of argumets\n");
-		return (1);
+		ft_printf("Invalid number of arguments\n");
+		exit(1);
 	}
 	pipes = create_pipes(argc);
-	cmd_args =  create_arrays(argc, argv, &full_cmd, envp);
-	if (!cmd_args)
+	cmds =  create_arrays(argc, argv, envp);
+	if (!cmds)
 	{
 		free_pipes(pipes, argc);
-		return (1);
+		exit(1);
 	}
 	pid = fork();
 	if (pid == -1)
 	{
 		perror("Fork: ");
+		free_pipes(pipes, argc);
 		exit(1);
 	}
 	if (pid == 0)
-	{
-		first_child(argc, argv, pipes);
-		if (execve(full_cmd[0], cmd_args[0], envp) == -1)
-			perror(argv[2]);
-		exit(1);
-	}
+		first_child(argc, argv, pipes, cmds, envp);
 	pipe_num = 1;
 	while (pipe_num < argc - 4)
 	{
@@ -266,12 +209,7 @@ int	main(int argc, char **argv, char **envp)
 			exit(1);
 		}	
 		if (pid == 0)
-		{
-			mid_child(pipe_num, argc, pipes);
-			if (execve(full_cmd[pipe_num], cmd_args[pipe_num], envp) == -1)
-				perror(argv[pipe_num + 2]);
-			exit(1);
-		}
+			mid_child(pipe_num, argc, pipes, cmds, envp);
 		pipe_num++;
 	}
 	pid = fork();
@@ -281,14 +219,9 @@ int	main(int argc, char **argv, char **envp)
 		exit(1);
 	}
 	if (pid == 0)
-	{
-		last_child(argc, argv, pipes);
-		if (execve(full_cmd[pipe_num], cmd_args[pipe_num], envp) == -1)
-			perror(argv[pipe_num + 2]);
-		exit(1);
-	};
+		last_child(argc, argv, pipes, cmds, envp);
 	close_pipes(-1, argc - 4, pipes);
-	free_arrays(cmd_args, full_cmd, argc - 3);
+	free_arrays(cmds, argc - 3);
 	free_pipes(pipes, argc); 
 	if (wait(NULL) != -1 || errno != ECHILD)
 		return (-1);
