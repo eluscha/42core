@@ -32,6 +32,5 @@ re: clean all
 
 norm:
 	@norminette $(SRCS) $(SRCS_B)
-	@norminette -R CheckDefine $(INCLUDE)
 
 .PHONY: bonus all clean fclean re

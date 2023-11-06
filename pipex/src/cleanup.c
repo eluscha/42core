@@ -12,13 +12,13 @@
 
 #include "pipex.h"
 
-void	free_arrays(char ***cmds, int len)
+void	free_arrays(char ***cmds, int ac)
 {
 	int	i;
 	int	j;
 
 	i = -1;
-	while (++i < len)
+	while (++i < ac - 3)
 	{
 		if (!cmds[i])
 			continue ;
@@ -33,12 +33,12 @@ void	free_arrays(char ***cmds, int len)
 	return ;
 }
 
-void	free_pipes(int **pipes, int argc)
+void	free_pipes(int **pipes, int ac)
 {
 	int	i;
 
 	i = 0;
-	while (i < argc - 4)
+	while (i < ac - 4)
 	{
 		if (!pipes[i])
 			break ;
@@ -48,14 +48,21 @@ void	free_pipes(int **pipes, int argc)
 	free(pipes);
 }
 
-void	close_pipes(int start, int end, int **pipes)
+void	close_pipes(int end, int **pipes)
 {
 	int	i;
 
-	i = start;
+	i = -1;
 	while (++i < end)
 	{
 		close(pipes[i][0]);
 		close(pipes[i][1]);
 	}
+}
+
+void	cleanup(int ac, int **pipes, char ***cmds)
+{
+	free_arrays(cmds, ac);
+	free_pipes(pipes, ac);
+	return ;
 }

@@ -37,7 +37,7 @@ void	first_child(int ac, char **av, int **pipes, char ***cmds)
 	close(fd_file1);
 	close(pipes[0][1]);
 	if (execve(cmds[0][0], &cmds[0][1], env) == -1)
-		perror(cmds[0][0]);
+		perror(cmds[0][1]);
 	exit(1);
 }
 
@@ -66,7 +66,7 @@ void	mid_child(int pnum, int ac, int **pipes, char ***cmds)
 	close(pipes[pnum][0]);
 	close(pipes[pnum][1]);
 	if (execve(cmds[pnum][0], &cmds[pnum][1], env) == -1)
-		perror(cmds[pnum][0]);
+		perror(cmds[pnum][1]);
 	exit(1);
 }
 
@@ -89,7 +89,7 @@ void	last_child(int ac, char **av, int **pipes, char ***cmds)
 	dup2(fd_file2, 1);
 	close(fd_file2);
 	close(pipes[ac - 5][0]);
-	if (execve(cmds[ac - 4][0], &cmds[ac - 4][1], env) == -1)
-		perror(cmds[ac - 4][0]);
+	execve(cmds[ac - 4][0], &cmds[ac - 4][1], env);
+	perror(cmds[ac - 4][1]);
 	exit(1);
 }

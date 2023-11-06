@@ -16,41 +16,41 @@ int	main(int argc, char **argv, char **envp)
 {
 	int		**pipes;
 	char	***cmds;
-	int		pipe_num;
-	int		pid;
-
+	pid_t	pid;
+	
 	check_argc(argc);
 	pipes = create_pipes(argc);
-	cmds =  create_arrays(argc, argv, envp);
-	if (!cmds)
-	{
-		free_pipes(pipes, argc);
-		exit(1);
-	}
+	cmds = create_arrays(argc, argv, envp, pipes);
 	pid = fork();
 	if (pid == -1)
 		fork_error(argc, pipes, cmds);
 	if (pid == 0)
 		first_child(argc, argv, pipes, cmds);
-	pipe_num = 1;
-	while (pipe_num < argc - 4)
-	{
-		pid = fork();
-		if (pid == -1)
-			fork_error(argc, pipes, cmds);
-		if (pid == 0)
-			mid_child(pipe_num, argc, pipes, cmds);
-		pipe_num++;
-	}
+	bonus_loop(argc, pipes, cmds);
 	pid = fork();
 	if (pid == -1)
 		fork_error(argc, pipes, cmds);
 	if (pid == 0)
 		last_child(argc, argv, pipes, cmds);
-	close_pipes(-1, argc - 4, pipes);
-	free_arrays(cmds, argc - 3);
-	free_pipes(pipes, argc); 
-	if (wait(NULL) != -1 || errno != ECHILD)
-		return (-1);
+	close_pipes(argc - 4, pipes);
+	while ((pid = wait(NULL)) > 0);
+	cleanup(argc, pipes, cmds);
 	return (0);
+}
+
+void	bonus_loop(int ac, int **pipes, char ***cmds)
+{
+	int		pipe_num;
+	int		pid;
+
+	pipe_num = 0;
+	while (++pipe_num < ac - 4)
+	{
+		pid = fork();
+		if (pid == -1)
+			fork_error(ac, pipes, cmds);
+		if (pid == 0)
+			mid_child(pipe_num, ac, pipes, cmds);
+	}
+	return ;
 }

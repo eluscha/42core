@@ -71,7 +71,7 @@ int	ft_eval_format(t_print *tab, const char *format, int pos)
 }
 
 char	ft_isconversion(char let)
-{	
+{
 	char	*set;
 	int		i;
 

@@ -45,7 +45,7 @@ static int	count_trims(char const *s1, char const *set, size_t *left)
 	}
 	i = finallen - 1;
 	while (i >= *left)
-	{		
+	{
 		if (inset(s1[i], set))
 			right++;
 		else
