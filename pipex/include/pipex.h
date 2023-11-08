@@ -34,10 +34,12 @@ void	mid_child(int pnum, int ac, int **pipes, char ***cmds);
 void	last_child(int ac, char **av, int **pipes, char ***cmds);
 void	free_arrays(char ***cmds, int ac);
 void	free_pipes(int **pipes, int ac);
-void	close_pipes(int end, int **pipes);
+void	close_pipes(int start, int end, int **pipes);
 void	cleanup(int ac, int **pipes, char ***cmds);
 void	pipe_error(int **pipes, int i);
 void	fork_error(int ac, int **pipes, char ***cmds);
+void	file_error(char *name, int fd);
+void	check_cmd_errors(char **cmd, int fd1, int fd2, int cnum);
 void	check_argc(int ac);
 
 #endif

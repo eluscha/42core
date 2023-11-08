@@ -45,7 +45,7 @@ char	***create_arrays(int ac, char **av, char **envp, int **pipes)
 	if (!cmds)
 	{
 		ft_printf("failed ft_calloc\n");
-		close_pipes(ac - 4, pipes);
+		close_pipes(0, ac - 4, pipes);
 		free_pipes(pipes, ac);
 		exit(EXIT_FAILURE);
 	}
@@ -53,10 +53,7 @@ char	***create_arrays(int ac, char **av, char **envp, int **pipes)
 	while (++i < ac - 3)
 	{
 		if (ft_strlen(av[2+i]) == 0)
-		{
-			ft_printf("\"\": not a valid command\n");
 			cmds[i] = NULL;
-		}
 		else
 			cmds[i] = fill_cmd(av[2 + i], envp);
 	}

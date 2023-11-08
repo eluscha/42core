@@ -48,16 +48,18 @@ void	free_pipes(int **pipes, int ac)
 	free(pipes);
 }
 
-void	close_pipes(int end, int **pipes)
+void	close_pipes(int start, int end, int **pipes)
 {
 	int	i;
 
-	i = -1;
-	while (++i < end)
+	i = start;
+	while (i < end)
 	{
 		close(pipes[i][0]);
 		close(pipes[i][1]);
+		i++;
 	}
+	return ;
 }
 
 void	cleanup(int ac, int **pipes, char ***cmds)

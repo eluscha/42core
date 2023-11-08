@@ -32,7 +32,7 @@ int	main(int argc, char **argv, char **envp)
 		fork_error(argc, pipes, cmds);
 	if (pid == 0)
 		last_child(argc, argv, pipes, cmds);
-	close_pipes(argc - 4, pipes);
+	close_pipes(0, argc - 4, pipes);
 	while ((pid = wait(NULL)) > 0);
 	cleanup(argc, pipes, cmds);
 	return (0);
@@ -53,4 +53,12 @@ void	bonus_loop(int ac, int **pipes, char ***cmds)
 			mid_child(pipe_num, ac, pipes, cmds);
 	}
 	return ;
+}
+
+void	check_argc(int ac)
+{
+	if (ac > 4)
+		return ;
+	ft_printf("Invalid number of arguments\n");
+	exit(EXIT_FAILURE);
 }
