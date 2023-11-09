@@ -23,7 +23,7 @@ void	pipe_error(int **pipes, int i)
 	exit(EXIT_FAILURE);
 }
 
-void	fork_error(int ac, int **pipes, char ***cmds)
+void	fork_error(int ac, int **pipes, char ***cmds) //also needs to wait ... and to free pids, of course
 {
 	close_pipes(0, ac - 4, pipes);
 	free_arrays(cmds, ac);
@@ -39,23 +39,11 @@ void	file_error(char *name, int fd)
 	exit(EXIT_FAILURE);
 }
 
-void	check_cmd_errors(char **cmd, int fd1, int fd2, int cnum)
+void	check_cmd_errors(char **cmd)
 {
-	if (!cmd)
-	{
-		sleep(cnum);
-		ft_printf("permission denied: \n");
-		close(fd1);
-		close(fd2);
-		exit(EXIT_FAILURE);
-	}
 	if (!cmd[0])
-	{
-		sleep(cnum);
 		ft_printf("command not found: %s\n", cmd[1]);
-		close(fd1);
-		close(fd2);
-		exit(EXIT_FAILURE);
-	}
+	else if (cmd[0] == (char *)1)
+		ft_printf("permission denied: %s\n", cmd[1]);
 	return ;
 }

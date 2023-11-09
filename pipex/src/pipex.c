@@ -16,29 +16,31 @@ int	main(int argc, char **argv, char **envp)
 {
 	int		**pipes;
 	char	***cmds;
+	pid_t	*pids;
 	pid_t	pid;
-	
+
 	check_argc(argc);
 	pipes = create_pipes(argc);
 	cmds = create_arrays(argc, argv, envp, pipes);
+	pids = create_pids(argc, pipes, cmds);
 	pid = fork();
 	if (pid == -1)
 		fork_error(argc, pipes, cmds);
 	if (pid == 0)
 		first_child(argc, argv, pipes, cmds);
-	bonus_loop(argc, pipes, cmds);
+	pids[0] = pid; 
+	bonus_loop(argc, pipes, cmds, pids);
 	pid = fork();
 	if (pid == -1)
 		fork_error(argc, pipes, cmds);
 	if (pid == 0)
 		last_child(argc, argv, pipes, cmds);
-	close_pipes(0, argc - 4, pipes);
-	while ((pid = wait(NULL)) > 0);
-	cleanup(argc, pipes, cmds);
+	pids[argc - 4] = pid;
+	wait_cleanup(argc, pipes, cmds, pids);
 	return (0);
 }
 
-void	bonus_loop(int ac, int **pipes, char ***cmds)
+void	bonus_loop(int ac, int **pipes, char ***cmds, pid_t *pids)
 {
 	int		pipe_num;
 	int		pid;
@@ -51,6 +53,7 @@ void	bonus_loop(int ac, int **pipes, char ***cmds)
 			fork_error(ac, pipes, cmds);
 		if (pid == 0)
 			mid_child(pipe_num, ac, pipes, cmds);
+		pids[pipe_num] = pid;
 	}
 	return ;
 }

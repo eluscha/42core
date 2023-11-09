@@ -12,6 +12,46 @@
 
 #include "pipex.h"
 
+void	wait_cleanup(int ac, int **pipes, char ***cmds, pid_t *pids)
+{
+	close_pipes(0, ac - 4, pipes);
+	wait_for_all(pids, cmds, ac - 3);
+	free_arrays(cmds, ac);
+	free_pipes(pipes, ac);
+	free(pids);
+	return ;
+}
+
+void	close_pipes(int start, int end, int **pipes)
+{
+	int	i;
+
+	i = start;
+	while (i < end)
+	{
+		close(pipes[i][0]);
+		close(pipes[i][1]);
+		i++;
+	}
+	return ;
+}
+
+void	wait_for_all(pid_t *pids, char ***cmds, int len)
+{
+	int	i;
+	int	status;
+
+	i = 0;
+	while (i < len)
+	{
+		waitpid(pids[i], &status, 0);
+		if (status != 0)
+			check_cmd_errors(cmds[i]);
+		i++;
+	}
+	return ;
+}
+
 void	free_arrays(char ***cmds, int ac)
 {
 	int	i;
@@ -46,25 +86,4 @@ void	free_pipes(int **pipes, int ac)
 			free(pipes[i++]);
 	}
 	free(pipes);
-}
-
-void	close_pipes(int start, int end, int **pipes)
-{
-	int	i;
-
-	i = start;
-	while (i < end)
-	{
-		close(pipes[i][0]);
-		close(pipes[i][1]);
-		i++;
-	}
-	return ;
-}
-
-void	cleanup(int ac, int **pipes, char ***cmds)
-{
-	free_arrays(cmds, ac);
-	free_pipes(pipes, ac);
-	return ;
 }
