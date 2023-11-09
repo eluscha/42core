@@ -1,5 +1,17 @@
 #include "pipex.h"
 
+char	**fill_null_cmd(void)
+{
+	char	**ret_ptr;
+
+	ret_ptr = malloc(sizeof(char *) * 3); //need to protect
+
+	ret_ptr[0] = ft_strdup("x"); //need to protect
+	ret_ptr[1] = ft_strdup(""); //need to protect
+	ret_ptr[2] = NULL;
+	return (ret_ptr);
+}
+
 char	**fill_cmd(char *cmd_str, char **envp)
 {
 	char	**cmd_args;
@@ -65,8 +77,14 @@ char	*search_path(char *cmd, char **dirs)
 	while (dirs[i])
 	{
 		full_cmd = ft_strjoin(dirs[i++], slash_cmd);
-		if (access(full_cmd, X_OK) == 0)
+		if (access(full_cmd, F_OK)  == 0)
+		{
+			if (access(full_cmd, X_OK) == 0)
+				break;
+			free(full_cmd);
+			full_cmd = ft_strdup("x");
 			break ;
+		}
 		free(full_cmd);
 	}
 	if (!dirs[i])

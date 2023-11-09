@@ -53,7 +53,7 @@ char	***create_arrays(int ac, char **av, char **envp, int **pipes)
 	while (++i < ac - 3)
 	{
 		if (ft_strlen(av[2+i]) == 0)
-			cmds[i] = NULL;
+			cmds[i] = fill_null_cmd();
 		else
 			cmds[i] = fill_cmd(av[2 + i], envp);
 	}

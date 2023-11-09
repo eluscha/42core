@@ -29,6 +29,7 @@ char	*search_path(char *cmd, char **dirs);
 int		**create_pipes(int ac);
 pid_t	*create_pids(int ac, int **pipes, char ***cmds);
 char	**fill_cmd(char *cmd_str, char **envp);
+char	**fill_null_cmd(void);
 char	***create_arrays(int ac, char **av, char **envp, int **pipes);
 void	first_child(int ac, char **av, int **pipes, char ***cmds);
 void	mid_child(int pnum, int ac, int **pipes, char ***cmds);

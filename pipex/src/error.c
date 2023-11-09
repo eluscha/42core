@@ -43,7 +43,7 @@ void	check_cmd_errors(char **cmd)
 {
 	if (!cmd[0])
 		ft_printf("command not found: %s\n", cmd[1]);
-	else if (cmd[0] == (char *)1)
+	else if (cmd[0][0] == 'x')
 		ft_printf("permission denied: %s\n", cmd[1]);
 	return ;
 }
