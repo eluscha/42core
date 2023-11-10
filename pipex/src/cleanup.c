@@ -15,7 +15,7 @@
 void	wait_cleanup(int ac, int **pipes, char ***cmds, pid_t *pids)
 {
 	close_pipes(0, ac - 4, pipes);
-	wait_for_all(pids, cmds, ac - 3);
+	wait_for_all(pids, ac - 3);
 	free_arrays(cmds, ac);
 	free_pipes(pipes, ac);
 	free(pids);
@@ -36,7 +36,7 @@ void	close_pipes(int start, int end, int **pipes)
 	return ;
 }
 
-void	wait_for_all(pid_t *pids, char ***cmds, int len)
+void	wait_for_all(pid_t *pids, int len)
 {
 	int	i;
 	int	status;
@@ -45,8 +45,8 @@ void	wait_for_all(pid_t *pids, char ***cmds, int len)
 	while (i < len)
 	{
 		waitpid(pids[i], &status, 0);
-		if (status != 0)
-			check_cmd_errors(cmds[i]);
+		//if (status != 0)
+		//	check_cmd_errors(cmds[i]);
 		i++;
 	}
 	return ;

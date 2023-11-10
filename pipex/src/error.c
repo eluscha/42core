@@ -39,11 +39,20 @@ void	file_error(char *name, int fd)
 	exit(EXIT_FAILURE);
 }
 
-void	check_cmd_errors(char **cmd)
-{
+void	print_cmd_error(char **cmd)
+{	
 	if (!cmd[0])
-		ft_printf("command not found: %s\n", cmd[1]);
-	else if (cmd[0][0] == 'x')
-		ft_printf("permission denied: %s\n", cmd[1]);
+	{
+		write(2, "Command not found: ", 19);
+		write(2, cmd[1], ft_strlen(cmd[1]));
+		write(2, "\n", 1);
+	}
+	else
+	{
+		write(2, strerror(errno), ft_strlen(strerror(errno)));
+		write(2, ": ", 2);
+		write(2, cmd[1], ft_strlen(cmd[1]));
+		write(2, "\n", 1);
+	}
 	return ;
 }

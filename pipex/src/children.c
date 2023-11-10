@@ -25,7 +25,10 @@ void	first_child(int ac, char **av, int **pipes, char ***cmds)
 	dup2(pipes[0][1], 1);
 	close(fd_file1);
 	close(pipes[0][1]);
+	if (!cmds[0])
+		exit(EXIT_FAILURE);
 	execve(cmds[0][0], &cmds[0][1], 0);
+	print_cmd_error(cmds[0]);
 	exit(EXIT_FAILURE);
 }
 
@@ -39,7 +42,10 @@ void	mid_child(int pnum, int ac, int **pipes, char ***cmds)
 	dup2(pipes[pnum][1], 1);
 	close(pipes[pnum - 1][0]);
 	close(pipes[pnum][1]);
+	if (!cmds[pnum])
+		exit(EXIT_FAILURE);
 	execve(cmds[pnum][0], &cmds[pnum][1], 0);
+	print_cmd_error(cmds[pnum]);
 	exit(EXIT_FAILURE);
 }
 
@@ -56,6 +62,9 @@ void	last_child(int ac, char **av, int **pipes, char ***cmds)
 	dup2(fd_file2, 1);
 	close(fd_file2);
 	close(pipes[ac - 5][0]);
+	if (!cmds[ac - 4])
+		exit(EXIT_FAILURE);
 	execve(cmds[ac - 4][0], &cmds[ac - 4][1], 0);
+	print_cmd_error(cmds[ac - 4]);
 	exit(EXIT_FAILURE);
 }
