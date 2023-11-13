@@ -12,13 +12,12 @@
 
 #include "pipex.h"
 
-void	wait_cleanup(int ac, int **pipes, char ***cmds, pid_t *pids)
+void	wait_cleanup(int ac, int **pipes, t_cmd *cmds, int num_cmds);
 {
-	close_pipes(0, ac - 4, pipes);
-	wait_for_all(pids, ac - 3);
-	free_arrays(cmds, ac);
-	free_pipes(pipes, ac);
-	free(pids);
+	close_pipes(0, num_cmds, pipes);
+	while (wait(NULL) > 0);
+	free_arrays(cmds, num_cmds);
+	free_pipes(pipes, num_cmds - 1);
 	return ;
 }
 
@@ -35,7 +34,7 @@ void	close_pipes(int start, int end, int **pipes)
 	}
 	return ;
 }
-
+/*
 void	wait_for_all(pid_t *pids, int len)
 {
 	int	i;
@@ -51,34 +50,34 @@ void	wait_for_all(pid_t *pids, int len)
 	}
 	return ;
 }
-
-void	free_arrays(char ***cmds, int ac)
+*/
+void	free_arrays(t_cmd *cmds, int num_cmds)
 {
 	int	i;
 	int	j;
 
 	i = -1;
-	while (++i < ac - 3)
+	while (++i < num_cmds)
 	{
-		if (!cmds[i])
+		if (cmds[i].adr)
+			free(cmds[i].adr);
+		if (!cmds[i].args)
 			continue ;
-		if (cmds[i][0])
-			free(cmds[i][0]);
-		j = 1;
-		while (cmds[i][j])
-			free(cmds[i][j++]);
-		free(cmds[i]);
+		j = 0;
+		while (cmds[i].args[j])
+			free(cmds[i].args[j++]);
+		free(cmds[i].args);
 	}
 	free(cmds);
 	return ;
 }
 
-void	free_pipes(int **pipes, int ac)
+void	free_pipes(int **pipes, int num)
 {
 	int	i;
 
 	i = 0;
-	while (i < ac - 4)
+	while (i < num)
 	{
 		if (!pipes[i])
 			break ;

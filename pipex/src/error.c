@@ -23,6 +23,14 @@ void	pipe_error(int **pipes, int i)
 	exit(EXIT_FAILURE);
 }
 
+void	cmds_array_error(int **pipes, int num_cmds)
+{
+	write(2, "Failed to ft_calloc cmds array\n", 31);
+	close_pipes(0, num_cmds - 1, pipes);
+	free_pipes(pipes, num_cmds - 1);
+	exit(EXIT_FAILURE);
+}
+
 void	fork_error(int ac, int **pipes, char ***cmds) //also needs to wait ... and to free pids, of course
 {
 	close_pipes(0, ac - 4, pipes);
@@ -39,19 +47,19 @@ void	file_error(char *name, int fd)
 	exit(EXIT_FAILURE);
 }
 
-void	print_cmd_error(char **cmd)
+void	print_cmd_error(t_cmd *cptr)
 {	
-	if (!cmd[0])
+	if (!cptr->adr)
 	{
 		write(2, "Command not found: ", 19);
-		write(2, cmd[1], ft_strlen(cmd[1]));
+		write(2, cptr->args[0], ft_strlen(cptr->args[0]));
 		write(2, "\n", 1);
 	}
 	else
 	{
 		write(2, strerror(errno), ft_strlen(strerror(errno)));
 		write(2, ": ", 2);
-		write(2, cmd[1], ft_strlen(cmd[1]));
+		write(2, cptr->args[0], ft_strlen(cptr->args[0]));
 		write(2, "\n", 1);
 	}
 	return ;

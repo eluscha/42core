@@ -12,11 +12,11 @@
 
 #include "pipex.h"
 
-void	first_child(int ac, char **av, int **pipes, char ***cmds)
+void	first_child(char **av, int **pipes, t_cmd *cmds, int num_cmds)
 {
 	int		fd_file1;
 
-	close_pipes(1, ac - 4, pipes);
+	close_pipes(1, num_cmds - 1, pipes);
 	close(pipes[0][0]);
 	fd_file1 = open(av[1], O_RDONLY);
 	if (fd_file1 == -1)
@@ -25,46 +25,48 @@ void	first_child(int ac, char **av, int **pipes, char ***cmds)
 	dup2(pipes[0][1], 1);
 	close(fd_file1);
 	close(pipes[0][1]);
-	if (!cmds[0])
+	if (!fill_cmd(cmds, 0))
 		exit(EXIT_FAILURE);
-	execve(cmds[0][0], &cmds[0][1], 0);
-	print_cmd_error(cmds[0]);
+	execve(cmds[0].adr, cmds[0].args, 0);
+	print_cmd_error(&cmds[0]);
 	exit(EXIT_FAILURE);
 }
 
-void	mid_child(int pnum, int ac, int **pipes, char ***cmds)
+void	mid_child(int pnum, int **pipes, t_cmd *cmds, int num_cmds)
 {
 	close_pipes(0, pnum - 1, pipes);
-	close_pipes(pnum + 1, ac - 4, pipes);
+	close_pipes(pnum + 1, num_cmds - 1, pipes);
 	close(pipes[pnum - 1][1]);
 	close(pipes[pnum][0]);
 	dup2(pipes[pnum - 1][0], 0);
 	dup2(pipes[pnum][1], 1);
 	close(pipes[pnum - 1][0]);
 	close(pipes[pnum][1]);
-	if (!cmds[pnum])
+	if (!fill_cmd(cmds, pnum))
 		exit(EXIT_FAILURE);
-	execve(cmds[pnum][0], &cmds[pnum][1], 0);
-	print_cmd_error(cmds[pnum]);
+	execve(cmds[pnum].adr, cmds[pnum].args, 0);
+	print_cmd_error(&cmds[pnum]);
 	exit(EXIT_FAILURE);
 }
 
-void	last_child(int ac, char **av, int **pipes, char ***cmds)
+void	last_child(char *fname, int **pipes, t_cmd *cmds, int num_cmds)
 {
 	int		fd_file2;
+	int		rpnum;
 
-	close_pipes(0, ac - 5, pipes);
-	close(pipes[ac - 5][1]);
-	fd_file2 = open(av[ac - 1], O_TRUNC | O_WRONLY | O_CREAT, 0777);
+	rpnum = num_cmds - 2;
+	close_pipes(0, rpnum, pipes);
+	close(pipes[rpnum][1]);
+	fd_file2 = open(fname, O_TRUNC | O_WRONLY | O_CREAT, 0777);
 	if (fd_file2 == -1)
-		file_error(av[ac - 1], pipes[ac - 5][0]);
-	dup2(pipes[ac - 5][0], 0);
+		file_error(fname, pipes[rpnum][0]);
+	dup2(pipes[rpnum][0], 0);
 	dup2(fd_file2, 1);
 	close(fd_file2);
-	close(pipes[ac - 5][0]);
-	if (!cmds[ac - 4])
+	close(pipes[rpnum][0]);
+	if (!fill_cmd(cmds, num_cmds - 1))
 		exit(EXIT_FAILURE);
-	execve(cmds[ac - 4][0], &cmds[ac - 4][1], 0);
-	print_cmd_error(cmds[ac - 4]);
+	execve(cmds[num_cmds - 1].adr, cmds[num_cmds - 1].args, 0);
+	print_cmd_error(&cmds[num_cmds - 1]);
 	exit(EXIT_FAILURE);
 }

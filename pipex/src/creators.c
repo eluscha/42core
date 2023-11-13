@@ -12,19 +12,19 @@
 
 #include "pipex.h"
 
-int	**create_pipes(int ac)
+int	**create_pipes(int num)
 {
 	int	**pipes;
 	int	i;
 
-	pipes = ft_calloc(ac - 4, sizeof(int *));
+	pipes = ft_calloc(num, sizeof(int *));
 	if (!pipes)
 	{
 		ft_printf("failed ft_calloc\n");
 		exit(EXIT_FAILURE);
 	}
 	i = 0;
-	while (i < ac - 4)
+	while (i < num)
 	{
 		pipes[i] = malloc(sizeof(int) * 2);
 		if (!pipes[i])
@@ -36,42 +36,91 @@ int	**create_pipes(int ac)
 	return (pipes);
 }
 
-char	***create_arrays(int ac, char **av, char **envp, int **pipes)
+t_cmd	*create_arrays(int ac, char **av, char **envp, int num_cmds)
 {
-	char	***cmds;
+	t_cmd	*cmds;
 	int		i;
+	int		j;
 
-	cmds = ft_calloc(ac - 3, sizeof(char **));
+	cmds = malloc(num_cmds * sizeof(t_cmd));
 	if (!cmds)
+		return (NULL);
+	i = 0;
+	j = ac - num_cmds - 1;
+	while (i < num_cmds)
 	{
-		ft_printf("failed to ft_calloc cmds array\n");
-		close_pipes(0, ac - 4, pipes);
-		free_pipes(pipes, ac);
-		exit(EXIT_FAILURE);
-	}
-	i = -1;
-	while (++i < ac - 3)
-	{
-		if (ft_strlen(av[2+i]) == 0)
-			cmds[i] = fill_null_cmd();
-		else
-			cmds[i] = fill_cmd(av[2 + i], envp);
+		cmds[i].envp = envp;
+		cmds[i++].str = av[j++];
 	}
 	return (cmds);
 }
 
-pid_t	*create_pids(int ac, int **pipes, char ***cmds)
+int	fill_cmd(t_cmd *cmds, int n)
 {
-	pid_t	*pids;
-
-	pids = malloc(sizeof(pid_t) * (ac - 3));
-	if (!pids)
+	if (ft_strlen(cmds[n].str) == 0)
 	{
-		ft_printf("failed to malloc pids array\n");
-		close_pipes(0, ac - 4, pipes);
-		free_pipes(pipes, ac);
-		free_arrays(cmds, ac);
-		exit(EXIT_FAILURE);
+		cmds[n].adr = ft_strdup("/"); 
+		cmds[n].args = ft_split("", ' ');
+		if (cmds[n].adr && cmds[n].args)
+			return (1);
 	}
-	return (pids);
+	else
+	{
+		cmds[n].args = ft_split(cmds[n].str, ' ');
+		if (cmds[n].args)
+		{
+			cmds[n].adr = get_cmd_adr(cmds[n].args[0], cmds[n].envp);
+			return (1);
+		}
+	}
+	return (0);
+}
+char	*get_cmd_adr(char *cmd, char **envp)
+{
+	char	**dirs;
+	char	*full_cmd;
+	int		i;
+
+	if (cmd[0] == '/')
+		return (ft_strdup(cmd));
+	while (*envp)
+	{
+		if (ft_strncmp((const char *) *envp, "PATH=", 5) == 0)
+			break ;
+		envp++;
+	}
+	if (!*envp)
+		return (NULL);
+	dirs = ft_split(*envp, ':');
+	if (!dirs)
+		return (NULL);
+	full_cmd = search_path(cmd, dirs);
+	i = 0;
+	while (dirs[i])
+		free(dirs[i++]);
+	free(dirs);
+	return (full_cmd);
+}
+
+char	*search_path(char *cmd, char **dirs)
+{
+	char	*slash_cmd; 
+	char	*full_cmd;
+	int		i;
+
+	slash_cmd = ft_strjoin("/", cmd);
+	if (!slash_cmd)
+		return (NULL);
+	i = 0;
+	while (dirs[i])
+	{
+		full_cmd = ft_strjoin(dirs[i++], slash_cmd);
+		if (access(full_cmd, F_OK)  == 0)
+			break;
+		free(full_cmd);
+	}
+	if (!dirs[i])
+		full_cmd = NULL;
+	free(slash_cmd);
+	return (full_cmd);
 }
