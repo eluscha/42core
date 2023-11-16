@@ -32,20 +32,20 @@ void	first_child(char **av, int **pipes, t_cmd *cmds, int num_cmds)
 	exit(EXIT_FAILURE);
 }
 
-void	mid_child(int pnum, int **pipes, t_cmd *cmds, int num_cmds)
+void	mid_child(int cnum, int **pipes, t_cmd *cmds, int num_cmds)
 {
-	close_pipes(0, pnum - 1, pipes);
-	close_pipes(pnum + 1, num_cmds - 1, pipes);
-	close(pipes[pnum - 1][1]);
-	close(pipes[pnum][0]);
-	dup2(pipes[pnum - 1][0], 0);
-	dup2(pipes[pnum][1], 1);
-	close(pipes[pnum - 1][0]);
-	close(pipes[pnum][1]);
-	if (!fill_cmd(cmds, pnum))
+	close_pipes(0, cnum - 1, pipes);
+	close_pipes(cnum + 1, num_cmds - 1, pipes);
+	close(pipes[cnum - 1][1]);
+	close(pipes[cnum][0]);
+	dup2(pipes[cnum - 1][0], 0);
+	dup2(pipes[cnum][1], 1);
+	close(pipes[cnum - 1][0]);
+	close(pipes[cnum][1]);
+	if (!fill_cmd(cmds, cnum))
 		exit(EXIT_FAILURE);
-	execve(cmds[pnum].adr, cmds[pnum].args, 0);
-	print_cmd_error(&cmds[pnum]);
+	execve(cmds[cnum].adr, cmds[cnum].args, 0);
+	print_cmd_error(&cmds[cnum]);
 	exit(EXIT_FAILURE);
 }
 

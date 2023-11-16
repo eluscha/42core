@@ -12,9 +12,9 @@
 
 #include "pipex.h"
 
-void	wait_cleanup(int ac, int **pipes, t_cmd *cmds, int num_cmds);
+void	wait_cleanup(int **pipes, t_cmd *cmds, int num_cmds)
 {
-	close_pipes(0, num_cmds, pipes);
+	close_pipes(0, num_cmds - 1, pipes);
 	while (wait(NULL) > 0);
 	free_arrays(cmds, num_cmds);
 	free_pipes(pipes, num_cmds - 1);

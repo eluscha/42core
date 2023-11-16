@@ -23,19 +23,21 @@ void	pipe_error(int **pipes, int i)
 	exit(EXIT_FAILURE);
 }
 
-void	cmds_array_error(int **pipes, int num_cmds)
+void	check_array_error(t_cmd *cmds, int **pipes, int num_cmds)
 {
+	if (cmds)
+		return ;
 	write(2, "Failed to ft_calloc cmds array\n", 31);
 	close_pipes(0, num_cmds - 1, pipes);
 	free_pipes(pipes, num_cmds - 1);
 	exit(EXIT_FAILURE);
 }
 
-void	fork_error(int ac, int **pipes, char ***cmds) //also needs to wait ... and to free pids, of course
+void	fork_error(int **pipes, t_cmd *cmds, int num_cmds) //also needs to wait ... and to free pids, of course
 {
-	close_pipes(0, ac - 4, pipes);
-	free_arrays(cmds, ac);
-	free_pipes(pipes, ac); 
+	close_pipes(0, num_cmds - 1, pipes);
+	free_arrays(cmds, num_cmds);
+	free_pipes(pipes, num_cmds - 1); 
 	perror("Fork: ");
 	exit(EXIT_FAILURE);
 }

@@ -12,31 +12,7 @@
 
 #include "pipex.h"
 
-int	**create_pipes(int num)
-{
-	int	**pipes;
-	int	i;
-
-	pipes = ft_calloc(num, sizeof(int *));
-	if (!pipes)
-	{
-		ft_printf("failed ft_calloc\n");
-		exit(EXIT_FAILURE);
-	}
-	i = 0;
-	while (i < num)
-	{
-		pipes[i] = malloc(sizeof(int) * 2);
-		if (!pipes[i])
-			pipe_error(pipes, i);
-		if (pipe(pipes[i]) == -1)
-			pipe_error(pipes, i);
-		i++;
-	}
-	return (pipes);
-}
-
-t_cmd	*create_arrays(int ac, char **av, char **envp, int num_cmds)
+t_cmd	*create_array(int ac, char **av, char **envp, int num_cmds)
 {
 	t_cmd	*cmds;
 	int		i;
@@ -49,6 +25,9 @@ t_cmd	*create_arrays(int ac, char **av, char **envp, int num_cmds)
 	j = ac - num_cmds - 1;
 	while (i < num_cmds)
 	{
+		cmds[i].adr = NULL;
+		cmds[i].args = NULL;
+		cmds[i].pid = -1;
 		cmds[i].envp = envp;
 		cmds[i++].str = av[j++];
 	}
@@ -60,9 +39,13 @@ int	fill_cmd(t_cmd *cmds, int n)
 	if (ft_strlen(cmds[n].str) == 0)
 	{
 		cmds[n].adr = ft_strdup("/"); 
-		cmds[n].args = ft_split("", ' ');
-		if (cmds[n].adr && cmds[n].args)
-			return (1);
+		cmds[n].args = ft_calloc(sizeof(char *), 2);
+		if (cmds[n].args)
+		{
+			cmds[n].args[0] = ft_strdup("");
+			if (cmds[n].adr && cmds[n].args[0])
+				return (1);
+		}	
 	}
 	else
 	{
