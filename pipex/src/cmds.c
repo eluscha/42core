@@ -12,52 +12,51 @@
 
 #include "pipex.h"
 
-t_cmd	*create_array(int ac, char **av, char **envp, int num_cmds)
+t_cmd	*init_struct(char **av, char **envp, int here_doc)
 {
-	t_cmd	*cmds;
-	int		i;
-	int		j;
+	t_cmd	*cmd;
 
-	cmds = malloc(num_cmds * sizeof(t_cmd));
-	if (!cmds)
-		return (NULL);
-	i = 0;
-	j = ac - num_cmds - 1;
-	while (i < num_cmds)
+	cmd = malloc(sizeof(t_cmd));
+	if (!cmd)
 	{
-		cmds[i].adr = NULL;
-		cmds[i].args = NULL;
-		cmds[i].pid = -1;
-		cmds[i].envp = envp;
-		cmds[i++].str = av[j++];
+		write(2, "Failed to malloc space for the struct!\n", 39);
+		return (NULL);
 	}
-	return (cmds);
+	cmd->here_doc = here_doc;
+	cmd->av = av;
+	cmd->envp = envp;
+	cmd->adr = NULL;
+	cmd->args = NULL;
+	return (cmd);
 }
 
-int	fill_cmd(t_cmd *cmds, int n)
+int	fill_cmd(t_cmd *cmd, int num)
 {
-	if (ft_strlen(cmds[n].str) == 0)
+	if (ft_strlen(cmd->av[num + 2 + cmd->here_doc]) == 0)
 	{
-		cmds[n].adr = ft_strdup("/"); 
-		cmds[n].args = ft_calloc(sizeof(char *), 2);
-		if (cmds[n].args)
+		cmd->adr = ft_strdup("/"); 
+		cmd->args = ft_calloc(sizeof(char *), 2);
+		if (cmd->args)
 		{
-			cmds[n].args[0] = ft_strdup("");
-			if (cmds[n].adr && cmds[n].args[0])
+			cmd->args[0] = ft_strdup("");
+			if (cmd->adr && cmd->args[0])
 				return (1);
 		}	
 	}
 	else
 	{
-		cmds[n].args = ft_split(cmds[n].str, ' ');
-		if (cmds[n].args)
+		cmd->args = ft_split(cmd->av[num + 2 + cmd->here_doc], ' ');
+		if (cmd->args)
 		{
-			cmds[n].adr = get_cmd_adr(cmds[n].args[0], cmds[n].envp);
-			return (1);
+			cmd->adr = get_cmd_adr(cmd->args[0], cmd->envp);
+			if (cmd->adr)
+				return (1);
 		}
 	}
+	write(2, "Failed to fill_cmd!", 19);
 	return (0);
 }
+
 char	*get_cmd_adr(char *cmd, char **envp)
 {
 	char	**dirs;
@@ -103,7 +102,23 @@ char	*search_path(char *cmd, char **dirs)
 		free(full_cmd);
 	}
 	if (!dirs[i])
-		full_cmd = NULL;
+		full_cmd = ft_strdup("none");
 	free(slash_cmd);
 	return (full_cmd);
+}
+
+void	free_cmd(t_cmd *cmd)
+{
+	int	i;
+
+	i = 0;
+	if (cmd->adr)
+		free(cmd->adr);
+	if (cmd->args)
+	{
+		while(cmd->args[i])
+			free(cmd->args[i++]);
+		free(cmd->args);
+	}
+	return ;
 }

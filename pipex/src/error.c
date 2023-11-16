@@ -17,28 +17,29 @@ void	pipe_error(int **pipes, int i)
 	ft_printf("Pipe index %d: %s\n", i, strerror(errno));
 	if (pipes[i])
 		free(pipes[i]);
-	close_pipes(0, i, pipes);
+	close_pipes(pipes, 0, i);
 	while (--i >= 0)
 		free(pipes[i]);
 	exit(EXIT_FAILURE);
 }
 
-void	check_array_error(t_cmd *cmds, int **pipes, int num_cmds)
+void	check_init_error(t_cmd *cmd, int **pipes, int num_pipes)
 {
-	if (cmds)
+	if (cmd)
 		return ;
-	write(2, "Failed to ft_calloc cmds array\n", 31);
-	close_pipes(0, num_cmds - 1, pipes);
-	free_pipes(pipes, num_cmds - 1);
+	close_pipes(pipes, 0, num_pipes);
+	free_pipes(pipes, num_pipes);
 	exit(EXIT_FAILURE);
 }
 
-void	fork_error(int **pipes, t_cmd *cmds, int num_cmds) //also needs to wait ... and to free pids, of course
+void	check_fork_error(pid_t pid, int **pipes, int num_pipes) 
 {
-	close_pipes(0, num_cmds - 1, pipes);
-	free_arrays(cmds, num_cmds);
-	free_pipes(pipes, num_cmds - 1); 
+	if (pid != -1)
+		return ;
 	perror("Fork: ");
+	close_pipes(pipes, 0, num_pipes);
+	while (wait(NULL) > 0);
+	free_pipes(pipes, num_pipes); 
 	exit(EXIT_FAILURE);
 }
 
@@ -49,19 +50,19 @@ void	file_error(char *name, int fd)
 	exit(EXIT_FAILURE);
 }
 
-void	print_cmd_error(t_cmd *cptr)
+void	print_cmd_error(t_cmd *cmd)
 {	
-	if (!cptr->adr)
+	if (ft_strncmp(cmd->adr, "none", 4) == 0)
 	{
 		write(2, "Command not found: ", 19);
-		write(2, cptr->args[0], ft_strlen(cptr->args[0]));
+		write(2, cmd->args[0], ft_strlen(cmd->args[0]));
 		write(2, "\n", 1);
 	}
 	else
 	{
 		write(2, strerror(errno), ft_strlen(strerror(errno)));
 		write(2, ": ", 2);
-		write(2, cptr->args[0], ft_strlen(cptr->args[0]));
+		write(2, cmd->args[0], ft_strlen(cmd->args[0]));
 		write(2, "\n", 1);
 	}
 	return ;

@@ -14,30 +14,46 @@
 
 int	main(int argc, char **argv, char **envp)
 {
-	int		num_cmds;
+	int		here_doc;
+	int		num_pipes;
 	int		**pipes;
-	t_cmd	*cmds;
+	t_cmd	*cmd;
 	pid_t	pid;
 
-	num_cmds = get_num_cmds(argc, argv);
-	pipes = create_pipes(num_cmds - 1); 
-	cmds = create_array(argc, argv, envp, num_cmds);
-	check_array_error(cmds, pipes, num_cmds);
+	num_pipes = get_num_pipes(argc, argv, &here_doc);
+	pipes = create_pipes(num_pipes);
+	cmd = init_struct(argv, envp, here_doc);
+	check_init_error(cmd, pipes, num_pipes);
 	pid = fork();
-	if (pid == -1)
-		fork_error(pipes, cmds, num_cmds);
+	check_fork_error(pid, pipes, num_pipes);
 	if (pid == 0)
-		first_child(argv, pipes, cmds, num_cmds);
-	cmds[0].pid = pid; 
-	bonus_loop(pipes, cmds, num_cmds);
+		first_child(cmd, pipes, num_pipes);
+	bonus_loop(pipes, cmd, num_pipes);
 	pid = fork();
-	if (pid == -1)
-		fork_error(pipes, cmds, num_cmds);
+	check_fork_error(pid, pipes, num_pipes);
 	if (pid == 0)
-		last_child(argv[argc - 1], pipes, cmds, num_cmds);
-	cmds[num_cmds - 1].pid = pid;
-	wait_cleanup(pipes, cmds, num_cmds);
-	return (0);
+		last_child(argv[argc - 1], cmd, pipes, num_pipes);
+	close_pipes(pipes, 0, num_pipes);
+	while (wait(NULL) > 0);
+	free_pipes(pipes, num_pipes);
+	free(cmd); //need to do in chi;dren ? certainly need in early exits !
+	exit(EXIT_SUCCESS);
+}
+
+int	get_num_pipes(int ac, char **av, int *here_doc)
+{
+	if (ac > 4)
+	{
+		if (ft_strncmp(av[1], "here_doc", 8) == 0)
+		{
+			*here_doc = 1;
+			return (ac - 5);
+		}
+		*here_doc = 0;
+		return (ac - 4);
+	}
+	ft_printf("Invalid number of arguments\n");
+	exit(EXIT_FAILURE);
 }
 
 int	**create_pipes(int num)
@@ -64,32 +80,31 @@ int	**create_pipes(int num)
 	return (pipes);
 }
 
-void	bonus_loop(int **pipes, t_cmd *cmds, int num_cmds)
+void	close_pipes(int **pipes, int start, int end)
 {
-	int		cnum;
-	int		pid;
+	int	i;
 
-	cnum = 0;
-	while (++cnum < num_cmds - 1)
+	i = start;
+	while (i < end)
 	{
-		pid = fork();
-		if (pid == -1)
-			fork_error(pipes, cmds, num_cmds);
-		if (pid == 0)
-			mid_child(cnum, pipes, cmds, num_cmds);
-		cmds[cnum].pid = pid;
+		close(pipes[i][0]);
+		close(pipes[i][1]);
+		i++;
 	}
 	return ;
 }
 
-int	get_num_cmds(int ac, char **av)
+void	free_pipes(int **pipes, int num)
 {
-	if (ac > 4)
+	int	i;
+
+	i = 0;
+	while (i < num)
 	{
-		if (ft_strncmp(av[1], "here_doc", 8) == 0)
-			return (ac - 4);
-		return (ac - 3);
+		if (!pipes[i])
+			break ;
+		else
+			free(pipes[i++]);
 	}
-	ft_printf("Invalid number of arguments\n");
-	exit(EXIT_FAILURE);
+	free(pipes);
 }

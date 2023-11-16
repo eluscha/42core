@@ -25,34 +25,31 @@
 
 typedef struct s_cmd
 {
-    char    *str;
+    int     here_doc;
+    //int     ac;
+    char    **av;
+    char    **envp;
     char    *adr;
     char    **args;
-    char    **envp;
-    pid_t   pid;
 }	t_cmd;
 
 void	bonus_loop(int **pipes, t_cmd *cmds, int num_cmds);
 int		**create_pipes(int num);
-//pid_t	*create_pids(int ac, int **pipes, char ***cmds);
-t_cmd	*create_array(int ac, char **av, char **envp, int num_cmds);
+t_cmd	*init_struct(char **av, char **envp, int here_doc);
 int     fill_cmd(t_cmd *cmds, int n);
 char	*get_cmd_adr(char *cmd, char **envp);
 char	*search_path(char *cmd, char **dirs);
-//char	*use_given_path(char *cmd);
-//int     check_access(char *cmd);
-void	first_child(char **av, int **pipes, t_cmd *cmds, int num_cmds);
-void	mid_child(int pnum, int **pipes, t_cmd *cmds, int num_cmds);
-void	last_child(char *fname, int **pipes, t_cmd *cmds, int num_cmds);
-void	free_arrays(t_cmd *cmds, int ac);
+void	first_child(t_cmd *cmd,int **pipes, int num_pipes);
+void	mid_child(t_cmd *cmd, int cnum, int **pipes, int num_pipes);
+void	last_child(char *fname, t_cmd *cmd, int **pipes, int num_pipes);
 void	free_pipes(int **pipes, int num);
-void	close_pipes(int start, int end, int **pipes);
-void	wait_cleanup(int **pipes, t_cmd *cmds, int num_cmds);
+void	close_pipes(int **pipes, int start, int end);
+void	free_cmd(t_cmd *cmd);
 void	pipe_error(int **pipes, int i);
-void	check_array_error(t_cmd *cmds, int **pipes, int num_cmds);
-void	fork_error(int **pipes, t_cmd *cmds, int num_cmds);
+void	check_init_error(t_cmd *cmd, int **pipes, int num_pipes);
+void	check_fork_error(pid_t pid, int **pipes, int num_pipes);
 void	file_error(char *name, int fd);
 void	print_cmd_error(t_cmd *cptr);
-int	    get_num_cmds(int ac, char **av);
+int	    get_num_pipes(int ac, char **av, int *here_doc);
 
 #endif
