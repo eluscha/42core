@@ -32,11 +32,16 @@ int	main(int argc, char **argv, char **envp)
 	pid = fork();
 	check_fork_error(pid, pipes, num_pipes);
 	if (pid == 0)
-		last_child(argv[argc - 1], cmd, pipes, num_pipes);
+		last_child(cmd, pipes, num_pipes);
 	close_pipes(pipes, 0, num_pipes);
 	while (wait(NULL) > 0);
 	free_pipes(pipes, num_pipes);
-	free(cmd); //need to do in chi;dren ? certainly need in early exits !
+	if (here_doc)
+	{
+		close(cmd->temp_fd);
+		unlink("temp"); //what if other name ?
+	}
+	free(cmd); //need to do in children ? certainly need in early exits !
 	exit(EXIT_SUCCESS);
 }
 

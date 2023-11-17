@@ -34,9 +34,12 @@ void	first_child(t_cmd *cmd, int **pipes, int num_pipes)
 
 	close_pipes(pipes, 1, num_pipes);
 	close(pipes[0][0]);
-	fd_file1 = open(cmd->av[1], O_RDONLY);
+	if (cmd->here_doc)
+		fd_file1 = cmd->temp_fd;
+	else 
+		fd_file1 = open(cmd->av[1], O_RDONLY);
 	if (fd_file1 == -1)
-		file_error(cmd->av[1], pipes[0][1]);
+		file_error(cmd, pipes[0][1], 0);
 	dup2(fd_file1, 0);
 	dup2(pipes[0][1], 1);
 	close(fd_file1);
@@ -67,15 +70,20 @@ void	mid_child(t_cmd *cmd, int cnum, int **pipes, int num_pipes)
 	exit(EXIT_FAILURE);
 }
 
-void	last_child(char *fname, t_cmd *cmd, int **pipes, int num_pipes)
+void	last_child(t_cmd *cmd, int **pipes, int num_pipes)
 {
 	int		fd_file2;
+	char	*fname;
 
+	fname = cmd->av[cmd->ac - 1];
 	close_pipes(pipes, 0, num_pipes - 1);
 	close(pipes[num_pipes - 1][1]);
-	fd_file2 = open(fname, O_TRUNC | O_WRONLY | O_CREAT, 0777);
+	if (cmd->here_doc)
+		fd_file2 = open(fname, O_APPEND | O_CREAT, 0777);
+	else
+		fd_file2 = open(fname, O_TRUNC | O_WRONLY | O_CREAT, 0777);
 	if (fd_file2 == -1)
-		file_error(fname, pipes[num_pipes - 1][0]);
+		file_error(cmd, pipes[num_pipes - 1][0], 1);
 	dup2(pipes[num_pipes - 1][0], 0);
 	dup2(fd_file2, 1);
 	close(fd_file2);

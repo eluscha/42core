@@ -43,9 +43,17 @@ void	check_fork_error(pid_t pid, int **pipes, int num_pipes)
 	exit(EXIT_FAILURE);
 }
 
-void	file_error(char *name, int fd)
+void	file_error(t_cmd *cmd, int fd, int code)
 {
-	ft_printf("%s: %s\n", strerror(errno), name);
+	int	idx;
+
+	if (code == 1)
+		idx = cmd->ac - 1;
+	else if (cmd->here_doc)
+		idx = 2;
+	else
+		idx = 1;
+	ft_printf("Error with file %s: %s\n", cmd->av[idx], strerror(errno));
 	close(fd);
 	exit(EXIT_FAILURE);
 }

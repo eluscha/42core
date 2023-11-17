@@ -27,6 +27,10 @@ t_cmd	*init_struct(char **av, char **envp, int here_doc)
 	cmd->envp = envp;
 	cmd->adr = NULL;
 	cmd->args = NULL;
+	if (here_doc)
+		cmd->temp_fd = write_tmp_file(cmd);
+	else
+		cmd->temp_fd = -1;
 	return (cmd);
 }
 
