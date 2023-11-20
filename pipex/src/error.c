@@ -49,12 +49,12 @@ void	file_error(t_cmd *cmd, int fd, int code)
 
 	if (code == 1)
 		idx = cmd->ac - 1;
-	else if (cmd->here_doc)
-		idx = 2;
 	else
 		idx = 1;
-	ft_printf("Error with file %s: %s\n", cmd->av[idx], strerror(errno));
+	ft_printf("Error with file, code %i\n", code);
 	close(fd);
+	free_cmd(cmd);
+	free(cmd);
 	exit(EXIT_FAILURE);
 }
 

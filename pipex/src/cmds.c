@@ -18,19 +18,15 @@ t_cmd	*init_struct(char **av, char **envp, int here_doc)
 
 	cmd = malloc(sizeof(t_cmd));
 	if (!cmd)
-	{
-		write(2, "Failed to malloc space for the struct!\n", 39);
-		return (NULL);
-	}
-	cmd->here_doc = here_doc;
-	cmd->av = av;
-	cmd->envp = envp;
-	cmd->adr = NULL;
-	cmd->args = NULL;
-	if (here_doc)
-		cmd->temp_fd = write_tmp_file(cmd);
+		ft_putstr_fd("Failed to malloc space for the struct!\n", 2);
 	else
-		cmd->temp_fd = -1;
+	{
+		cmd->here_doc = here_doc;
+		cmd->av = av;
+		cmd->envp = envp;
+		cmd->adr = NULL;
+		cmd->args = NULL;
+	}
 	return (cmd);
 }
 
@@ -57,7 +53,7 @@ int	fill_cmd(t_cmd *cmd, int num)
 				return (1);
 		}
 	}
-	write(2, "Failed to fill_cmd!", 19);
+	ft_putstr_fd("Failed to fill_cmd!", 2);
 	return (0);
 }
 

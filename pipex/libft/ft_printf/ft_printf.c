@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "libft.h"
 
 /* Inspo from csnotes.medium.com/ft-printf-tutorial-42project-f09b6dc1cd0e */
 

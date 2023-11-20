@@ -24,6 +24,8 @@ int	main(int argc, char **argv, char **envp)
 	pipes = create_pipes(num_pipes);
 	cmd = init_struct(argv, envp, here_doc);
 	check_init_error(cmd, pipes, num_pipes);
+	if (here_doc)
+		write_tmp_file(cmd);
 	pid = fork();
 	check_fork_error(pid, pipes, num_pipes);
 	if (pid == 0)
@@ -36,11 +38,8 @@ int	main(int argc, char **argv, char **envp)
 	close_pipes(pipes, 0, num_pipes);
 	while (wait(NULL) > 0);
 	free_pipes(pipes, num_pipes);
-	if (here_doc)
-	{
-		close(cmd->temp_fd);
-		unlink("temp"); //what if other name ?
-	}
+	//if (here_doc)
+		//unlink("temp");
 	free(cmd); //need to do in children ? certainly need in early exits !
 	exit(EXIT_SUCCESS);
 }

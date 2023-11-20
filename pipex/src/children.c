@@ -35,7 +35,7 @@ void	first_child(t_cmd *cmd, int **pipes, int num_pipes)
 	close_pipes(pipes, 1, num_pipes);
 	close(pipes[0][0]);
 	if (cmd->here_doc)
-		fd_file1 = cmd->temp_fd;
+		fd_file1 = open("temp", O_RDONLY);
 	else 
 		fd_file1 = open(cmd->av[1], O_RDONLY);
 	if (fd_file1 == -1)

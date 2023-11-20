@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "libft.h"
 //#include <stdio.h>
 
 char	*ft_full_string(t_print *tab, char *str)
