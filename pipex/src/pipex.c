@@ -34,13 +34,13 @@ int	main(int argc, char **argv, char **envp)
 	pid = fork();
 	check_fork_error(pid, pipes, num_pipes);
 	if (pid == 0)
-		last_child(cmd, pipes, num_pipes);
+		last_child(argv[argc - 1], cmd, pipes, num_pipes);
 	close_pipes(pipes, 0, num_pipes);
-	while (wait(NULL) > 0);
+	while (wait(NULL) != -1);
 	free_pipes(pipes, num_pipes);
-	//if (here_doc)
-		//unlink("temp");
-	free(cmd); //need to do in children ? certainly need in early exits !
+	if (here_doc)
+		unlink("temp");
+	free(cmd); // also certainly need in early exits !
 	exit(EXIT_SUCCESS);
 }
 

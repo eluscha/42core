@@ -12,7 +12,7 @@
 
 #include "pipex.h"
 
-t_cmd	*init_struct(char **av, char **envp, int here_doc)
+t_cmd	*init_struct(char **av, char **envp, int heredoc)
 {
 	t_cmd	*cmd;
 
@@ -21,18 +21,18 @@ t_cmd	*init_struct(char **av, char **envp, int here_doc)
 		ft_putstr_fd("Failed to malloc space for the struct!\n", 2);
 	else
 	{
-		cmd->here_doc = here_doc;
 		cmd->av = av;
 		cmd->envp = envp;
 		cmd->adr = NULL;
 		cmd->args = NULL;
+		cmd->here_doc = heredoc;
 	}
 	return (cmd);
 }
 
-int	fill_cmd(t_cmd *cmd, int num)
+int	fill_cmd(t_cmd *cmd, int num, int here_doc)
 {
-	if (ft_strlen(cmd->av[num + 2 + cmd->here_doc]) == 0)
+	if (ft_strlen(cmd->av[num + 2 + here_doc]) == 0)
 	{
 		cmd->adr = ft_strdup("/"); 
 		cmd->args = ft_calloc(sizeof(char *), 2);
@@ -45,7 +45,7 @@ int	fill_cmd(t_cmd *cmd, int num)
 	}
 	else
 	{
-		cmd->args = ft_split(cmd->av[num + 2 + cmd->here_doc], ' ');
+		cmd->args = ft_split(cmd->av[num + 2 + here_doc], ' ');
 		if (cmd->args)
 		{
 			cmd->adr = get_cmd_adr(cmd->args[0], cmd->envp);
@@ -53,7 +53,6 @@ int	fill_cmd(t_cmd *cmd, int num)
 				return (1);
 		}
 	}
-	ft_putstr_fd("Failed to fill_cmd!", 2);
 	return (0);
 }
 

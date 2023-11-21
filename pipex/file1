@@ -1,9 +1,1 @@
-total 44
- 0 -rw-r--r-- 1 eusatiko 2022_berlin     0 Nov 16 14:57 file1
- 4 -rwxr-xr-x 1 eusatiko 2022_berlin    24 Nov 16 14:57 file2
- 0 drwxr-xr-x 2 eusatiko 2022_berlin    55 Nov 16 10:54 include
- 4 drwxr-xr-x 3 eusatiko 2022_berlin  4096 Nov 16 11:33 libft
- 4 -rw-r--r-- 1 eusatiko 2022_berlin   872 Nov 16 14:52 Makefile
-32 -rwxr-xr-x 1 eusatiko 2022_berlin 31376 Nov 16 14:57 pipex
- 0 drwxr-xr-x 2 eusatiko 2022_berlin   209 Nov 16 14:57 src
- 0 -rw-r--r-- 1 eusatiko 2022_berlin     0 Nov  8 12:52 wc
+       0       0       0

@@ -43,18 +43,20 @@ void	check_fork_error(pid_t pid, int **pipes, int num_pipes)
 	exit(EXIT_FAILURE);
 }
 
-void	file_error(t_cmd *cmd, int fd, int code)
+void	file_error(char *fname, t_cmd *cmd, int fd)
 {
-	int	idx;
-
-	if (code == 1)
-		idx = cmd->ac - 1;
-	else
-		idx = 1;
-	ft_printf("Error with file, code %i\n", code);
+	perror(fname);
 	close(fd);
 	free_cmd(cmd);
-	free(cmd);
+	free(cmd); //free pipes ?
+	exit(EXIT_FAILURE);
+}
+
+void	fill_cmd_error(t_cmd *cmd)
+{
+	ft_putstr_fd("Failed to fill_cmd!", 2);
+	free_cmd(cmd);
+	free(cmd); //free pipes ?
 	exit(EXIT_FAILURE);
 }
 
