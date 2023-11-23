@@ -71,7 +71,7 @@ char	*get_cmd_adr(char *cmd, char **envp)
 		envp++;
 	}
 	if (!*envp)
-		return (NULL);
+		return (ft_strdup("none"));
 	dirs = ft_split(*envp, ':');
 	if (!dirs)
 		return (NULL);

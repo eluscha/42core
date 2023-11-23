@@ -25,7 +25,10 @@ int	main(int argc, char **argv, char **envp)
 	cmd = init_struct(argv, envp, here_doc);
 	check_init_error(cmd, pipes, num_pipes);
 	if (here_doc)
-		write_tmp_file(cmd);
+	{
+		if (write_tmp_file(cmd) == -1)
+			file_error(0, cmd, pipes, num_pipes);
+	}
 	pid = fork();
 	check_fork_error(pid, pipes, num_pipes);
 	if (pid == 0)
@@ -35,80 +38,70 @@ int	main(int argc, char **argv, char **envp)
 	check_fork_error(pid, pipes, num_pipes);
 	if (pid == 0)
 		last_child(argv[argc - 1], cmd, pipes, num_pipes);
-	close_pipes(pipes, 0, num_pipes);
-	while (wait(NULL) != -1);
-	free_pipes(pipes, num_pipes);
-	if (here_doc)
-		unlink("temp");
-	free(cmd); // also certainly need in early exits !
-	exit(EXIT_SUCCESS);
+	wait_and_cleanup(pid, cmd, pipes, num_pipes);
 }
 
-int	get_num_pipes(int ac, char **av, int *here_doc)
+int	write_tmp_file(t_cmd *cmd)
 {
-	if (ac > 4)
+	int		fd;
+	char	*line;
+	char	*limiter;
+	size_t	len;
+
+	fd = open(".temp_hd", O_CREAT | O_WRONLY | O_APPEND, 0777);
+	if (fd == -1)
+		return (-1);
+	limiter = cmd->av[2];
+	len = ft_strlen(limiter);
+	line = get_next_line(0);
+	while (line)
 	{
-		if (ft_strncmp(av[1], "here_doc", 8) == 0)
+		if (ft_strlen(line) == len + 1)
 		{
-			*here_doc = 1;
-			return (ac - 5);
+			if (ft_strncmp(line, limiter, len) == 0)
+				break ;
 		}
-		*here_doc = 0;
-		return (ac - 4);
+		write(fd, line, ft_strlen(line));
+		free(line);
+		line = get_next_line(0);
 	}
-	ft_printf("Invalid number of arguments\n");
-	exit(EXIT_FAILURE);
+    if (line)
+		free(line);
+	close(fd);
+	return (0);
 }
 
-int	**create_pipes(int num)
+void	bonus_loop(int **pipes, t_cmd *cmd, int num_pipes)
 {
-	int	**pipes;
-	int	i;
+	int		cnum;
+	int		pid;
 
-	pipes = ft_calloc(num, sizeof(int *));
-	if (!pipes)
+	cnum = 0;
+	while (++cnum < num_pipes)
 	{
-		ft_printf("failed ft_calloc\n");
-		exit(EXIT_FAILURE);
-	}
-	i = 0;
-	while (i < num)
-	{
-		pipes[i] = malloc(sizeof(int) * 2);
-		if (!pipes[i])
-			pipe_error(pipes, i);
-		if (pipe(pipes[i]) == -1)
-			pipe_error(pipes, i);
-		i++;
-	}
-	return (pipes);
-}
-
-void	close_pipes(int **pipes, int start, int end)
-{
-	int	i;
-
-	i = start;
-	while (i < end)
-	{
-		close(pipes[i][0]);
-		close(pipes[i][1]);
-		i++;
+		pid = fork();
+		check_fork_error(pid, pipes, num_pipes);
+		if (pid == 0)
+			mid_child(cmd, cnum, pipes, num_pipes);
 	}
 	return ;
 }
 
-void	free_pipes(int **pipes, int num)
+void	wait_and_cleanup(pid_t pid, t_cmd *cmd, int **pipes, int num_pipes)
 {
-	int	i;
-
-	i = 0;
-	while (i < num)
-	{
-		if (!pipes[i])
-			break ;
-		else
-			free(pipes[i++]);
-	}
-	free(pipes);
+	int	status;
+	
+	status = 0;
+	close_pipes(pipes, 0, num_pipes);
+	//printf("exit code is %i\n", status);
+	waitpid(pid, &status, 0);
+	//printf("exit code is %i\n", status);
+	//printf("exit code is %i\n", errno);
+	while (wait(NULL) != -1);
+	free_pipes(pipes, num_pipes);
+	if (cmd->here_doc)
+		unlink(".temp_hd");
+	free(cmd);
+	printf("exit code is %i\n", WEXITSTATUS(status));
+	exit(WEXITSTATUS(status));
 }

@@ -31,6 +31,7 @@ typedef struct s_cmd
     int     here_doc;
 }	t_cmd;
 
+int	    get_num_pipes(int ac, char **av, int *here_doc);
 int		**create_pipes(int num);
 t_cmd	*init_struct(char **av, char **envp, int heredoc);
 int     write_tmp_file(t_cmd *cmd);
@@ -47,9 +48,9 @@ void	free_cmd(t_cmd *cmd);
 void	pipe_error(int **pipes, int i);
 void	check_init_error(t_cmd *cmd, int **pipes, int num_pipes);
 void	check_fork_error(pid_t pid, int **pipes, int num_pipes);
-void	file_error(char *fname, t_cmd *cmd, int fd);
-void	fill_cmd_error(t_cmd *cmd);
-void	print_cmd_error(t_cmd *cptr);
-int	    get_num_pipes(int ac, char **av, int *here_doc);
+void	file_error(char *fname, t_cmd *cmd, int **pipes, int num_pipes);
+void	fill_cmd_error(t_cmd *cmd, int **pipes, int num_pipes);
+void	print_cmd_error(t_cmd *cmd);
+void	wait_and_cleanup(pid_t pid, t_cmd *cmd, int **pipes, int num_pipes);
 
 #endif
