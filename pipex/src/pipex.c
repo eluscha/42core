@@ -45,11 +45,7 @@ void	write_tmp_file(t_cmd *cmd, int **pipes, int num_pipes)
 	char	*limiter;
 	size_t	len;
 
-	fd = open("/tmp/pipex_here_doc", O_CREAT, 0777);
-	if (fd == -1)
-		file_error(0, cmd, pipes, num_pipes);
-	close(fd);
-	fd = open("/tmp/pipex_here_doc", O_WRONLY | O_APPEND);
+	fd = open("/tmp/pipex_here_doc",  O_CREAT | O_EXCL | O_WRONLY | O_APPEND, 0777);
 	if (fd == -1)
 		file_error(0, cmd, pipes, num_pipes);
 	limiter = cmd->av[2];
