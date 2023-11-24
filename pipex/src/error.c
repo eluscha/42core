@@ -29,7 +29,7 @@ void	check_fork_error(pid_t pid, int **pipes, int num_pipes)
 	close_pipes(pipes, 0, num_pipes);
 	while (wait(NULL) > 0);
 	free_pipes(pipes, num_pipes); 
-	exit(errno);
+	exit(EXIT_FAILURE);
 }
 
 void	file_error(char *fname, t_cmd *cmd, int **pipes, int num_pipes)
@@ -45,7 +45,7 @@ void	file_error(char *fname, t_cmd *cmd, int **pipes, int num_pipes)
 		perror("Failed to write temp");
 	free(cmd);
 	//ft_putstr_fd(ft_itoa(errno), 2); //
-	exit(errno);
+	exit(EXIT_FAILURE);
 }
 
 void	fill_cmd_error(t_cmd *cmd, int **pipes, int num_pipes)

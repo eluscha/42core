@@ -18,7 +18,7 @@ void	first_child(t_cmd *cmd, int **pipes, int num_pipes)
 	char	*fname;
 
 	if (cmd->here_doc)
-		fname = ".temp_hd";
+		fname = "/tmp/pipex_here_doc";
 	else
 		fname = cmd->av[1];
 	fd_file1 = open(fname, O_RDONLY);
@@ -34,10 +34,24 @@ void	first_child(t_cmd *cmd, int **pipes, int num_pipes)
 		fill_cmd_error(cmd, pipes, num_pipes);
 	execve(cmd->adr, cmd->args, 0);
 	print_cmd_error(cmd);
-	free_cmd(cmd);
-	free(cmd);
-	free_pipes(pipes, num_pipes);
+	cleanup(cmd, pipes, num_pipes);
 	exit(EXIT_FAILURE);
+}
+
+void	bonus_loop(int **pipes, t_cmd *cmd, int num_pipes)
+{
+	int		cnum;
+	int		pid;
+
+	cnum = 0;
+	while (++cnum < num_pipes)
+	{
+		pid = fork();
+		check_fork_error(pid, pipes, num_pipes);
+		if (pid == 0)
+			mid_child(cmd, cnum, pipes, num_pipes);
+	}
+	return ;
 }
 
 void	mid_child(t_cmd *cmd, int cnum, int **pipes, int num_pipes)
@@ -54,9 +68,7 @@ void	mid_child(t_cmd *cmd, int cnum, int **pipes, int num_pipes)
 		fill_cmd_error(cmd, pipes, num_pipes);
 	execve(cmd->adr, cmd->args, 0);
 	print_cmd_error(cmd);
-	free_cmd(cmd);
-	free(cmd);
-	free_pipes(pipes, num_pipes);
+	cleanup(cmd, pipes, num_pipes);
 	exit(EXIT_FAILURE);
 }
 
@@ -80,8 +92,6 @@ void	last_child(char *fname, t_cmd *cmd, int **pipes, int num_pipes)
 		fill_cmd_error(cmd, pipes, num_pipes);
 	execve(cmd->adr, cmd->args, 0);
 	print_cmd_error(cmd);
-	free_cmd(cmd);
-	free(cmd);
-	free_pipes(pipes, num_pipes);
+	cleanup(cmd, pipes, num_pipes);
 	exit(errno);
 }

@@ -25,10 +25,7 @@ int	main(int argc, char **argv, char **envp)
 	cmd = init_struct(argv, envp, here_doc);
 	check_init_error(cmd, pipes, num_pipes);
 	if (here_doc)
-	{
-		if (write_tmp_file(cmd) == -1)
-			file_error(0, cmd, pipes, num_pipes);
-	}
+		write_tmp_file(cmd, pipes, num_pipes);
 	pid = fork();
 	check_fork_error(pid, pipes, num_pipes);
 	if (pid == 0)
@@ -38,21 +35,35 @@ int	main(int argc, char **argv, char **envp)
 	check_fork_error(pid, pipes, num_pipes);
 	if (pid == 0)
 		last_child(argv[argc - 1], cmd, pipes, num_pipes);
-	wait_and_cleanup(pid, cmd, pipes, num_pipes);
+	close_pipes(pipes, 0, num_pipes);
+	wait_cleanup_exit(pid, cmd, pipes, num_pipes);
 }
 
-int	write_tmp_file(t_cmd *cmd)
+void	write_tmp_file(t_cmd *cmd, int **pipes, int num_pipes)
 {
 	int		fd;
-	char	*line;
 	char	*limiter;
 	size_t	len;
 
-	fd = open(".temp_hd", O_CREAT | O_WRONLY | O_APPEND, 0777);
+	fd = open("/tmp/pipex_here_doc", O_CREAT, 0777);
 	if (fd == -1)
-		return (-1);
+		file_error(0, cmd, pipes, num_pipes);
+	close(fd);
+	fd = open("/tmp/pipex_here_doc", O_WRONLY | O_APPEND);
+	if (fd == -1)
+		file_error(0, cmd, pipes, num_pipes);
 	limiter = cmd->av[2];
 	len = ft_strlen(limiter);
+	get_input(fd, limiter, len);
+	close(fd);
+	return ;
+}
+
+void	get_input(int fd, char *limiter, size_t len)	
+{
+	char	*line;
+	
+	ft_putstr_fd("here_doc: ", 0);
 	line = get_next_line(0);
 	while (line)
 	{
@@ -63,45 +74,32 @@ int	write_tmp_file(t_cmd *cmd)
 		}
 		write(fd, line, ft_strlen(line));
 		free(line);
+		ft_putstr_fd("here_doc: ", 0);
 		line = get_next_line(0);
 	}
     if (line)
 		free(line);
-	close(fd);
-	return (0);
-}
-
-void	bonus_loop(int **pipes, t_cmd *cmd, int num_pipes)
-{
-	int		cnum;
-	int		pid;
-
-	cnum = 0;
-	while (++cnum < num_pipes)
-	{
-		pid = fork();
-		check_fork_error(pid, pipes, num_pipes);
-		if (pid == 0)
-			mid_child(cmd, cnum, pipes, num_pipes);
-	}
 	return ;
 }
 
-void	wait_and_cleanup(pid_t pid, t_cmd *cmd, int **pipes, int num_pipes)
+void	wait_cleanup_exit(pid_t pid, t_cmd *cmd, int **pipes, int num_pipes)
 {
 	int	status;
 	
 	status = 0;
-	close_pipes(pipes, 0, num_pipes);
-	//printf("exit code is %i\n", status);
 	waitpid(pid, &status, 0);
-	//printf("exit code is %i\n", status);
-	//printf("exit code is %i\n", errno);
 	while (wait(NULL) != -1);
-	free_pipes(pipes, num_pipes);
 	if (cmd->here_doc)
-		unlink(".temp_hd");
-	free(cmd);
-	printf("exit code is %i\n", WEXITSTATUS(status));
+		unlink("/tmp/pipex_here_doc");
+	cleanup(cmd, pipes, num_pipes);
 	exit(WEXITSTATUS(status));
+}
+
+void	cleanup(t_cmd *cmd, int **pipes, int num_pipes)
+{
+	if (cmd->adr || cmd->args)
+		free_cmd(cmd);
+	free(cmd);
+	free_pipes(pipes, num_pipes);
+	return ;
 }
