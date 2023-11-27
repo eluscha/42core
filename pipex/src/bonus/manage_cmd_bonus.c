@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   manage_cmd.c                                       :+:      :+:    :+:   */
+/*   manage_cmd_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eusatiko <eusatiko@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/30 15:02:21 by eusatiko          #+#    #+#             */
-/*   Updated: 2023/11/27 11:46:13 by eusatiko         ###   ########.fr       */
+/*   Updated: 2023/10/30 15:02:27 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
-t_cmd	*init_struct(char **av, char **envp)
+t_cmd	*init_struct(char **av, char **envp, int heredoc)
 {
 	t_cmd	*cmd;
 
@@ -25,13 +25,14 @@ t_cmd	*init_struct(char **av, char **envp)
 		cmd->envp = envp;
 		cmd->adr = NULL;
 		cmd->args = NULL;
+		cmd->here_doc = heredoc;
 	}
 	return (cmd);
 }
 
-int	fill_cmd(t_cmd *cmd, int num)
+int	fill_cmd(t_cmd *cmd, int num, int here_doc)
 {
-	if (ft_strlen(cmd->av[num + 2]) == 0)
+	if (ft_strlen(cmd->av[num + 2 + here_doc]) == 0)
 	{
 		cmd->adr = ft_strdup("/"); 
 		cmd->args = ft_calloc(sizeof(char *), 2);
@@ -44,7 +45,7 @@ int	fill_cmd(t_cmd *cmd, int num)
 	}
 	else
 	{
-		cmd->args = ft_split(cmd->av[num + 2], ' ');
+		cmd->args = ft_split(cmd->av[num + 2 + here_doc], ' ');
 		if (cmd->args)
 		{
 			cmd->adr = get_cmd_adr(cmd->args[0], cmd->envp);

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   error_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eusatiko <eusatiko@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,41 +10,50 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
-void	check_init_error(t_cmd *cmd, int *onepipe)
+void	check_init_error(t_cmd *cmd, int **pipes, int num_pipes)
 {
 	if (cmd)
 		return ;
-	close(onepipe[0]);
-	close(onepipe[1]);
+	close_pipes(pipes, 0, num_pipes);
+	free_pipes(pipes, num_pipes);
 	exit(EXIT_FAILURE);
 }
 
-void	check_fork_error(pid_t pid, int *onepipe) 
+void	check_fork_error(pid_t pid, int **pipes, int num_pipes) 
 {
 	if (pid != -1)
 		return ;
-	close(onepipe[0]);
-	close(onepipe[1]);
-	while (wait(NULL) != -1);
+	perror("Fork");
+	close_pipes(pipes, 0, num_pipes);
+	while (wait(NULL) > 0);
+	free_pipes(pipes, num_pipes); 
 	exit(EXIT_FAILURE);
 }
 
-void	file_error(char *fname, t_cmd *cmd, int *onepipe)
+void	file_error(char *fname, t_cmd *cmd, int **pipes, int num_pipes)
 {
-	perror(fname);
-	close(onepipe[0]);
-	close(onepipe[1]);
+	close_pipes(pipes, 0, num_pipes);
+	free_pipes(pipes, num_pipes);
+	if (fname)
+	{
+		perror(fname);
+		free_cmd(cmd); //i do not think o need that!!!
+	}
+	else
+		perror("Failed to write temp");
 	free(cmd);
+	//ft_putstr_fd(ft_itoa(errno), 2); //
 	exit(EXIT_FAILURE);
 }
 
-void	fill_cmd_error(t_cmd *cmd)
+void	fill_cmd_error(t_cmd *cmd, int **pipes, int num_pipes)
 {
 	ft_putstr_fd("Failed to fill_cmd!", 2);
 	free_cmd(cmd);
 	free(cmd);
+	free_pipes(pipes, num_pipes);
 	exit(EXIT_FAILURE);
 }
 
