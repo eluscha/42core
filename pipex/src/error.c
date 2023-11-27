@@ -21,13 +21,14 @@ void	check_init_error(t_cmd *cmd, int *onepipe)
 	exit(EXIT_FAILURE);
 }
 
-void	check_fork_error(pid_t pid, int *onepipe) 
+void	check_fork_error(pid_t pid, int *onepipe)
 {
 	if (pid != -1)
 		return ;
 	close(onepipe[0]);
 	close(onepipe[1]);
-	while (wait(NULL) != -1);
+	while (wait(NULL) != -1)
+		continue ;
 	exit(EXIT_FAILURE);
 }
 
@@ -49,7 +50,7 @@ void	fill_cmd_error(t_cmd *cmd)
 }
 
 void	print_cmd_error(t_cmd *cmd)
-{	
+{
 	if (ft_strncmp(cmd->adr, "none", 4) == 0)
 	{
 		ft_putstr_fd(cmd->args[0], 2);

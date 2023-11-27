@@ -50,10 +50,11 @@ void	check_argc(int ac)
 void	wait_cleanup_exit(pid_t pid, t_cmd *cmd)
 {
 	int	status;
-	
+
 	status = 0;
 	waitpid(pid, &status, 0);
-	while (wait(NULL) != -1);
+	while (wait(NULL) != -1)
+		continue ;
 	free(cmd);
 	exit(WEXITSTATUS(status));
 }

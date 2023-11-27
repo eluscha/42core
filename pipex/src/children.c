@@ -14,7 +14,7 @@
 
 void	first_child(t_cmd *cmd, int *onepipe)
 {
-	int	fd_file1;
+	int		fd_file1;
 	char	*fname;
 
 	fname = cmd->av[1];
@@ -37,7 +37,7 @@ void	first_child(t_cmd *cmd, int *onepipe)
 
 void	last_child(t_cmd *cmd, int *onepipe)
 {
-	int	fd_file2;
+	int		fd_file2;
 	char	*fname;
 
 	fname = cmd->av[4];

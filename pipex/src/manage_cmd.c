@@ -40,7 +40,7 @@ int	fill_cmd(t_cmd *cmd, int num)
 			cmd->args[0] = ft_strdup("");
 			if (cmd->adr && cmd->args[0])
 				return (1);
-		}	
+		}
 	}
 	else
 	{
@@ -95,8 +95,8 @@ char	*search_path(char *cmd, char **dirs)
 	while (dirs[i])
 	{
 		full_cmd = ft_strjoin(dirs[i++], slash_cmd);
-		if (access(full_cmd, F_OK)  == 0)
-			break;
+		if (access(full_cmd, F_OK) == 0)
+			break ;
 		free(full_cmd);
 	}
 	if (!dirs[i])
@@ -114,7 +114,7 @@ void	free_cmd(t_cmd *cmd)
 		free(cmd->adr);
 	if (cmd->args)
 	{
-		while(cmd->args[i])
+		while (cmd->args[i])
 			free(cmd->args[i++]);
 		free(cmd->args);
 	}
