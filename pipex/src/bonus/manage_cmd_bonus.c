@@ -50,21 +50,21 @@ int	fill_cmd(t_cmd *cmd, int num)
 		cmd->args = ft_split(cmd->av[idx], ' ');
 		if (!cmd->args)
 			return (0);
-		cmd->adr = get_cmd_adr(cmd->args[0], cmd->envp);
+		cmd->adr = get_cmd_adr(cmd->args[0], cmd->envp, cmd);
 		if (!cmd->adr)
 			return (0);
 	}
 	return (1);
 }
 
-char	*get_cmd_adr(char *cmd, char **envp)
+char	*get_cmd_adr(char *cmdname, char **envp, t_cmd *cmd)
 {
 	char	**dirs;
 	char	*full_cmd;
-	int		i;
+	char	*first_dir;
 
-	if (cmd[0] == '/')
-		return (ft_strdup(cmd));
+	if (cmdname[0] == '/' || cmdname[0] == '.')
+		return (use_given_path(cmdname, envp, cmd));
 	while (*envp)
 	{
 		if (ft_strncmp((const char *) *envp, "PATH=", 5) == 0)
@@ -76,11 +76,12 @@ char	*get_cmd_adr(char *cmd, char **envp)
 	dirs = ft_split(*envp, ':');
 	if (!dirs)
 		return (NULL);
-	full_cmd = search_path(cmd, dirs);
-	i = 0;
-	while (dirs[i])
-		free(dirs[i++]);
-	free(dirs);
+	first_dir = ft_strdup(dirs[0] + 5);
+	if (!first_dir)
+		return (NULL);
+	free(dirs[0]);
+	dirs[0] = first_dir;
+	full_cmd = search_path(cmdname, dirs);
 	return (full_cmd);
 }
 
@@ -104,21 +105,34 @@ char	*search_path(char *cmd, char **dirs)
 	if (!dirs[i])
 		full_cmd = ft_strdup("none");
 	free(slash_cmd);
+	i = 0;
+	while (dirs[i])
+		free(dirs[i++]);
+	free(dirs);
 	return (full_cmd);
 }
 
-void	free_cmd(t_cmd *cmd)
+char	*use_given_path(char *cmdname, char **envp, t_cmd *cmd)
 {
-	int	i;
+	char	*retstr;
 
-	i = 0;
-	if (cmd->adr)
-		free(cmd->adr);
-	if (cmd->args)
+	if (cmdname[0] == '/')
+		return (ft_strdup(cmdname));
+	while (*envp)
 	{
-		while (cmd->args[i])
-			free(cmd->args[i++]);
-		free(cmd->args);
+		if (ft_strncmp((const char *) *envp, "PWD=", 4) == 0)
+			break ;
+		envp++;
 	}
-	return ;
+	if (!*envp)
+		return (NULL);
+	retstr = ft_strjoin(ft_strdup(*envp + 4), cmdname + 1);
+	if (access(retstr, F_OK) != 0)
+	{
+		free(retstr);
+		return (ft_strdup("none"));
+	}
+	free(cmd->args[0]);
+	cmd->args[0] = ft_strdup(retstr);
+	return (retstr);
 }

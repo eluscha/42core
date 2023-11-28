@@ -51,16 +51,12 @@ void	fill_cmd_error(t_cmd *cmd)
 
 int	print_cmd_error(t_cmd *cmd)
 {
-	int	status;
-
-	status = 1;
 	if (ft_strncmp(cmd->adr, "none", 4) == 0)
 	{
 		ft_putstr_fd(cmd->args[0], 2);
-		ft_putstr_fd(": Command not found\n", 2);
-		status = 127;
+		ft_putstr_fd(": command not found\n", 2);
+		return (127);
 	}
-	else
-		perror(cmd->args[0]);
-	return (status);
+	perror(cmd->args[0]);
+	return (1);
 }

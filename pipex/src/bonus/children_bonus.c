@@ -16,6 +16,7 @@ void	first_child(t_cmd *cmd, int **pipes, int num_pipes)
 {
 	int		fd_file1;
 	char	*fname;
+	int		status;
 
 	if (cmd->here_doc)
 		fname = "/tmp/pipex_here_doc";
@@ -33,9 +34,9 @@ void	first_child(t_cmd *cmd, int **pipes, int num_pipes)
 	if (!fill_cmd(cmd, 0))
 		fill_cmd_error(cmd, pipes, num_pipes);
 	execve(cmd->adr, cmd->args, cmd->envp);
-	print_cmd_error(cmd);
+	status = print_cmd_error(cmd);
 	cleanup(cmd, pipes, num_pipes);
-	exit(EXIT_FAILURE);
+	exit(status);
 }
 
 void	bonus_loop(int **pipes, t_cmd *cmd, int num_pipes)
@@ -56,6 +57,8 @@ void	bonus_loop(int **pipes, t_cmd *cmd, int num_pipes)
 
 void	mid_child(t_cmd *cmd, int cnum, int **pipes, int num_pipes)
 {
+	int	status;
+
 	close_pipes(pipes, 0, cnum - 1);
 	close_pipes(pipes, cnum + 1, num_pipes);
 	close(pipes[cnum - 1][1]);
@@ -67,14 +70,15 @@ void	mid_child(t_cmd *cmd, int cnum, int **pipes, int num_pipes)
 	if (!fill_cmd(cmd, cnum))
 		fill_cmd_error(cmd, pipes, num_pipes);
 	execve(cmd->adr, cmd->args, cmd->envp);
-	print_cmd_error(cmd);
+	status = print_cmd_error(cmd);
 	cleanup(cmd, pipes, num_pipes);
-	exit(EXIT_FAILURE);
+	exit(status);
 }
 
 void	last_child(char *fname, t_cmd *cmd, int **pipes, int num_pipes)
 {
-	int	fd_file2;
+	int		fd_file2;
+	int		status;
 
 	if (cmd->here_doc)
 		fd_file2 = open(fname, O_APPEND | O_WRONLY | O_CREAT, 0777);
@@ -91,7 +95,23 @@ void	last_child(char *fname, t_cmd *cmd, int **pipes, int num_pipes)
 	if (!fill_cmd(cmd, num_pipes))
 		fill_cmd_error(cmd, pipes, num_pipes);
 	execve(cmd->adr, cmd->args, cmd->envp);
-	print_cmd_error(cmd);
+	status = print_cmd_error(cmd);
 	cleanup(cmd, pipes, num_pipes);
-	exit(errno);
+	exit(status);
+}
+
+void	free_cmd(t_cmd *cmd)
+{
+	int	i;
+
+	i = 0;
+	if (cmd->adr)
+		free(cmd->adr);
+	if (cmd->args)
+	{
+		while (cmd->args[i])
+			free(cmd->args[i++]);
+		free(cmd->args);
+	}
+	return ;
 }

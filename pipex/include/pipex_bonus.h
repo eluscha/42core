@@ -37,7 +37,8 @@ t_cmd	*init_struct(char **av, char **envp, int heredoc);
 void	write_tmp_file(t_cmd *cmd, int **pipes, int num_pipes);
 void	get_input(int fd, char *limiter, size_t len);
 int		fill_cmd(t_cmd *cmds, int n);
-char	*get_cmd_adr(char *cmd, char **envp);
+char	*get_cmd_adr(char *cmdname, char **envp, t_cmd *cmd);
+char	*use_given_path(char *cmdname, char **envp, t_cmd *cmd);
 char	*search_path(char *cmd, char **dirs);
 void	first_child(t_cmd *cmd, int **pipes, int num_pipes);
 void	bonus_loop(int **pipes, t_cmd *cmds, int num_cmds);
@@ -51,7 +52,7 @@ void	check_init_error(t_cmd *cmd, int **pipes, int num_pipes);
 void	check_fork_error(pid_t pid, int **pipes, int num_pipes);
 void	file_error(char *fname, t_cmd *cmd, int **pipes, int num_pipes);
 void	fill_cmd_error(t_cmd *cmd, int **pipes, int num_pipes);
-void	print_cmd_error(t_cmd *cmd);
+int		print_cmd_error(t_cmd *cmd);
 void	wait_cleanup_exit(pid_t pid, t_cmd *cmd, int **pipes, int num_pipes);
 void	cleanup(t_cmd *cmd, int **pipes, int num_pipes);
 
