@@ -14,7 +14,7 @@
 
 void	first_child(t_cmd *cmd, int **pipes, int num_pipes)
 {
-	int	fd_file1;
+	int		fd_file1;
 	char	*fname;
 
 	if (cmd->here_doc)
@@ -30,7 +30,7 @@ void	first_child(t_cmd *cmd, int **pipes, int num_pipes)
 	dup2(pipes[0][1], 1);
 	close(fd_file1);
 	close(pipes[0][1]);
-	if (!fill_cmd(cmd, 0, cmd->here_doc))
+	if (!fill_cmd(cmd, 0))
 		fill_cmd_error(cmd, pipes, num_pipes);
 	execve(cmd->adr, cmd->args, cmd->envp);
 	print_cmd_error(cmd);
@@ -64,7 +64,7 @@ void	mid_child(t_cmd *cmd, int cnum, int **pipes, int num_pipes)
 	dup2(pipes[cnum][1], 1);
 	close(pipes[cnum - 1][0]);
 	close(pipes[cnum][1]);
-	if (!fill_cmd(cmd, cnum, cmd->here_doc))
+	if (!fill_cmd(cmd, cnum))
 		fill_cmd_error(cmd, pipes, num_pipes);
 	execve(cmd->adr, cmd->args, cmd->envp);
 	print_cmd_error(cmd);
@@ -88,7 +88,7 @@ void	last_child(char *fname, t_cmd *cmd, int **pipes, int num_pipes)
 	dup2(fd_file2, 1);
 	close(fd_file2);
 	close(pipes[num_pipes - 1][0]);
-	if (!fill_cmd(cmd, num_pipes, cmd->here_doc))
+	if (!fill_cmd(cmd, num_pipes))
 		fill_cmd_error(cmd, pipes, num_pipes);
 	execve(cmd->adr, cmd->args, cmd->envp);
 	print_cmd_error(cmd);

@@ -21,13 +21,14 @@ void	check_init_error(t_cmd *cmd, int **pipes, int num_pipes)
 	exit(EXIT_FAILURE);
 }
 
-void	check_fork_error(pid_t pid, int **pipes, int num_pipes) 
+void	check_fork_error(pid_t pid, int **pipes, int num_pipes)
 {
 	if (pid != -1)
 		return ;
 	perror("Fork");
 	close_pipes(pipes, 0, num_pipes);
-	while (wait(NULL) > 0);
+	while (wait(NULL) > 0)
+		continue ;
 	free_pipes(pipes, num_pipes); 
 	exit(EXIT_FAILURE);
 }
@@ -37,14 +38,10 @@ void	file_error(char *fname, t_cmd *cmd, int **pipes, int num_pipes)
 	close_pipes(pipes, 0, num_pipes);
 	free_pipes(pipes, num_pipes);
 	if (fname)
-	{
 		perror(fname);
-		free_cmd(cmd); //i do not think o need that!!!
-	}
 	else
 		perror("Failed to write temp");
 	free(cmd);
-	//ft_putstr_fd(ft_itoa(errno), 2); //
 	exit(EXIT_FAILURE);
 }
 
@@ -58,7 +55,7 @@ void	fill_cmd_error(t_cmd *cmd, int **pipes, int num_pipes)
 }
 
 void	print_cmd_error(t_cmd *cmd)
-{	
+{
 	if (ft_strncmp(cmd->adr, "none", 4) == 0)
 	{
 		ft_putstr_fd(cmd->args[0], 2);

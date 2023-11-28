@@ -24,18 +24,18 @@
 
 typedef struct s_cmd
 {
-    char    **av;
-    char    **envp;
-    char    *adr;
-    char    **args;
+	char	**av;
+	char	**envp;
+	char	*adr;
+	char	**args;
 }	t_cmd;
 
 void	check_argc(int ac);
 t_cmd	*init_struct(char **av, char **envp);
-int     fill_cmd(t_cmd *cmds, int num);
+int		fill_cmd(t_cmd *cmds, int num);
 char	*get_cmd_adr(char *cmd, char **envp);
 char	*search_path(char *cmd, char **dirs);
-void	first_child(t_cmd *cmd,int *onepipe);
+void	first_child(t_cmd *cmd, int *onepipe);
 void	last_child(t_cmd *cmd, int *onepipe);
 void	free_cmd(t_cmd *cmd);
 void	check_init_error(t_cmd *cmd, int *onepipe);

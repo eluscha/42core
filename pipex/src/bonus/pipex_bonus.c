@@ -43,9 +43,11 @@ void	write_tmp_file(t_cmd *cmd, int **pipes, int num_pipes)
 {
 	int		fd;
 	char	*limiter;
+	char	*name;
 	size_t	len;
 
-	fd = open("/tmp/pipex_here_doc",  O_CREAT | O_EXCL | O_WRONLY | O_APPEND, 0777);
+	name = "/tmp/pipex_here_doc";
+	fd = open(name, O_CREAT | O_EXCL | O_WRONLY | O_APPEND, 0777);
 	if (fd == -1)
 		file_error(0, cmd, pipes, num_pipes);
 	limiter = cmd->av[2];
@@ -55,10 +57,10 @@ void	write_tmp_file(t_cmd *cmd, int **pipes, int num_pipes)
 	return ;
 }
 
-void	get_input(int fd, char *limiter, size_t len)	
+void	get_input(int fd, char *limiter, size_t len)
 {
 	char	*line;
-	
+
 	ft_putstr_fd("here_doc: ", 0);
 	line = get_next_line(0);
 	while (line)
@@ -73,7 +75,7 @@ void	get_input(int fd, char *limiter, size_t len)
 		ft_putstr_fd("here_doc: ", 0);
 		line = get_next_line(0);
 	}
-    if (line)
+	if (line)
 		free(line);
 	return ;
 }
@@ -81,10 +83,11 @@ void	get_input(int fd, char *limiter, size_t len)
 void	wait_cleanup_exit(pid_t pid, t_cmd *cmd, int **pipes, int num_pipes)
 {
 	int	status;
-	
+
 	status = 0;
 	waitpid(pid, &status, 0);
-	while (wait(NULL) != -1);
+	while (wait(NULL) != -1)
+		continue ;
 	if (cmd->here_doc)
 		unlink("/tmp/pipex_here_doc");
 	cleanup(cmd, pipes, num_pipes);

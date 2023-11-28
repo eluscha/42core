@@ -21,12 +21,12 @@ BONUS_OBJS = $(BONUS_SRCS:.c=.o)
 
 all:		$(NAME)
 
-$(NAME):	$(OBJS)
+$(NAME):	$(OBJS) $(INCLUDE)/pipex.h
 			@make -C $(LIBFT)
 			$(CC) $(OBJS) $(LIBFT)/libft.a -ldl -o $(NAME)
 			@echo "pipex compiled!"
 
-.bonus:		$(BONUS_OBJS)
+.bonus:		$(BONUS_OBJS) $(INCLUDE)/pipex_bonus.h
 			@touch $@
 			@make -C $(LIBFT)
 			$(CC) $(BONUS_OBJS) $(LIBFT)/libft.a -ldl -o $(NAME)
@@ -51,7 +51,7 @@ re:				fclean all
 			@echo "Cleaned and rebuilt everything for pipex!"
 
 norm:
-			@norminette $(SRCS)
+			@norminette $(SRCS) $(BONUS_SRCS)
 			@norminette -R CheckDefine $(INCLUDE)
 			@make norm -C $(LIBFT)
 

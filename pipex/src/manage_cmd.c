@@ -35,24 +35,22 @@ int	fill_cmd(t_cmd *cmd, int num)
 	{
 		cmd->adr = ft_strdup("/"); 
 		cmd->args = ft_calloc(sizeof(char *), 2);
-		if (cmd->args)
-		{
-			cmd->args[0] = ft_strdup("");
-			if (cmd->adr && cmd->args[0])
-				return (1);
-		}
+		if (!cmd->args)
+			return (0);
+		cmd->args[0] = ft_strdup("");
+		if (!cmd->adr || !cmd->args[0])
+			return (0);
 	}
 	else
 	{
 		cmd->args = ft_split(cmd->av[num + 2], ' ');
-		if (cmd->args)
-		{
-			cmd->adr = get_cmd_adr(cmd->args[0], cmd->envp);
-			if (cmd->adr)
-				return (1);
-		}
+		if (!cmd->args)
+			return (0);
+		cmd->adr = get_cmd_adr(cmd->args[0], cmd->envp);
+		if (!cmd->adr)
+			return (0);
 	}
-	return (0);
+	return (1);
 }
 
 char	*get_cmd_adr(char *cmd, char **envp)

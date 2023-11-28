@@ -24,22 +24,22 @@
 
 typedef struct s_cmd
 {
-    char    **av;
-    char    **envp;
-    char    *adr;
-    char    **args;
-    int     here_doc;
+	char	**av;
+	char	**envp;
+	char	*adr;
+	char	**args;
+	int		here_doc;
 }	t_cmd;
 
-int	    get_num_pipes(int ac, char **av, int *here_doc);
+int		get_num_pipes(int ac, char **av, int *here_doc);
 int		**create_pipes(int num);
 t_cmd	*init_struct(char **av, char **envp, int heredoc);
-void     write_tmp_file(t_cmd *cmd, int **pipes, int num_pipes);
+void	write_tmp_file(t_cmd *cmd, int **pipes, int num_pipes);
 void	get_input(int fd, char *limiter, size_t len);
-int     fill_cmd(t_cmd *cmds, int n, int here_doc);
+int		fill_cmd(t_cmd *cmds, int n);
 char	*get_cmd_adr(char *cmd, char **envp);
 char	*search_path(char *cmd, char **dirs);
-void	first_child(t_cmd *cmd,int **pipes, int num_pipes);
+void	first_child(t_cmd *cmd, int **pipes, int num_pipes);
 void	bonus_loop(int **pipes, t_cmd *cmds, int num_cmds);
 void	mid_child(t_cmd *cmd, int cnum, int **pipes, int num_pipes);
 void	last_child(char *fname, t_cmd *cmd, int **pipes, int num_pipes);

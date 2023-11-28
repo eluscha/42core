@@ -30,30 +30,31 @@ t_cmd	*init_struct(char **av, char **envp, int heredoc)
 	return (cmd);
 }
 
-int	fill_cmd(t_cmd *cmd, int num, int here_doc)
+int	fill_cmd(t_cmd *cmd, int num)
 {
-	if (ft_strlen(cmd->av[num + 2 + here_doc]) == 0)
+	int	idx;
+
+	idx = num + 2 + cmd->here_doc;
+	if (ft_strlen(cmd->av[idx]) == 0)
 	{
 		cmd->adr = ft_strdup("/"); 
 		cmd->args = ft_calloc(sizeof(char *), 2);
-		if (cmd->args)
-		{
-			cmd->args[0] = ft_strdup("");
-			if (cmd->adr && cmd->args[0])
-				return (1);
-		}	
+		if (!cmd->args)
+			return (0);
+		cmd->args[0] = ft_strdup("");
+		if (!cmd->adr || !cmd->args[0])
+			return (0);
 	}
 	else
 	{
-		cmd->args = ft_split(cmd->av[num + 2 + here_doc], ' ');
-		if (cmd->args)
-		{
-			cmd->adr = get_cmd_adr(cmd->args[0], cmd->envp);
-			if (cmd->adr)
-				return (1);
-		}
+		cmd->args = ft_split(cmd->av[idx], ' ');
+		if (!cmd->args)
+			return (0);
+		cmd->adr = get_cmd_adr(cmd->args[0], cmd->envp);
+		if (!cmd->adr)
+			return (0);
 	}
-	return (0);
+	return (1);
 }
 
 char	*get_cmd_adr(char *cmd, char **envp)
@@ -96,8 +97,8 @@ char	*search_path(char *cmd, char **dirs)
 	while (dirs[i])
 	{
 		full_cmd = ft_strjoin(dirs[i++], slash_cmd);
-		if (access(full_cmd, F_OK)  == 0)
-			break;
+		if (access(full_cmd, F_OK) == 0)
+			break ;
 		free(full_cmd);
 	}
 	if (!dirs[i])
@@ -115,7 +116,7 @@ void	free_cmd(t_cmd *cmd)
 		free(cmd->adr);
 	if (cmd->args)
 	{
-		while(cmd->args[i])
+		while (cmd->args[i])
 			free(cmd->args[i++]);
 		free(cmd->args);
 	}
