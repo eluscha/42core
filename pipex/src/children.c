@@ -16,6 +16,7 @@ void	first_child(t_cmd *cmd, int *onepipe)
 {
 	int		fd_file1;
 	char	*fname;
+	int		status;
 
 	fname = cmd->av[1];
 	fd_file1 = open(fname, O_RDONLY);
@@ -29,16 +30,17 @@ void	first_child(t_cmd *cmd, int *onepipe)
 	if (!fill_cmd(cmd, 0))
 		fill_cmd_error(cmd);
 	execve(cmd->adr, cmd->args, cmd->envp);
-	print_cmd_error(cmd);
+	status = print_cmd_error(cmd);
 	free_cmd(cmd);
 	free(cmd);
-	exit(EXIT_FAILURE);
+	exit(status);
 }
 
 void	last_child(t_cmd *cmd, int *onepipe)
 {
 	int		fd_file2;
 	char	*fname;
+	int		status;
 
 	fname = cmd->av[4];
 	fd_file2 = open(fname, O_TRUNC | O_WRONLY | O_CREAT, 0777);
@@ -52,8 +54,26 @@ void	last_child(t_cmd *cmd, int *onepipe)
 	if (!fill_cmd(cmd, 1))
 		fill_cmd_error(cmd);
 	execve(cmd->adr, cmd->args, cmd->envp);
-	print_cmd_error(cmd);
+	status = print_cmd_error(cmd);
 	free_cmd(cmd);
 	free(cmd);
-	exit(errno);
+	exit(status);
+}
+
+void	free_cmd(t_cmd *cmd)
+{
+	int	i;
+
+	if (cmd->adr)
+		free(cmd->adr);
+	if (cmd->args)
+	{
+		if (cmd->args[0])
+			free(cmd->args[0]);
+		i = 1;
+		while (cmd->args[i])
+			free(cmd->args[i++]);
+		free(cmd->args);
+	}
+	return ;
 }

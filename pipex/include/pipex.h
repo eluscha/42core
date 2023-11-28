@@ -33,7 +33,8 @@ typedef struct s_cmd
 void	check_argc(int ac);
 t_cmd	*init_struct(char **av, char **envp);
 int		fill_cmd(t_cmd *cmds, int num);
-char	*get_cmd_adr(char *cmd, char **envp);
+char	*get_cmd_adr(char *cmdname, char **envp, t_cmd *cmd);
+char	*special_cases(char *cmdname, char **envp, t_cmd *cmd);
 char	*search_path(char *cmd, char **dirs);
 void	first_child(t_cmd *cmd, int *onepipe);
 void	last_child(t_cmd *cmd, int *onepipe);
@@ -42,7 +43,7 @@ void	check_init_error(t_cmd *cmd, int *onepipe);
 void	check_fork_error(pid_t pid, int *onepipe);
 void	file_error(char *fname, t_cmd *cmd, int *onepipe);
 void	fill_cmd_error(t_cmd *cmd);
-void	print_cmd_error(t_cmd *cmd);
+int		print_cmd_error(t_cmd *cmd);
 void	wait_cleanup_exit(pid_t pid, t_cmd *cmd);
 
 #endif
