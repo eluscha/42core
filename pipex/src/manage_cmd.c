@@ -60,7 +60,7 @@ char	*get_cmd_adr(char *cmdname, char **envp, t_cmd *cmd)
 	char	*first_dir;
 
 	if (cmdname[0] == '/' || cmdname[0] == '.')
-		return (special_cases(cmdname, envp, cmd));
+		return (use_given_path(cmdname, envp, cmd));
 	while (*envp)
 	{
 		if (ft_strncmp((const char *) *envp, "PATH=", 5) == 0)
@@ -81,7 +81,7 @@ char	*get_cmd_adr(char *cmdname, char **envp, t_cmd *cmd)
 	return (full_cmd);
 }
 
-char	*special_cases(char *cmdname, char **envp, t_cmd *cmd)
+char	*use_given_path(char *cmdname, char **envp, t_cmd *cmd)
 {
 	char	*retstr;
 

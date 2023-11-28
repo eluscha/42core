@@ -34,7 +34,7 @@ void	check_argc(int ac);
 t_cmd	*init_struct(char **av, char **envp);
 int		fill_cmd(t_cmd *cmds, int num);
 char	*get_cmd_adr(char *cmdname, char **envp, t_cmd *cmd);
-char	*special_cases(char *cmdname, char **envp, t_cmd *cmd);
+char	*use_given_path(char *cmdname, char **envp, t_cmd *cmd);
 char	*search_path(char *cmd, char **dirs);
 void	first_child(t_cmd *cmd, int *onepipe);
 void	last_child(t_cmd *cmd, int *onepipe);
