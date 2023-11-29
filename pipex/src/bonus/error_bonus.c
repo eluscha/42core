@@ -21,7 +21,7 @@ void	check_init_error(t_cmd *cmd, int **pipes, int num_pipes)
 	exit(EXIT_FAILURE);
 }
 
-void	check_fork_error(pid_t pid, int **pipes, int num_pipes)
+void	check_fork_error(pid_t pid, int **pipes, int num_pipes, t_cmd *cmd)
 {
 	if (pid != -1)
 		return ;
@@ -29,7 +29,8 @@ void	check_fork_error(pid_t pid, int **pipes, int num_pipes)
 	close_pipes(pipes, 0, num_pipes);
 	while (wait(NULL) > 0)
 		continue ;
-	free_pipes(pipes, num_pipes); 
+	free_pipes(pipes, num_pipes);
+	free(cmd);
 	exit(EXIT_FAILURE);
 }
 

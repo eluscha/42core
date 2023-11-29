@@ -49,7 +49,7 @@ void	close_pipes(int **pipes, int start, int end);
 void	free_cmd(t_cmd *cmd);
 void	pipe_error(int **pipes, int i);
 void	check_init_error(t_cmd *cmd, int **pipes, int num_pipes);
-void	check_fork_error(pid_t pid, int **pipes, int num_pipes);
+void	check_fork_error(pid_t pid, int **pipes, int num_pipes, t_cmd *cmd);
 void	file_error(char *fname, t_cmd *cmd, int **pipes, int num_pipes);
 void	fill_cmd_error(t_cmd *cmd, int **pipes, int num_pipes);
 int		print_cmd_error(t_cmd *cmd);

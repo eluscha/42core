@@ -27,11 +27,11 @@ int	main(int argc, char **argv, char **envp)
 	cmd = init_struct(argv, envp);
 	check_init_error(cmd, onepipe);
 	pid = fork();
-	check_fork_error(pid, onepipe);
+	check_fork_error(pid, onepipe, cmd);
 	if (pid == 0)
 		first_child(cmd, onepipe);
 	pid = fork();
-	check_fork_error(pid, onepipe);
+	check_fork_error(pid, onepipe, cmd);
 	if (pid == 0)
 		last_child(cmd, onepipe);
 	close(onepipe[0]);

@@ -48,7 +48,7 @@ void	bonus_loop(int **pipes, t_cmd *cmd, int num_pipes)
 	while (++cnum < num_pipes)
 	{
 		pid = fork();
-		check_fork_error(pid, pipes, num_pipes);
+		check_fork_error(pid, pipes, num_pipes, cmd);
 		if (pid == 0)
 			mid_child(cmd, cnum, pipes, num_pipes);
 	}

@@ -21,7 +21,7 @@ void	check_init_error(t_cmd *cmd, int *onepipe)
 	exit(EXIT_FAILURE);
 }
 
-void	check_fork_error(pid_t pid, int *onepipe)
+void	check_fork_error(pid_t pid, int *onepipe, t_cmd *cmd)
 {
 	if (pid != -1)
 		return ;
@@ -29,6 +29,7 @@ void	check_fork_error(pid_t pid, int *onepipe)
 	close(onepipe[1]);
 	while (wait(NULL) != -1)
 		continue ;
+	free(cmd);
 	exit(EXIT_FAILURE);
 }
 

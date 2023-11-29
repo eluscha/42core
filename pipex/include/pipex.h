@@ -41,7 +41,7 @@ void	first_child(t_cmd *cmd, int *onepipe);
 void	last_child(t_cmd *cmd, int *onepipe);
 void	free_cmd(t_cmd *cmd);
 void	check_init_error(t_cmd *cmd, int *onepipe);
-void	check_fork_error(pid_t pid, int *onepipe);
+void	check_fork_error(pid_t pid, int *onepipe, t_cmd *cmd);
 void	file_error(char *fname, t_cmd *cmd, int *onepipe);
 void	fill_cmd_error(t_cmd *cmd);
 int		print_cmd_error(t_cmd *cmd);

@@ -27,12 +27,12 @@ int	main(int argc, char **argv, char **envp)
 	if (here_doc)
 		write_tmp_file(cmd, pipes, num_pipes);
 	pid = fork();
-	check_fork_error(pid, pipes, num_pipes);
+	check_fork_error(pid, pipes, num_pipes, cmd);
 	if (pid == 0)
 		first_child(cmd, pipes, num_pipes);
 	bonus_loop(pipes, cmd, num_pipes);
 	pid = fork();
-	check_fork_error(pid, pipes, num_pipes);
+	check_fork_error(pid, pipes, num_pipes, cmd);
 	if (pid == 0)
 		last_child(argv[argc - 1], cmd, pipes, num_pipes);
 	close_pipes(pipes, 0, num_pipes);
