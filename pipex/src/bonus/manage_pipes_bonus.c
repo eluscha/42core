@@ -58,8 +58,7 @@ void	pipe_error(int **pipes, int i)
 	if (pipes[i])
 		free(pipes[i]);
 	close_pipes(pipes, 0, i);
-	while (--i >= 0)
-		free(pipes[i]);
+	free_pipes(pipes, i);
 	exit(EXIT_FAILURE);
 }
 
