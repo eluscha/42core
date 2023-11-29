@@ -61,7 +61,7 @@ void	get_input(int fd, char *limiter, size_t len)
 {
 	char	*line;
 
-	ft_putstr_fd("here_doc: ", 0);
+	ft_putstr_fd("> ", 0);
 	line = get_next_line(0);
 	while (line)
 	{
@@ -72,7 +72,7 @@ void	get_input(int fd, char *limiter, size_t len)
 		}
 		write(fd, line, ft_strlen(line));
 		free(line);
-		ft_putstr_fd("here_doc: ", 0);
+		ft_putstr_fd("> ", 0);
 		line = get_next_line(0);
 	}
 	if (line)

@@ -8,8 +8,8 @@ CFLAGS		= -Wall -Werror -Wextra -I
 
 #Sources
 
-SRC_FILES = pipex children manage_cmd error
-BONUS_SRC_FILES = pipex_bonus children_bonus manage_cmd_bonus manage_pipes_bonus error_bonus
+SRC_FILES = pipex children init_and_free manage_cmd error
+BONUS_SRC_FILES = pipex_bonus children_bonus init_and_free_bonus manage_cmd_bonus manage_pipes_bonus error_bonus
 
 SRCS = $(addprefix $(SRC_DIR), $(addsuffix .c, $(SRC_FILES)))
 OBJS = $(SRCS:.c=.o) 

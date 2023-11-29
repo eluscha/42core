@@ -37,6 +37,7 @@ t_cmd	*init_struct(char **av, char **envp, int heredoc);
 void	write_tmp_file(t_cmd *cmd, int **pipes, int num_pipes);
 void	get_input(int fd, char *limiter, size_t len);
 int		fill_cmd(t_cmd *cmds, int n);
+int		bash_cmd(char *str, t_cmd *cmd);
 char	*get_cmd_adr(char *cmdname, char **envp, t_cmd *cmd);
 char	*use_given_path(char *cmdname, char **envp, t_cmd *cmd);
 char	*search_path(char *cmd, char **dirs);

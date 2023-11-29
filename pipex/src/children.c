@@ -59,21 +59,3 @@ void	last_child(t_cmd *cmd, int *onepipe)
 	free(cmd);
 	exit(status);
 }
-
-void	free_cmd(t_cmd *cmd)
-{
-	int	i;
-
-	if (cmd->adr)
-		free(cmd->adr);
-	if (cmd->args)
-	{
-		if (cmd->args[0])
-			free(cmd->args[0]);
-		i = 1;
-		while (cmd->args[i])
-			free(cmd->args[i++]);
-		free(cmd->args);
-	}
-	return ;
-}

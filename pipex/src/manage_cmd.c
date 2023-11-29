@@ -12,26 +12,14 @@
 
 #include "pipex.h"
 
-t_cmd	*init_struct(char **av, char **envp)
-{
-	t_cmd	*cmd;
-
-	cmd = malloc(sizeof(t_cmd));
-	if (!cmd)
-		ft_putstr_fd("Failed to malloc space for the struct!\n", 2);
-	else
-	{
-		cmd->av = av;
-		cmd->envp = envp;
-		cmd->adr = NULL;
-		cmd->args = NULL;
-	}
-	return (cmd);
-}
-
 int	fill_cmd(t_cmd *cmd, int num)
 {
-	if (ft_strlen(cmd->av[num + 2]) == 0)
+	char	*s;
+
+	s = cmd->av[num + 2];
+	if (ft_strchr(s, '\'') || ft_strchr(s, '\"'))
+		return (bash_cmd(s, cmd));
+	else if (ft_strlen(s) == 0)
 	{
 		cmd->adr = ft_strdup("/"); 
 		cmd->args = ft_calloc(sizeof(char *), 2);
@@ -40,16 +28,14 @@ int	fill_cmd(t_cmd *cmd, int num)
 		cmd->args[0] = ft_strdup("");
 		if (!cmd->adr || !cmd->args[0])
 			return (0);
+		return (1);
 	}
-	else
-	{
-		cmd->args = ft_split(cmd->av[num + 2], ' ');
-		if (!cmd->args)
-			return (0);
-		cmd->adr = get_cmd_adr(cmd->args[0], cmd->envp, cmd);
-		if (!cmd->adr)
-			return (0);
-	}
+	cmd->args = ft_split(s, ' ');
+	if (!cmd->args)
+		return (0);
+	cmd->adr = get_cmd_adr(cmd->args[0], cmd->envp, cmd);
+	if (!cmd->adr)
+		return (0);
 	return (1);
 }
 
@@ -131,4 +117,24 @@ char	*search_path(char *cmd, char **dirs)
 		free(dirs[i++]);
 	free(dirs);
 	return (full_cmd);
+}
+
+int	bash_cmd(char *str, t_cmd *cmd)
+{
+	cmd->adr = get_cmd_adr("bash", cmd->envp, cmd);
+	if (!cmd->adr)
+		return (0);
+	cmd->args = ft_calloc(sizeof(char *), 4);
+	if (!cmd->args)
+		return (0);
+	cmd->args[0] = ft_strdup("bash");
+	if (!cmd->args[0])
+		return (0);
+	cmd->args[1] = ft_strdup("-c");
+	if (!cmd->args[1])
+		return (0);
+	cmd->args[2] = ft_strdup(str);
+	if (!cmd->args[2])
+		return (0);
+	return (1);
 }

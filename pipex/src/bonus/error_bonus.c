@@ -62,7 +62,7 @@ int	print_cmd_error(t_cmd *cmd)
 	if (ft_strncmp(cmd->adr, "none", 4) == 0)
 	{
 		ft_putstr_fd(cmd->args[0], 2);
-		ft_putstr_fd(": Command not found\n", 2);
+		ft_putstr_fd(": command not found\n", 2);
 		status = 127;
 	}
 	else

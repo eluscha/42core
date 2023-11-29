@@ -12,30 +12,14 @@
 
 #include "pipex_bonus.h"
 
-t_cmd	*init_struct(char **av, char **envp, int heredoc)
-{
-	t_cmd	*cmd;
-
-	cmd = malloc(sizeof(t_cmd));
-	if (!cmd)
-		ft_putstr_fd("Failed to malloc space for the struct!\n", 2);
-	else
-	{
-		cmd->av = av;
-		cmd->envp = envp;
-		cmd->adr = NULL;
-		cmd->args = NULL;
-		cmd->here_doc = heredoc;
-	}
-	return (cmd);
-}
-
 int	fill_cmd(t_cmd *cmd, int num)
 {
-	int	idx;
+	char	*s;
 
-	idx = num + 2 + cmd->here_doc;
-	if (ft_strlen(cmd->av[idx]) == 0)
+	s = cmd->av[num + 2 + cmd->here_doc];
+	if (ft_strchr(s, '\'') || ft_strchr(s, '\"'))
+		return (bash_cmd(s, cmd));
+	if (ft_strlen(s) == 0)
 	{
 		cmd->adr = ft_strdup("/"); 
 		cmd->args = ft_calloc(sizeof(char *), 2);
@@ -47,7 +31,7 @@ int	fill_cmd(t_cmd *cmd, int num)
 	}
 	else
 	{
-		cmd->args = ft_split(cmd->av[idx], ' ');
+		cmd->args = ft_split(s, ' ');
 		if (!cmd->args)
 			return (0);
 		cmd->adr = get_cmd_adr(cmd->args[0], cmd->envp, cmd);
@@ -135,4 +119,24 @@ char	*use_given_path(char *cmdname, char **envp, t_cmd *cmd)
 	free(cmd->args[0]);
 	cmd->args[0] = ft_strdup(retstr);
 	return (retstr);
+}
+
+int	bash_cmd(char *str, t_cmd *cmd)
+{
+	cmd->adr = get_cmd_adr("bash", cmd->envp, cmd);
+	if (!cmd->adr)
+		return (0);
+	cmd->args = ft_calloc(sizeof(char *), 4);
+	if (!cmd->args)
+		return (0);
+	cmd->args[0] = ft_strdup("bash");
+	if (!cmd->args[0])
+		return (0);
+	cmd->args[1] = ft_strdup("-c");
+	if (!cmd->args[1])
+		return (0);
+	cmd->args[2] = ft_strdup(str);
+	if (!cmd->args[2])
+		return (0);
+	return (1);
 }

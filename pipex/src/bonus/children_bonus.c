@@ -99,19 +99,3 @@ void	last_child(char *fname, t_cmd *cmd, int **pipes, int num_pipes)
 	cleanup(cmd, pipes, num_pipes);
 	exit(status);
 }
-
-void	free_cmd(t_cmd *cmd)
-{
-	int	i;
-
-	i = 0;
-	if (cmd->adr)
-		free(cmd->adr);
-	if (cmd->args)
-	{
-		while (cmd->args[i])
-			free(cmd->args[i++]);
-		free(cmd->args);
-	}
-	return ;
-}

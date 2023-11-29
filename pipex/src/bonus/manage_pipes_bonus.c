@@ -14,7 +14,7 @@
 
 int	get_num_pipes(int ac, char **av, int *here_doc)
 {
-	if (ac > 4)
+	if (ac > 5)
 	{
 		if (ft_strncmp(av[1], "here_doc", 8) == 0)
 		{

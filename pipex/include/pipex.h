@@ -28,11 +28,13 @@ typedef struct s_cmd
 	char	**envp;
 	char	*adr;
 	char	**args;
+	int		bash;
 }	t_cmd;
 
 void	check_argc(int ac);
 t_cmd	*init_struct(char **av, char **envp);
 int		fill_cmd(t_cmd *cmds, int num);
+int		bash_cmd(char *str, t_cmd *cmd);
 char	*get_cmd_adr(char *cmdname, char **envp, t_cmd *cmd);
 char	*use_given_path(char *cmdname, char **envp, t_cmd *cmd);
 char	*search_path(char *cmd, char **dirs);
