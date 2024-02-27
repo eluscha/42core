@@ -3,6 +3,7 @@
 
 # include <unistd.h>
 # include <stdlib.h>
+# include <stdio.h>  //so far just for printf
 # include "libft.h"
 
 #endif

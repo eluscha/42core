@@ -27,7 +27,6 @@ typedef struct s_cmd
 	char	**envp;
 	char	*adr;
 	char	**args;
-	int		bash;
 }	t_cmd;
 
 void	check_argc(int ac);
