@@ -33,26 +33,50 @@ int	*get_num(char *str, int *result)
 	return (result);
 }
 
+void printstack(t_stack *head)
+{
+	int i = 0;
+
+	while (i++ < 10)
+	{
+		printf("%i\n", head->num);
+		head = head->next;
+	}
+}
+
 int	main(int argc, char **argv)
 {
+	int	err;
 	int	i;
 	int num;
+	t_stack *head;
+	t_stack *tail;
 
+	err = 0;
+	head = NULL;
+	tail = NULL;
 	if (argc == 1)
+		err = 1;
+	else if (get_num(argv[1], &num))
+	{
+		head = newnode(num);
+		tail = head;
+	}
+	i = 1;
+	while (++i < argc && !err && tail)
+	{
+		if (get_num(argv[i], &num))
+			tail = add_to_tail(num, tail);
+		else
+			err = 1;
+	}
+	if (err || !tail)
 	{
 		ft_putstr_fd("Error\n", 2);
 		exit(EXIT_FAILURE);
 	}
-	i = 0;
-	while (++i < argc)
-	{
-		if (get_num(argv[i], &num))
-			printf("num is %i\n", num);
-		else
-		{
-			ft_putstr_fd("Error\n", 2);
-			exit(EXIT_FAILURE);
-		}
-	}
+	tail->next = head;
+    head->pre = tail;
+	printstack(head);
 	exit(EXIT_SUCCESS);
 }
