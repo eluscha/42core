@@ -8,6 +8,17 @@ typedef struct s_stack
 	struct s_stack  *pre;
 }		t_stack;
 
+typedef struct s_ops
+{
+	int	ra;
+	int	rra;
+	int	rb;
+	int rrb;
+	int rr;
+	int rrr;
+	int sum;
+}		t_ops;
+
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdio.h>  //so far just for printf

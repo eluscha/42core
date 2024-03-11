@@ -41,12 +41,17 @@ void reverse_rotate(t_stack **head)
 
 void swap(t_stack **head)
 {
+	if ((*head)->next->next == *head)
+	{
+		rotate(head);
+		return ;
+	}
 	t_stack *oldhead = *head;
 	t_stack *newhead = oldhead->next;
 	t_stack *third = newhead->next;
 	t_stack *tail = oldhead->pre;
 
-	tail->next = newhead;
+	tail->next = newhead; 
 	newhead->pre = tail;
 	newhead->next = oldhead;
 	oldhead->pre = newhead;
