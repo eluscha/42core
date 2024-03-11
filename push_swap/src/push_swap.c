@@ -1,7 +1,7 @@
 
 #include "push_swap.h"
 
-int	*get_num(char *str, int *result)
+int	get_num(char *str, int *result)
 {
 	int	i;
 	int	neg;
@@ -20,63 +20,124 @@ int	*get_num(char *str, int *result)
 		if (i - neg == 9)
 		{
 			if (str[i] - 48 > 7 + neg)
-				return (NULL);
+				return (0);
 		}
 		else if (i - neg == 10)
-			return (NULL);
+			return (0);
 		num *= 10;
 		num += str[i++] - 48;
 	}
 	if (str[i])
-		return (NULL);
+		return (0);
 	*result = num * (-2 * neg + 1); 
-	return (result);
+	return (1);
 }
 
 void printstack(t_stack *head)
 {
-	int i = 0;
+	t_stack * ptr = head;
 
-	while (i++ < 10)
+	printf("%i\n", ptr->num);
+	ptr = ptr->next;
+	while (ptr != head)
 	{
-		printf("%i\n", head->num);
-		head = head->next;
+		printf("%i\n", ptr->num);
+		ptr = ptr->next;
 	}
 }
 
-int	main(int argc, char **argv)
+
+t_stack	*get_stack_a(int ac, char **av)
 {
-	int	err;
+	int	num;
 	int	i;
-	int num;
 	t_stack *head;
 	t_stack *tail;
 
-	err = 0;
-	head = NULL;
-	tail = NULL;
-	if (argc == 1)
-		err = 1;
-	else if (get_num(argv[1], &num))
+	if (get_num(av[1], &num))
 	{
-		head = newnode(num);
+		head = newnode(num, NULL, NULL);
 		tail = head;
 	}
 	i = 1;
-	while (++i < argc && !err && tail)
+	while (++i < ac && tail)
 	{
-		if (get_num(argv[i], &num))
+		if (get_num(av[i], &num))
 			tail = add_to_tail(num, tail);
 		else
-			err = 1;
+			tail = NULL;
 	}
-	if (err || !tail)
+	if (!tail)
+	{
+		tail = head->next;
+		while(tail->next)
+		{
+			tail = tail->next;
+			free(tail->pre);
+		}
+		free(head);
+		return(NULL);
+	}
+	return(head);
+}
+
+int	solve_three(t_stack *head)
+{
+	int num1;
+	int num2;
+	int num3;
+
+	if (head->next == head)
+		return (1);
+	if (head->next->next == head)
+	{
+		if (head->num > head->next->num)
+			ft_putstr_fd("ra\n", 1);
+		return(1);
+	}
+	if (head->next->next->next == head)
+	{
+		num1 = head->num;
+		num2 = head->next->num;
+		num3 = head->next->next->num;
+		if (num1 > num2 && num1 < num3)
+			ft_putstr_fd("sa\n", 1);
+		else if (num1 > num2 && num2 > num3)
+			ft_putstr_fd("sa\nrra\n", 1);
+		else if (num1 > num3 && num2 < num3)
+			ft_putstr_fd("ra\n", 1);
+		else if (num1 < num3 && num2 > num3)
+			ft_putstr_fd("sa\nra\n", 1);
+		else if (num1 < num2 && num1 > num3)
+			ft_putstr_fd("rra\n", 1);
+		return (1);
+	}
+	return (0);
+}
+
+
+int	main(int argc, char **argv)
+{
+	t_stack *stack_a;
+	//t_stack *stack_b;
+
+	//stack_b = NULL;
+	if (argc == 1)
+		stack_a = NULL;
+	else
+		stack_a = get_stack_a(argc, argv);
+	if (!stack_a)
 	{
 		ft_putstr_fd("Error\n", 2);
 		exit(EXIT_FAILURE);
 	}
-	tail->next = head;
-    head->pre = tail;
-	printstack(head);
+	printstack(stack_a);
+	rotate(&stack_a);
+	printf("After ra stack a is: \n");
+	printstack(stack_a);
+	swap(&stack_a);
+	printf("And after sa it is: \n");
+	printstack(stack_a);
+	//solve_three(stack_a);
 	exit(EXIT_SUCCESS);
 }

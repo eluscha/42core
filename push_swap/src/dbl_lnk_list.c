@@ -1,6 +1,6 @@
 #include "push_swap.h"
 
-t_stack	*newnode(int num)
+t_stack	*newnode(int num, t_stack *pre, t_stack *next)
 {
 	t_stack	*node;
 
@@ -8,8 +8,14 @@ t_stack	*newnode(int num)
 	if (!node)
 		return (NULL);
 	node->num = num;
-	node->next = NULL;
-    node->pre = NULL;
+	if (!next)
+		node->next = node;
+	else
+		node->next = next;
+	if (!pre)
+		node->pre = node;
+	else
+    		node->pre = pre;
 	return (node);
 }
 
@@ -17,11 +23,11 @@ t_stack *add_to_tail(int num, t_stack *oldtail) //assume here that tail is not N
 {
     t_stack *newtail;
     
-    newtail = newnode(num);
-    if (!newtail )
+    newtail = newnode(num, oldtail, oldtail->next);
+    if (!newtail)
         return (NULL);
-    newtail->pre = oldtail;
     oldtail->next = newtail;
+    newtail->next->pre = newtail;
     return (newtail);
 }
 

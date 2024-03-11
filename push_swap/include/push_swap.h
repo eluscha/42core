@@ -3,9 +3,9 @@
 
 typedef struct s_stack
 {
-	int			    num;
+	int		num;
 	struct s_stack	*next;
-    struct s_stack  *pre;
+	struct s_stack  *pre;
 }		t_stack;
 
 # include <unistd.h>
@@ -13,7 +13,11 @@ typedef struct s_stack
 # include <stdio.h>  //so far just for printf
 # include "libft.h"
 
-t_stack *newnode(int num);
+t_stack *newnode(int num, t_stack *pre, t_stack *next);
 t_stack *add_to_tail(int num, t_stack *oldtail);
+t_stack *push(t_stack **from, t_stack **to);
+void rotate(t_stack **head);
+void reverse_rotate(t_stack **head);
+void swap(t_stack **head);
 
 #endif
