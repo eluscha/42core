@@ -92,7 +92,7 @@ int	solve_three(t_stack **head)
 	if ((*head)->next->next == head)
 	{
 		if ((*head)->num > (*head)->next->num)
-			ft_putstr_fd("ra\n", 1);
+			rotate(head);
 		return(EXIT_SUCCESS);
 	}
 	if ((*head)->next->next->next == *head)
@@ -101,15 +101,21 @@ int	solve_three(t_stack **head)
 		num2 = (*head)->next->num;
 		num3 = (*head)->next->next->num;
 		if (num1 > num2 && num1 < num3)
-			ft_putstr_fd("sa\n", 1);
+			swap(head);
 		else if (num1 > num2 && num2 > num3)
-			ft_putstr_fd("sa\nrra\n", 1);
+		{
+			swap(head);
+			reverse_rotate(head);
+		}
 		else if (num1 > num3 && num2 < num3)
-			ft_putstr_fd("ra\n", 1);
+			rotate(head);
 		else if (num1 < num3 && num2 > num3)
-			ft_putstr_fd("sa\nra\n", 1);
+		{
+			swap(head);
+			rotate(head);
+		}
 		else if (num1 < num2 && num1 > num3)
-			ft_putstr_fd("rra\n", 1);
+			reverse_rotate(head);
 		return (EXIT_SUCCESS);
 	}
 	return (EXIT_FAILURE);
@@ -118,7 +124,8 @@ int	solve_three(t_stack **head)
 t_ops	count_ops(t_stack *ptr_a, t_stack *ptr_b, int i, int len_a, int len_b)
 {
 	t_ops	ops;
-	int		num;
+	int	num;
+	int	code;
 
 	ops.ra = i;
 	ops.rra = len_a - i;
@@ -135,10 +142,99 @@ t_ops	count_ops(t_stack *ptr_a, t_stack *ptr_b, int i, int len_a, int len_b)
 		}
 		ops.rrb = len_b - ops.rb;
 	}
-	ops.rr = min(ops.ra, ops.rb);
-	ops.rra = min(ops.rra, ops.rrb);
+	ops.rr = ops.ra;
+	if (ops.rb < ops.ra)
+		ops.rr = ops.rb;
+	ops.rrr = ops.rra; 
+	if (ops.rrb < ops.rra)
+		ops.rrr = ops.rrb;
+	ops.sum = ops.ra + ops.rrb;
+	code = 0; 
+	if (ops.rra + ops.rb < ops.sum)
+	{
+		ops.sum = ops.rra + ops.rrb; 
+		code = 1;
+	}
+	if (ops.ra + ops.rb - ops.rr < ops.sum)
+	{
+		ops.sum = ops.ra + ops.rb - ops.rr;
+		code = 2;
+	}
+	if (ops.rra + ops.rrb - ops.rrr < ops.sum)
+	{
+		ops.sum = ops.rra + ops.rrb - ops.rrr;
+		code = 3;
+	}
+	if (code == 0 || code == 1)
+	{
+		ops.rr = 0;
+		ops.rra = 0;
+		if (code == 0)
+		{
+			ops.rb = 0;
+			ops.rra = 0;
+		}
+		else
+		{
+			ops.ra = 0;
+			ops.rrb = 0;
+		}
+	}
+	else if (code == 2)
+	{
+		ops.rra = 0;
+		ops.rrb = 0;
+		ops.ra -= ops.rr;
+		ops.rb -= ops.rr;
+	}
+	else
+	{
+		ops.ra = 0;
+		ops.rb = 0;
+		ops.rra -= ops.rrr;
+		ops.rrb -= ops.rrr;
+	}
+	return (ops);
+}
 
+void	perform_ops(t_stack **stack_a, t_stack **stack_b, t_ops ops)
+{
+	int i = 0;
 
+	while(i++ < ops.ra)
+		rotate(stack_a, NULL, 'a');
+	i = 0;
+	while(i++ < ops.rb)
+		rotate(stack_b, NULL, 'b');
+	i = 0;
+	while(i++ < ops.rr)
+		rotate(stack_a, stack_b, 'r');
+	i = 0;
+	while(i++ < ops.rra)
+		reverse_rotate(stack_a, NULL, 'a');
+	i = 0;
+	while(i++ < ops.rrb)
+		reverse_rotate(stack_b, NULL, 'b');
+	i = 0;
+	while(i++ < ops.rrr)
+		reverse_rotate(stack_a, stack_b, 'r');
+}
+
+void push_back(t_stack **stack_a, t_stack **stack_b, int len_a)
+{
+	int i = 0;
+	int num = (*stack_b)->num;
+	
+	while (i < len_a)
+	{
+		if ((*stack_a)->num > num)
+			break ;
+		rotate(stack_a, NULL, 'a');
+		i++;
+	}
+	push(stack_b, stack_a);
+	while (i > 0)
+		reverse_rotate(stack_a, NULL, 'a');
 }
 
 int	solve(t_stack **stack_a, t_stack **stack_b, int len_a)
@@ -179,13 +275,9 @@ int	solve(t_stack **stack_a, t_stack **stack_b, int len_a)
 		len_b++;
 	}
 	solve_three(&stack_a);
-	while(len_b > 0)
-	{
-		ops = find_right_pos(stack_a, (*stack_b)->num);
-		perform_ops(stack_a, stack_b, ops);
-		push(stack_b, stack_a);
-		len_b--;
-	}
+	len_b++;
+	while(--len_b > 0)
+		push_back(**stack_a, **stack_b, len_a);
 	return (EXIT_SUCCESS);
 }
 
