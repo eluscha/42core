@@ -283,7 +283,7 @@ void recover_stack_b(t_stack **stack_b, t_ops ops)
 		rotate(stack_b, NULL, 'b');
 }
 
-void push_back(t_stack **stack_a, t_stack **stack_b, int len_a)
+int push_back(t_stack **stack_a, t_stack **stack_b, int len_a)
 {
 	int i = 0;
 	int j = -1;
@@ -293,39 +293,45 @@ void push_back(t_stack **stack_a, t_stack **stack_b, int len_a)
 	
 	if (num < min_a)
 	{
-		push(stack_b, stack_a);
-		return ;
+		push(stack_b, stack_a, "pb");
+		printstack(*stack_a, *stack_b);
+		return (1);
 	}
 	if (num > max_a)
 	{
-		push(stack_b, stack_a);
+		push(stack_b, stack_a, "pb");
 		rotate(stack_a, NULL, 'a');
-		return ;
+		printstack(*stack_a, *stack_b);
+		return (1);
 	}
 	t_stack *ptr = *stack_a;
 	while (i < len_a)
 	{
 		if (ptr->num > num)
 			break ;
+		ptr = ptr->next;
 		i++;
 	}
 	if (i < len_a / 2 + 1)
 	{
 		while (++j < i)
 			rotate(stack_a, NULL, 'a');
-		push(stack_b, stack_a);
-		j++;
+		push(stack_b, stack_a, "pb");
+		j += 1;
 		while (--j > 0)
 			reverse_rotate(stack_a, NULL, 'a');
-		return ;
+		printstack(*stack_a, *stack_b);
+		return (1);
 	}
 	i = len_a - i;
 	while (++j < i)
 		reverse_rotate(stack_a, NULL, 'a');
-	push(stack_b, stack_a);
-	j++;
+	push(stack_b, stack_a, "pb");
+	j += 2;
 	while (--j > 0)
 		rotate(stack_a, NULL, 'a');
+	printstack(*stack_a, *stack_b);
+	return (1);
 }
 
 int	solve(t_stack **stack_a, t_stack **stack_b, int len_a)
@@ -336,19 +342,19 @@ int	solve(t_stack **stack_a, t_stack **stack_b, int len_a)
 	t_ops ops;
 	t_ops min_ops;
 
-	push(stack_a, stack_b);
+	push(stack_a, stack_b, "pa");
 	printstack(*stack_a, *stack_b);
 	len_b++;
 	if (--len_a > 3)
 	{
 		printf("Now len_a is %i\n", len_a);
-		push(stack_a, stack_b);
+		push(stack_a, stack_b, "pa");
 		printstack(*stack_a, *stack_b);
 		len_a--;
 		len_b++;
+		if ((*stack_b)->num < (*stack_b)->next->num)
+			rotate(stack_b, NULL, 'b');
 	}
-	if ((*stack_b)->num < (*stack_b)->next->num)
-		rotate(stack_b, NULL, 'b');
 	ptr = *stack_a;
 	i = 0;
 	min_ops = count_ops(ptr, *stack_b, 0, len_a, len_b);
@@ -362,15 +368,18 @@ int	solve(t_stack **stack_a, t_stack **stack_b, int len_a)
 				min_ops = ops;
 		}
 		perform_ops(stack_a, stack_b, min_ops);
-		push(stack_a, stack_b);
+		push(stack_a, stack_b, "pa");
 		recover_stack_b(stack_b, min_ops);
 		len_a--;
 		len_b++;
 	}
 	solve_three(stack_a);
+	printstack(*stack_a, *stack_b);
 	len_b++;
 	while(--len_b > 0)
-		push_back(stack_a, stack_b, len_a);
+	{
+		len_a += push_back(stack_a, stack_b, len_a);
+	}
 	return (EXIT_SUCCESS);
 }
 
@@ -397,7 +406,7 @@ int	main(int argc, char **argv)
 		solve_three(&stack_a); //originally planned to exit with return value of solve three
 	else
 		solve(&stack_a, &stack_b, len); //originally planned to exit with return value of solve
-	printstack(stack_a, stack_b);
+	//printstack(stack_a, stack_b);
 	//rotate(&stack_a, NULL, 'a');
 	//printf("After ra stack a is: \n");
 	//printstack(stack_a, stack_b);

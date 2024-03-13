@@ -1,32 +1,43 @@
 #include "push_swap.h"
 
-t_stack *push(t_stack **from, t_stack **to)
+void	push(t_stack **from, t_stack **to, char *code) 
 {
-	int num;
+	int last_node = 0;
 	t_stack *from_tail;
 	t_stack *to_tail;
-	t_stack *new;
+	t_stack *node;
 
 	if (!*to)
 		to_tail = NULL;
 	else
 		to_tail = (*to)->pre;
+	if ((*from)->next == (*from))
+		last_node = 1;
 	from_tail = (*from)->pre;
-	num = (*from)->num;
-	new = newnode(num, *to, to_tail);
-	if (!new)
-		return (NULL);
-	(*from)->next->pre = from_tail;
-	from_tail->next = (*from)->next;
-	free(*from);
-	*from = from_tail->next;
+	node = *from;
+	if (last_node)
+		*from = NULL;
+	else
+	{
+		(*from)->next->pre = from_tail;
+		from_tail->next = (*from)->next;
+		*from = from_tail->next;
+	}
 	if (*to)
 	{
-		(*to)->pre = new;
-		to_tail->next = new;
+		(*to)->pre = node;
+		to_tail->next = node;
+		node->next = (*to);
+		node->pre = to_tail;
 	}
-	*to = new;
-	return (new);
+	else
+	{
+		node->next = node;
+		node->pre = node;
+	}
+	*to = node;
+	ft_putstr_fd(code, 1);
+	ft_putstr_fd("\n", 1);
 }
 
 void rotate(t_stack **first, t_stack **second, char c)
