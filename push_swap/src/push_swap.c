@@ -40,7 +40,7 @@ void printstack(t_stack *stack_a, t_stack *stack_b)
 
 	if (ptr_a)
 	{
-		printf("%10d ", ptr_a->num);
+		printf("%10d   ", ptr_a->num);
 		ptr_a = ptr_a->next;
 	}
 	else
@@ -52,11 +52,11 @@ void printstack(t_stack *stack_a, t_stack *stack_b)
 	}
 	else
 		printf("\n");
-	while (ptr_a != stack_a || ptr_b != stack_a)
+	while (ptr_a != stack_a || ptr_b != stack_b)
 	{
 		if (ptr_a != stack_a)
 		{
-			printf("%10d ", ptr_a->num);
+			printf("%10d   ", ptr_a->num);
 			ptr_a = ptr_a->next;
 		}
 		else
@@ -69,7 +69,7 @@ void printstack(t_stack *stack_a, t_stack *stack_b)
 		else
 			printf("\n");
 	}
-	printf("  stack_a  stack_b\n");
+	printf("  stack_a     stack_b\n");
 }
 
 
@@ -107,18 +107,32 @@ t_stack	*get_stack_a(int ac, char **av)
 	return(head);
 }
 
+int	get_len(t_stack *stack_a)
+{
+	if (!stack_a)
+		return (0);
+	t_stack *ptr = stack_a;
+	int i = 1;
+	while (ptr->next != stack_a)
+	{
+		ptr = ptr->next;
+		i++;
+	}
+	return (i);
+}
+
 int	solve_three(t_stack **head)
 {
 	int num1;
 	int num2;
 	int num3;
 
-	if ((*head)->next == head)
+	if ((*head)->next == *head)
 		return (EXIT_SUCCESS);
-	if ((*head)->next->next == head)
+	if ((*head)->next->next == *head)
 	{
 		if ((*head)->num > (*head)->next->num)
-			rotate(head);
+			rotate(head, NULL, 'a');
 		return(EXIT_SUCCESS);
 	}
 	if ((*head)->next->next->next == *head)
@@ -127,21 +141,21 @@ int	solve_three(t_stack **head)
 		num2 = (*head)->next->num;
 		num3 = (*head)->next->next->num;
 		if (num1 > num2 && num1 < num3)
-			swap(head);
+			swap(head, 'a');
 		else if (num1 > num2 && num2 > num3)
 		{
-			swap(head);
-			reverse_rotate(head);
+			swap(head, 'a');
+			reverse_rotate(head, NULL, 'a');
 		}
 		else if (num1 > num3 && num2 < num3)
-			rotate(head);
+			rotate(head, NULL, 'a');
 		else if (num1 < num3 && num2 > num3)
 		{
-			swap(head);
-			rotate(head);
+			swap(head, 'a');
+			rotate(head, NULL, 'a');
 		}
 		else if (num1 < num2 && num1 > num3)
-			reverse_rotate(head);
+			reverse_rotate(head, NULL, 'a');
 		return (EXIT_SUCCESS);
 	}
 	return (EXIT_FAILURE);
@@ -249,6 +263,26 @@ void	perform_ops(t_stack **stack_a, t_stack **stack_b, t_ops ops)
 		reverse_rotate(stack_a, stack_b, 'r');
 }
 
+void recover_stack_b(t_stack **stack_b, t_ops ops)
+{
+	int i;
+	
+	if (!stack_b)
+		return ;
+	i = 0;
+	while(i++ < ops.rb)
+		reverse_rotate(stack_b, NULL, 'b');
+	i = 0;
+	while(i++ < ops.rr)
+		reverse_rotate(stack_b, NULL, 'b');
+	i = 0;
+	while(i++ < ops.rrb)
+		rotate(stack_b, NULL, 'b');
+	i = 0;
+	while(i++ < ops.rrr)
+		rotate(stack_b, NULL, 'b');
+}
+
 void push_back(t_stack **stack_a, t_stack **stack_b, int len_a)
 {
 	int i = 0;
@@ -296,25 +330,26 @@ void push_back(t_stack **stack_a, t_stack **stack_b, int len_a)
 
 int	solve(t_stack **stack_a, t_stack **stack_b, int len_a)
 {	
-	int len_b;
+	int len_b = 0;
 	int i;
 	t_stack *ptr;
 	t_ops ops;
-	t_ops best_ops;
-	int min_ops;
+	t_ops min_ops;
 
-	
 	push(stack_a, stack_b);
+	printstack(*stack_a, *stack_b);
 	len_b++;
 	if (--len_a > 3)
 	{
+		printf("Now len_a is %i\n", len_a);
 		push(stack_a, stack_b);
+		printstack(*stack_a, *stack_b);
 		len_a--;
 		len_b++;
 	}
 	if ((*stack_b)->num < (*stack_b)->next->num)
-		rotate(stack_b);
-	t_stack *ptr = *stack_a;
+		rotate(stack_b, NULL, 'b');
+	ptr = *stack_a;
 	i = 0;
 	min_ops = count_ops(ptr, *stack_b, 0, len_a, len_b);
 	while(len_a > 3)
@@ -332,10 +367,10 @@ int	solve(t_stack **stack_a, t_stack **stack_b, int len_a)
 		len_a--;
 		len_b++;
 	}
-	solve_three(&stack_a);
+	solve_three(stack_a);
 	len_b++;
 	while(--len_b > 0)
-		push_back(**stack_a, **stack_b, len_a);
+		push_back(stack_a, stack_b, len_a);
 	return (EXIT_SUCCESS);
 }
 
@@ -356,16 +391,17 @@ int	main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 	len = get_len(stack_a);
+	printf("len is %i\n", len);
+	printstack(stack_a, stack_b);
 	if (len <= 3)
-		exit(solve_three(&stack_a));
+		solve_three(&stack_a); //originally planned to exit with return value of solve three
 	else
-		exit(solve(&stack_a, &stack_b, len));
-	/*printstack(stack_a);
-	rotate(&stack_a);
-	printf("After ra stack a is: \n");
-	printstack(stack_a);
-	swap(&stack_a);
-	printf("And after sa it is: \n");
-	printstack(stack_a);
-	*/
+		solve(&stack_a, &stack_b, len); //originally planned to exit with return value of solve
+	printstack(stack_a, stack_b);
+	//rotate(&stack_a, NULL, 'a');
+	//printf("After ra stack a is: \n");
+	//printstack(stack_a, stack_b);
+	//swap(&stack_a, 'a');
+	//printf("And after sa it is: \n");
+	//printstack(stack_a, stack_b);
 }

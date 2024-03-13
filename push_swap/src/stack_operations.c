@@ -53,7 +53,7 @@ void swap(t_stack **head, char c)
 {
 	if ((*head)->next->next == *head)
 	{
-		rotate(head);
+		rotate(head, NULL, c);
 		return ;
 	}
 	t_stack *oldhead = *head;

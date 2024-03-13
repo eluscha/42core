@@ -27,8 +27,8 @@ typedef struct s_ops
 t_stack *newnode(int num, t_stack *pre, t_stack *next);
 t_stack *add_to_tail(int num, t_stack *oldtail);
 t_stack *push(t_stack **from, t_stack **to);
-void rotate(t_stack **head);
-void reverse_rotate(t_stack **head);
-void swap(t_stack **head);
+void rotate(t_stack **first, t_stack **second, char c);
+void reverse_rotate(t_stack **first, t_stack **second, char c);
+void swap(t_stack **head, char c);
 
 #endif
