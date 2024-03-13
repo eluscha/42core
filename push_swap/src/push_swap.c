@@ -33,17 +33,43 @@ int	get_num(char *str, int *result)
 	return (1);
 }
 
-void printstack(t_stack *head)
+void printstack(t_stack *stack_a, t_stack *stack_b)
 {
-	t_stack * ptr = head;
+	t_stack *ptr_a = stack_a;
+	t_stack *ptr_b = stack_b;
 
-	printf("%i\n", ptr->num);
-	ptr = ptr->next;
-	while (ptr != head)
+	if (ptr_a)
 	{
-		printf("%i\n", ptr->num);
-		ptr = ptr->next;
+		printf("%10d ", ptr_a->num);
+		ptr_a = ptr_a->next;
 	}
+	else
+		printf("          ");
+	if (ptr_b)
+	{
+		printf("%10d\n", ptr_b->num);
+		ptr_b = ptr_b->next;
+	}
+	else
+		printf("\n");
+	while (ptr_a != stack_a || ptr_b != stack_a)
+	{
+		if (ptr_a != stack_a)
+		{
+			printf("%10d ", ptr_a->num);
+			ptr_a = ptr_a->next;
+		}
+		else
+			printf("          ");
+		if (ptr_b != stack_b)
+		{
+			printf("%10d\n", ptr_b->num);
+			ptr_b = ptr_b->next;
+		}
+		else
+			printf("\n");
+	}
+	printf("  stack_a  stack_b\n");
 }
 
 
@@ -199,8 +225,11 @@ t_ops	count_ops(t_stack *ptr_a, t_stack *ptr_b, int i, int len_a, int len_b)
 
 void	perform_ops(t_stack **stack_a, t_stack **stack_b, t_ops ops)
 {
-	int i = 0;
+	int i;
 
+	if (!stack_a || !stack_b)
+		return ;
+	i = 0;
 	while(i++ < ops.ra)
 		rotate(stack_a, NULL, 'a');
 	i = 0;
@@ -223,25 +252,55 @@ void	perform_ops(t_stack **stack_a, t_stack **stack_b, t_ops ops)
 void push_back(t_stack **stack_a, t_stack **stack_b, int len_a)
 {
 	int i = 0;
+	int j = -1;
 	int num = (*stack_b)->num;
+	int max_a = (*stack_a)->pre->num;
+	int min_a = (*stack_a)->num;
 	
+	if (num < min_a)
+	{
+		push(stack_b, stack_a);
+		return ;
+	}
+	if (num > max_a)
+	{
+		push(stack_b, stack_a);
+		rotate(stack_a, NULL, 'a');
+		return ;
+	}
+	t_stack *ptr = *stack_a;
 	while (i < len_a)
 	{
-		if ((*stack_a)->num > num)
+		if (ptr->num > num)
 			break ;
-		rotate(stack_a, NULL, 'a');
 		i++;
 	}
-	push(stack_b, stack_a);
-	while (i > 0)
+	if (i < len_a / 2 + 1)
+	{
+		while (++j < i)
+			rotate(stack_a, NULL, 'a');
+		push(stack_b, stack_a);
+		j++;
+		while (--j > 0)
+			reverse_rotate(stack_a, NULL, 'a');
+		return ;
+	}
+	i = len_a - i;
+	while (++j < i)
 		reverse_rotate(stack_a, NULL, 'a');
+	push(stack_b, stack_a);
+	j++;
+	while (--j > 0)
+		rotate(stack_a, NULL, 'a');
 }
 
 int	solve(t_stack **stack_a, t_stack **stack_b, int len_a)
 {	
 	int len_b;
 	int i;
+	t_stack *ptr;
 	t_ops ops;
+	t_ops best_ops;
 	int min_ops;
 
 	
@@ -256,21 +315,20 @@ int	solve(t_stack **stack_a, t_stack **stack_b, int len_a)
 	if ((*stack_b)->num < (*stack_b)->next->num)
 		rotate(stack_b);
 	t_stack *ptr = *stack_a;
-	i = -1;
-	min_ops = 0;
+	i = 0;
+	min_ops = count_ops(ptr, *stack_b, 0, len_a, len_b);
 	while(len_a > 3)
 	{
-		while (i++ < min_ops)
+		while (++i < min_ops.sum)
 		{
-			ops = count_ops(ptr, *stack_b, i, len_a, len_b);
-			if (!min_ops)
-			 	min_ops = ops.sum;
-			else if (ops.sum < min_ops)
-				min_ops = ops.sum;
 			ptr = ptr->next;
+			ops = count_ops(ptr, *stack_b, i, len_a, len_b);
+			if (ops.sum < min_ops.sum)
+				min_ops = ops;
 		}
-		perform_ops(stack_a, stack_b, ops);
+		perform_ops(stack_a, stack_b, min_ops);
 		push(stack_a, stack_b);
+		recover_stack_b(stack_b, min_ops);
 		len_a--;
 		len_b++;
 	}
