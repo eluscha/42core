@@ -171,12 +171,14 @@ t_ops	count_ops(t_stack *ptr_a, t_stack *ptr_b, int i, int len_a, int len_b)
 	ops.rra = len_a - i;
 	num = ptr_a->num;
 	ops.rb = 0;
+	ops.rrb = 0;
 	if (len_b == 1)
 		ops.rrb = 0; 
 	else
 	{
 		while (num < ptr_b->num && ops.rb < len_b)
 		{
+			//printf("num %i is smaller then ptr_b->num %i\n", num, ptr_b->num);
 			ptr_b = ptr_b->next;
 			ops.rb++;
 		}
@@ -188,6 +190,7 @@ t_ops	count_ops(t_stack *ptr_a, t_stack *ptr_b, int i, int len_a, int len_b)
 	ops.rrr = ops.rra; 
 	if (ops.rrb < ops.rra)
 		ops.rrr = ops.rrb;
+	//printf("ops.ra is %i, ops.rb is %i, ops.rra is %i ops.rrb is %i \n", ops.ra, ops.rb, ops.rra, ops.rrb);
 	ops.sum = ops.ra + ops.rrb;
 	code = 0; 
 	if (ops.rra + ops.rb < ops.sum)
@@ -208,7 +211,7 @@ t_ops	count_ops(t_stack *ptr_a, t_stack *ptr_b, int i, int len_a, int len_b)
 	if (code == 0 || code == 1)
 	{
 		ops.rr = 0;
-		ops.rra = 0;
+		ops.rrr = 0;
 		if (code == 0)
 		{
 			ops.rb = 0;
@@ -224,6 +227,7 @@ t_ops	count_ops(t_stack *ptr_a, t_stack *ptr_b, int i, int len_a, int len_b)
 	{
 		ops.rra = 0;
 		ops.rrb = 0;
+		ops.rrr = 0;
 		ops.ra -= ops.rr;
 		ops.rb -= ops.rr;
 	}
@@ -231,9 +235,12 @@ t_ops	count_ops(t_stack *ptr_a, t_stack *ptr_b, int i, int len_a, int len_b)
 	{
 		ops.ra = 0;
 		ops.rb = 0;
+		ops.rr = 0;
 		ops.rra -= ops.rrr;
 		ops.rrb -= ops.rrr;
 	}
+	//printf("code is %i ops.ra is %i, ops.rb is %i, ops.rr is %i\n ", code, ops.ra, ops.rb, ops.rr);
+	//printf("ops.rra is %i, ops.rrb is %i, ops.rrr is %i\n ", ops.rra, ops.rrb, ops.rrr);
 	return (ops);
 }
 
@@ -241,6 +248,7 @@ void	perform_ops(t_stack **stack_a, t_stack **stack_b, t_ops ops)
 {
 	int i;
 
+	//printf("perform ops\n");
 	if (!stack_a || !stack_b)
 		return ;
 	i = 0;
@@ -267,6 +275,7 @@ void recover_stack_b(t_stack **stack_b, t_ops ops)
 {
 	int i;
 	
+	//printf("recover stack b\n");
 	if (!stack_b)
 		return ;
 	i = 0;
@@ -281,6 +290,8 @@ void recover_stack_b(t_stack **stack_b, t_ops ops)
 	i = 0;
 	while(i++ < ops.rrr)
 		rotate(stack_b, NULL, 'b');
+	while ((*stack_b)->num < (*stack_b)->pre->num)
+		rotate(stack_b, NULL, 'b');
 }
 
 int push_back(t_stack **stack_a, t_stack **stack_b, int len_a)
@@ -293,15 +304,15 @@ int push_back(t_stack **stack_a, t_stack **stack_b, int len_a)
 	
 	if (num < min_a)
 	{
-		push(stack_b, stack_a, "pb");
-		printstack(*stack_a, *stack_b);
+		push(stack_b, stack_a, "pa");
+		//printstack(*stack_a, *stack_b);
 		return (1);
 	}
 	if (num > max_a)
 	{
-		push(stack_b, stack_a, "pb");
+		push(stack_b, stack_a, "pa");
 		rotate(stack_a, NULL, 'a');
-		printstack(*stack_a, *stack_b);
+		//printstack(*stack_a, *stack_b);
 		return (1);
 	}
 	t_stack *ptr = *stack_a;
@@ -316,21 +327,21 @@ int push_back(t_stack **stack_a, t_stack **stack_b, int len_a)
 	{
 		while (++j < i)
 			rotate(stack_a, NULL, 'a');
-		push(stack_b, stack_a, "pb");
+		push(stack_b, stack_a, "pa");
 		j += 1;
 		while (--j > 0)
 			reverse_rotate(stack_a, NULL, 'a');
-		printstack(*stack_a, *stack_b);
+		//printstack(*stack_a, *stack_b);
 		return (1);
 	}
 	i = len_a - i;
 	while (++j < i)
 		reverse_rotate(stack_a, NULL, 'a');
-	push(stack_b, stack_a, "pb");
+	push(stack_b, stack_a, "pa");
 	j += 2;
 	while (--j > 0)
 		rotate(stack_a, NULL, 'a');
-	printstack(*stack_a, *stack_b);
+	//printstack(*stack_a, *stack_b);
 	return (1);
 }
 
@@ -342,24 +353,24 @@ int	solve(t_stack **stack_a, t_stack **stack_b, int len_a)
 	t_ops ops;
 	t_ops min_ops;
 
-	push(stack_a, stack_b, "pa");
-	printstack(*stack_a, *stack_b);
+	push(stack_a, stack_b, "pb");
+	//printstack(*stack_a, *stack_b);
 	len_b++;
 	if (--len_a > 3)
 	{
-		printf("Now len_a is %i\n", len_a);
-		push(stack_a, stack_b, "pa");
-		printstack(*stack_a, *stack_b);
+		//printf("Now len_a is %i\n", len_a);
+		push(stack_a, stack_b, "pb");
+		//printstack(*stack_a, *stack_b);
 		len_a--;
 		len_b++;
 		if ((*stack_b)->num < (*stack_b)->next->num)
 			rotate(stack_b, NULL, 'b');
 	}
-	ptr = *stack_a;
-	i = 0;
-	min_ops = count_ops(ptr, *stack_b, 0, len_a, len_b);
 	while(len_a > 3)
 	{
+		ptr = *stack_a;
+		i = 0;
+		min_ops = count_ops(ptr, *stack_b, 0, len_a, len_b);
 		while (++i < min_ops.sum)
 		{
 			ptr = ptr->next;
@@ -368,13 +379,13 @@ int	solve(t_stack **stack_a, t_stack **stack_b, int len_a)
 				min_ops = ops;
 		}
 		perform_ops(stack_a, stack_b, min_ops);
-		push(stack_a, stack_b, "pa");
+		push(stack_a, stack_b, "pb");
 		recover_stack_b(stack_b, min_ops);
 		len_a--;
 		len_b++;
 	}
 	solve_three(stack_a);
-	printstack(*stack_a, *stack_b);
+	//printstack(*stack_a, *stack_b);
 	len_b++;
 	while(--len_b > 0)
 	{
@@ -400,8 +411,8 @@ int	main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 	len = get_len(stack_a);
-	printf("len is %i\n", len);
-	printstack(stack_a, stack_b);
+	//printf("len is %i\n", len);
+	//printstack(stack_a, stack_b);
 	if (len <= 3)
 		solve_three(&stack_a); //originally planned to exit with return value of solve three
 	else
