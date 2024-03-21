@@ -8,6 +8,18 @@ typedef struct s_stack
 	struct s_stack  *pre;
 }		t_stack;
 
+typedef struct s_info
+{
+	t_stack	**adr_a;
+	t_stack	**adr_b;
+	int		len_a;
+	int		len_b;
+	int		min_a;
+	int		min_b;
+	int		max_a;
+	int 	max_b;
+}		t_info;
+
 typedef struct s_ops
 {
 	int	ra;
@@ -24,11 +36,16 @@ typedef struct s_ops
 # include <stdio.h>  //so far just for printf
 # include "libft.h"
 
+int		get_len(t_stack *stack_a);
+t_info	init_info(t_stack **stack_a, t_stack **stack_b);
+void	update_tb(t_info *tb, char c, int num);
 t_stack *newnode(int num, t_stack *pre, t_stack *next);
 t_stack *add_to_tail(int num, t_stack *oldtail);
-void	push(t_stack **from, t_stack **to, char *code);
-void	rotate(t_stack **first, t_stack **second, char c);
-void	reverse_rotate(t_stack **first, t_stack **second, char c);
-void	swap(t_stack **head, char c);
+t_stack *insert_node(t_stack *head, t_stack *newhead);
+int	move_node(t_stack **to, t_stack **from);
+int		push(t_info *tb, char c);
+void	rotate(t_info *tb, char c);
+void	reverse_rotate(t_info *tb, char c);
+void	swap(t_info *tb, char c);
 
 #endif

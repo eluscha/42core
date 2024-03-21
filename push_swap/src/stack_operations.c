@@ -1,86 +1,92 @@
 #include "push_swap.h"
 
-void	push(t_stack **from, t_stack **to, char *code) 
+int	push(t_info *tb, char c) 
 {
-	int last_node = 0;
-	t_stack *from_tail;
-	t_stack *to_tail;
-	t_stack *node;
+	t_stack **to;
+	t_stack **from;
+	int moved;
 
-	if (!*to)
-		to_tail = NULL;
-	else
-		to_tail = (*to)->pre;
-	if ((*from)->next == (*from))
-		last_node = 1;
-	from_tail = (*from)->pre;
-	node = *from;
-	if (last_node)
-		*from = NULL;
-	else
+	if (c == 'a')
 	{
-		(*from)->next->pre = from_tail;
-		from_tail->next = (*from)->next;
-		*from = from_tail->next;
+		to = tb->adr_a;
+		from = tb->adr_b;
 	}
-	if (*to)
+	else if (c == 'b')
 	{
-		(*to)->pre = node;
-		to_tail->next = node;
-		node->next = (*to);
-		node->pre = to_tail;
+		to = tb->adr_b;
+		from = tb->adr_a;
 	}
-	else
-	{
-		node->next = node;
-		node->pre = node;
-	}
-	*to = node;
-	ft_putstr_fd(code, 1);
+	moved = move_node(to, from);
+	if (moved)
+		update_tb(tb, c, (*to)->num);
+	ft_putstr_fd("p", 1); 
+	ft_putchar_fd(c, 1); 
 	ft_putstr_fd("\n", 1);
+	return ((*to)->num);
 }
 
-void rotate(t_stack **first, t_stack **second, char c)
+void rotate(t_info *tb, char c)
 {
-	*first = (*first)->next;
-	if (second)
-		*second = (*second)->next;
+	t_stack	*stack_a;
+	t_stack	*stack_b;
+
+	stack_a = *(tb->adr_a); //pointer to first node
+	stack_b = *(tb->adr_b); //pointer to first node
+	if (stack_a && (c == 'a' || c == 'r'))
+		*(tb->adr_a) = stack_a->next;
+	if (stack_b && (c == 'b' || c == 'r'))
+		*(tb->adr_b) = stack_b->next;
 	ft_putstr_fd("r", 1); 
-	write(1, &c, 1); 
+	ft_putchar_fd(c, 1); 
 	ft_putstr_fd("\n", 1); 
 }
 
-void reverse_rotate(t_stack **first, t_stack **second, char c)
+void reverse_rotate(t_info *tb, char c)
 {
-	*first = (*first)->pre;
-	if (second)
-		*second = (*second)->pre;
+	t_stack	*stack_a;
+	t_stack	*stack_b;
+
+	stack_a = *(tb->adr_a); //pointer to first node
+	stack_b = *(tb->adr_b); //pointer to first node
+	if (stack_a && (c == 'a' || c == 'r'))
+		*(tb->adr_a) = stack_a->pre;
+	if (stack_b && (c == 'b' || c == 'r'))
+		*(tb->adr_b) = stack_b->pre;
 	ft_putstr_fd("rr", 1); 
-	write(1, &c, 1); 
+	ft_putchar_fd(c, 1);
 	ft_putstr_fd("\n", 1); 
 }
 
-void swap(t_stack **head, char c)
+t_stack *swap_one(t_stack **head_adr)
 {
-	if ((*head)->next->next == *head)
-	{
-		rotate(head, NULL, c);
-		return ;
-	}
-	t_stack *oldhead = *head;
-	t_stack *newhead = oldhead->next;
-	t_stack *third = newhead->next;
-	t_stack *tail = oldhead->pre;
+	t_stack	*head;
+	t_stack *newhead;
+	t_stack *third;
+	t_stack *tail;
 
+	head = *head_adr;
+	newhead = head->next;
+	third = newhead->next;
+	tail = head->pre;
+	if (third  == head) //len of stack is two, we just need to rotate
+		return (newhead);
 	tail->next = newhead; 
 	newhead->pre = tail;
-	newhead->next = oldhead;
-	oldhead->pre = newhead;
-	oldhead->next = third;
-	third->pre = oldhead;
-	*head = newhead;
+	newhead->next = head;
+	head->pre = newhead;
+	head->next = third;
+	third->pre = head;
+	return (newhead);
+}
+
+void swap(t_info *tb, char c)
+{
+	if (c == 'a' || c == 's')
+		*(tb->adr_a) = swap_one(tb->adr_a);
+	if (c == 'b' || c == 's')
+		*(tb->adr_b) = swap_one(tb->adr_b);
 	ft_putstr_fd("s", 1);
-	write(1, &c, 1); 
+	ft_putchar_fd(c, 1); 
 	ft_putstr_fd("\n", 1); 
 }
 

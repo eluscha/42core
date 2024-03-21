@@ -31,8 +31,43 @@ t_stack *add_to_tail(int num, t_stack *oldtail) //assume here that tail is not N
     return (newtail);
 }
 
-/*int head_to_tail(t_stack *head, t_stack *tail)
+t_stack *insert_node(t_stack *head, t_stack *newhead)
 {
-    tail->next = head;
-    head->pre = tail;
-}*/
+	t_stack *to_tail;
+	
+	if (!head)
+	{
+		newhead->next = newhead;
+		newhead->pre = newhead;
+	}
+	else
+	{
+		to_tail = head->pre;
+		to_tail->next = newhead;
+		newhead->pre = to_tail;
+		newhead->next = head;
+		head->pre = newhead;
+	}
+	return (newhead);
+}
+
+int	move_node(t_stack **to, t_stack **from)
+{
+	t_stack *from_tail;
+	t_stack *from_head;
+
+	if (*from == NULL)
+		return (0);
+	from_tail = (*from)->pre;
+	from_head = (*from)->next;
+	*to = insert_node(*to, *from); 
+	if (*from == from_head)
+		*from = NULL;
+	else
+	{
+		from_head->pre = from_tail;
+		from_tail->next = from_head;
+		*from = from_head; 
+	}
+	return (1);
+}
