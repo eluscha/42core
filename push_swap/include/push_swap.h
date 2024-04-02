@@ -43,9 +43,25 @@ t_stack *newnode(int num, t_stack *pre, t_stack *next);
 t_stack *add_to_tail(int num, t_stack *oldtail);
 t_stack *insert_node(t_stack *head, t_stack *newhead);
 int	move_node(t_stack **to, t_stack **from);
+void	solve_three(t_info *tb);
+void	len_is_three(t_info *tb, t_stack *stack_a);
+void	solve(t_info *tb);
+void	back_to_stack_a(t_info *tb);
+void	push_back(t_info *tb);
+t_ops	fill_ops(char *code, int i);
+void	perform_ops(t_info *tb, t_ops ops);
 int		push(t_info *tb, char c);
 void	rotate(t_info *tb, char c);
 void	reverse_rotate(t_info *tb, char c);
 void	swap(t_info *tb, char c);
+t_ops	count_ops(int num, int i, t_info *tb);
+t_ops	get_best_ops(t_ops ops);
+t_ops	adjust_ops(t_ops ops, int code);
+t_ops	ops_code3(t_ops ops);
+int	ft_min(int num1, int num2);
+void	free_list(t_stack *head);
+
+
+void printstack(t_stack *stack_a, t_stack *stack_b); //delete later!!
 
 #endif

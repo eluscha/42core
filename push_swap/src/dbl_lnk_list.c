@@ -71,3 +71,18 @@ int	move_node(t_stack **to, t_stack **from)
 	}
 	return (1);
 }
+
+void	free_list(t_stack *head)
+{
+	t_stack *ptr;
+
+	if (!head)
+		return ;
+	ptr = head;
+	while(ptr->next && ptr->next != head )
+	{
+		ptr = ptr->next;
+		free(ptr->pre);
+	}
+	free(ptr);
+}

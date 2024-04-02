@@ -7,7 +7,7 @@ CFLAGS		= -Wall -Werror -Wextra -I
 
 #Sources
 
-SRC_FILES = push_swap dbl_lnk_list stack_operations info_tb
+SRC_FILES = push_swap dbl_lnk_list stack_operations info_tb count_ops solve_fts ops_struct_fts
 
 SRCS = $(addprefix $(SRC_DIR), $(addsuffix .c, $(SRC_FILES)))
 OBJS = $(SRCS:.c=.o) 
