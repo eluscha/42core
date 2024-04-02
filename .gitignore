@@ -1,5 +1,11 @@
+#vscode
+*/.vscode/
+
 #pft tester
 ft_printf/pft/
+
+#push_swap visualizer
+push_swap/Vis
 
 #test
 test.c
