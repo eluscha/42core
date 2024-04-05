@@ -160,7 +160,7 @@ int	main(int argc, char **argv)
 		}
 		if (cmd)
 			free(cmd);
-		printstack(stack_a, stack_b);
+		//printstack(stack_a, stack_b);
 		if (is_sorted(stack_a, stack_b))
 			ft_putstr_fd("OK\n", 1);
 		else

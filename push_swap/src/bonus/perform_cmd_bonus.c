@@ -26,6 +26,6 @@ int perform_cmd(char *cmd, t_stack **stack_a, t_stack **stack_b)
         rotate(stack_a, stack_b, 'r');
     else
         return (0);
-    printstack(*stack_a, *stack_b);
+    //printstack(*stack_a, *stack_b);
     return (1);
 }
