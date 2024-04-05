@@ -1,5 +1,5 @@
 
-#include "push_swap.h"
+#include "push_swap_bonus.h"
 
 int	is_dupl(int ac, int num, t_stack **array)
 {
@@ -38,7 +38,7 @@ int	get_num(int ac, char *str, int *result, t_stack **array)
 
 	//printf("in get num \n");
 	neg = 0;
-	if (str[0] == '-' && str[1])
+	if (str[0] == '-')
 		neg = 1;
 	num = 0;
 	i = neg;
@@ -60,6 +60,34 @@ int	get_num(int ac, char *str, int *result, t_stack **array)
 	if (str[i] || !str[neg] || is_dupl(ac, *result, array))
 		return (0);
 	return (1);
+}
+
+t_stack	*get_stack_a(int ac, char **av, t_stack **array)
+{
+	int	num;
+	int	i;
+	t_stack *head;
+	t_stack *tail;
+
+	//printf("get stack_a \n");
+	head = NULL;
+	if (get_num(ac, av[1], &num, array))
+		head = newnode(num, NULL, NULL);
+	tail = head;
+	i = 1;
+	while (++i < ac && tail)
+	{
+		if (get_num(ac, av[i], &num, array))
+			tail = add_to_tail(num, tail);
+		else
+			tail = NULL;
+	}
+	if (!tail && head)
+	{
+		free_list(head);
+		return(NULL);
+	}
+	return(head);
 }
 
 void printstack(t_stack *stack_a, t_stack *stack_b) // does not have to be norm
@@ -102,40 +130,12 @@ void printstack(t_stack *stack_a, t_stack *stack_b) // does not have to be norm
 }
 
 
-t_stack	*get_stack_a(int ac, char **av, t_stack **array)
-{
-	int	num;
-	int	i;
-	t_stack *head;
-	t_stack *tail;
-
-	//printf("get stack_a \n");
-	head = NULL;
-	if (get_num(ac, av[1], &num, array))
-		head = newnode(num, NULL, NULL);
-	tail = head;
-	i = 1;
-	while (++i < ac && tail)
-	{
-		if (get_num(ac, av[i], &num, array))
-			tail = add_to_tail(num, tail);
-		else
-			tail = NULL;
-	}
-	if (!tail && head)
-	{
-		free_list(head);
-		return(NULL);
-	}
-	return(head);
-}
-
 int	main(int argc, char **argv)
 {
 	t_stack *stack_a;
 	t_stack *stack_b;
 	t_stack	**array;
-	t_info	tb;
+	char	*cmd;
 
 	array = ft_calloc(argc, sizeof(t_stack *));
 	stack_b = NULL;
@@ -147,12 +147,24 @@ int	main(int argc, char **argv)
 		ft_putstr_fd("Error\n", 2);
 	else
 	{
-		tb = init_info(&stack_a, &stack_b);
-		if (tb.len_a <= 3)
-			solve_three(&tb);
+		cmd = get_next_line(0);
+		while (cmd)
+		{
+			if (!perform_cmd(cmd, &stack_a, &stack_b))
+			{
+				ft_putstr_fd("Error\n", 2);
+				break ;
+			}
+			free(cmd);
+			cmd = get_next_line(0);
+		}
+		if (cmd)
+			free(cmd);
+		printstack(stack_a, stack_b);
+		if (is_sorted(stack_a, stack_b))
+			ft_putstr_fd("OK\n", 1);
 		else
-			solve(&tb);
-		//printstack(stack_a, stack_b);
+			ft_putstr_fd("KO\n", 1);
 	}
 	free_list(stack_a);
 	free_list(stack_b);
@@ -160,4 +172,21 @@ int	main(int argc, char **argv)
 	while (++i < argc)
 		free_list(array[i]);
 	free(array);
+}
+
+int	is_sorted(t_stack *stack_a, t_stack *stack_b)
+{
+	if (stack_b)
+		return (0);
+	t_stack *ptr = stack_a;
+	while (ptr->next != stack_a)
+	{
+		if (ptr->num > ptr->next->num)
+		{
+			printf("ptr->num %i > ptr->next->num %i", ptr->num, ptr->next->num);
+			return (0);
+		}
+		ptr = ptr->next;
+	}
+	return (1);
 }
