@@ -2,10 +2,13 @@
 
 int	get_len(t_stack *stack_a)
 {
+	t_stack	*ptr;
+	int		i;
+
 	if (!stack_a)
 		return (0);
-	t_stack *ptr = stack_a;
-	int i = 1;
+	ptr = stack_a;
+	i = 1;
 	while (ptr->next != stack_a)
 	{
 		ptr = ptr->next;
@@ -29,26 +32,24 @@ t_info	init_info(t_stack **stack_a, t_stack **stack_b)
 	return (tb);
 }
 
-void update_tb(t_info *tb, char c, int num)
+void	update_tb(t_info *tb, char c, int num)
 {
-    if (c == 'a')
-    {
-        tb->len_a++;
-        tb->len_b--;
-        if (num > tb->max_a)
-            tb->max_a = num;
-        if (num < tb->min_a)
-            tb->min_a = num;
-        //printf("min_a is %i, max_a is %i\n", tb->min_a, tb->max_a);
-    }
-    else if (c == 'b')
-    {
-        tb->len_b++;
-        tb->len_a--;
-        if (num > tb->max_b)
-            tb->max_b = num;
-        if (num < tb->min_b)
-            tb->min_b = num;
-        //printf("len_b is %i, min_b is %i, max_b is %i\n", tb->len_b, tb->min_b, tb->max_b);
-    }
+	if (c == 'a')
+	{
+		tb->len_a++;
+		tb->len_b--;
+		if (num > tb->max_a)
+			tb->max_a = num;
+		if (num < tb->min_a)
+			tb->min_a = num;
+	}
+	else if (c == 'b')
+	{
+		tb->len_b++;
+		tb->len_a--;
+		if (num > tb->max_b)
+			tb->max_b = num;
+		if (num < tb->min_b)
+			tb->min_b = num;
+	}
 }

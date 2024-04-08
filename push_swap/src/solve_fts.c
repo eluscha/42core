@@ -2,7 +2,7 @@
 
 void	solve_three(t_info *tb)
 {
-	t_stack *stack_a;
+	t_stack	*stack_a;
 
 	stack_a = *(tb->adr_a);
 	if (tb->len_a == 1)
@@ -20,10 +20,10 @@ void	solve_three(t_info *tb)
 
 void	len_is_three(t_info *tb, t_stack *stack_a)
 {
-	int num1;
-	int num2;
-	int num3;
-	
+	int	num1;
+	int	num2;
+	int	num3;
+
 	num1 = stack_a->num;
 	num2 = stack_a->next->num;
 	num3 = stack_a->next->next->num;
@@ -46,16 +46,16 @@ void	len_is_three(t_info *tb, t_stack *stack_a)
 }
 
 void	solve(t_info *tb)
-{	
-	int i;
-	t_stack *ptr;
-	t_ops ops;
-	t_ops min_ops;
+{
+	int		i;
+	t_stack	*ptr;
+	t_ops	ops;
+	t_ops	min_ops;
 
 	push(tb, 'b');
 	if (tb->len_a > 3)
 		push(tb, 'b');
-	while(tb->len_a > 3)
+	while (tb->len_a > 3)
 	{
 		ptr = *(tb->adr_a);
 		i = 0;
@@ -76,10 +76,10 @@ void	solve(t_info *tb)
 
 void	back_to_stack_a(t_info *tb)
 {
-	int i;
-	t_stack *ptr;
-	
-	while(tb->len_b > 0)
+	int		i;
+	t_stack	*ptr;
+
+	while (tb->len_b > 0)
 		push_back(tb);
 	i = 0;
 	ptr = *(tb->adr_a);
@@ -98,17 +98,17 @@ void	back_to_stack_a(t_info *tb)
 
 void	push_back(t_info *tb)
 {
-	int i;
-	int num;
-	t_stack *ptr;
+	int		i;
+	int		num;
+	t_stack	*ptr;
 	t_ops	ops;
-	
+
 	num = (*(tb->adr_b))->num;
 	ptr = *(tb->adr_a);
 	i = -1;
 	if (num < tb->min_a || num > tb->max_a)
 	{
-		while (++i < tb->len_a && ptr->num > tb->min_a) 
+		while (++i < tb->len_a && ptr->num > tb->min_a)
 			ptr = ptr->next;
 	}
 	else

@@ -2,7 +2,7 @@
 
 t_ops	fill_ops(char *code, int i)
 {
-	t_ops ops;
+	t_ops	ops;
 
 	ops.ra = 0;
 	ops.rb = 0;
@@ -27,24 +27,24 @@ t_ops	fill_ops(char *code, int i)
 
 void	perform_ops(t_info *tb, t_ops ops)
 {
-	int i;
+	int	i;
 
 	i = 0;
-	while(i++ < ops.ra)
+	while (i++ < ops.ra)
 		rotate(tb, 'a');
 	i = 0;
-	while(i++ < ops.rb)
+	while (i++ < ops.rb)
 		rotate(tb, 'b');
 	i = 0;
-	while(i++ < ops.rr)
+	while (i++ < ops.rr)
 		rotate(tb, 'r');
 	i = 0;
-	while(i++ < ops.rra)
+	while (i++ < ops.rra)
 		reverse_rotate(tb, 'a');
 	i = 0;
-	while(i++ < ops.rrb)
+	while (i++ < ops.rrb)
 		reverse_rotate(tb, 'b');
 	i = 0;
-	while(i++ < ops.rrr)
+	while (i++ < ops.rrr)
 		reverse_rotate(tb, 'r');
 }

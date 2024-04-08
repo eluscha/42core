@@ -2,10 +2,10 @@
 
 t_ops	count_ops(int num, int i, t_info *tb)
 {
-	//printf("In count ops for num %i!\n", num);
 	t_ops	ops;
-	t_stack *ptr_b = *(tb->adr_b);
+	t_stack	*ptr_b;
 
+	ptr_b = *(tb->adr_b);
 	ops.ra = i;
 	ops.rra = tb->len_a - i;
 	ops.rb = -1;
@@ -17,27 +17,25 @@ t_ops	count_ops(int num, int i, t_info *tb)
 	}
 	else
 	{
-		while (++ops.rb < tb->len_b && (num < ptr_b->num || num > ptr_b->pre->num))
+		while (++ops.rb < tb->len_b && \
+				(num < ptr_b->num || num > ptr_b->pre->num))
 			ptr_b = ptr_b->next;
 		ops.rrb = tb->len_b - ops.rb;
 	}
 	ops.rr = ft_min(ops.ra, ops.rb);
 	ops.rrr = ft_min(ops.rra, ops.rrb);
-	//printf("ops.ra is %i, ops.rb is %i, ops.rra is %i ops.rrb is %i \n", ops.ra, ops.rb, ops.rra, ops.rrb);
-	//printf("code is %i ops.ra is %i, ops.rb is %i, ops.rr is %i\n ", code, ops.ra, ops.rb, ops.rr);
-	//printf("ops.rra is %i, ops.rrb is %i, ops.rrr is %i\n ", ops.rra, ops.rrb, ops.rrr);
 	return (get_best_ops(ops));
 }
 
 t_ops	get_best_ops(t_ops ops)
 {
-	int code;
+	int	code;
 
 	ops.sum = ops.ra + ops.rrb;
 	code = 0;
 	if (ops.rra + ops.rb < ops.sum)
 	{
-		ops.sum = ops.rra + ops.rrb; 
+		ops.sum = ops.rra + ops.rrb;
 		code = 1;
 	}
 	if (ops.ra + ops.rb - ops.rr < ops.sum)
@@ -70,7 +68,14 @@ t_ops	adjust_ops(t_ops ops, int code)
 			ops.rrb = 0;
 		}
 	}
-	else if (code == 2)
+	else
+		ops = ops_code23(ops, code);
+	return (ops);
+}
+
+t_ops	ops_code23(t_ops ops, int code)
+{
+	if (code == 2)
 	{
 		ops.rra = 0;
 		ops.rrb = 0;
@@ -78,18 +83,14 @@ t_ops	adjust_ops(t_ops ops, int code)
 		ops.ra -= ops.rr;
 		ops.rb -= ops.rr;
 	}
-	else
-		ops = ops_code3(ops);
-	return (ops);
-}
-
-t_ops	ops_code3(t_ops ops)
-{
-	ops.ra = 0;
-	ops.rb = 0;
-	ops.rr = 0;
-	ops.rra -= ops.rrr;
-	ops.rrb -= ops.rrr;
+	else if (code == 3)
+	{
+		ops.ra = 0;
+		ops.rb = 0;
+		ops.rr = 0;
+		ops.rra -= ops.rrr;
+		ops.rrb -= ops.rrr;
+	}
 	return (ops);
 }
 

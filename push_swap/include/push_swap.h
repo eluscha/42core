@@ -36,32 +36,43 @@ typedef struct s_ops
 # include <stdio.h>  //so far just for printf
 # include "libft.h"
 
+/*manage_stacks*/
+t_stack	*get_stack_a(int ac, char **av, t_stack **array);
+int	get_num(int ac, char *str, int *result, t_stack **array);
+int	is_dupl(int ac, int num, t_stack **array);
+void	free_all(int ac, t_stack *stack_a, t_stack *stack_b, t_stack **array);
+void	free_list(t_stack *head);
+/*info_tb*/
 int		get_len(t_stack *stack_a);
 t_info	init_info(t_stack **stack_a, t_stack **stack_b);
 void	update_tb(t_info *tb, char c, int num);
+/*dbl_lnk_list*/
 t_stack *newnode(int num, t_stack *pre, t_stack *next);
 t_stack *add_to_tail(int num, t_stack *oldtail);
 t_stack *insert_node(t_stack *head, t_stack *newhead);
 int	move_node(t_stack **to, t_stack **from);
+/*solve_fts*/
 void	solve_three(t_info *tb);
 void	len_is_three(t_info *tb, t_stack *stack_a);
 void	solve(t_info *tb);
 void	back_to_stack_a(t_info *tb);
 void	push_back(t_info *tb);
+/*ops_struct_fts*/
 t_ops	fill_ops(char *code, int i);
 void	perform_ops(t_info *tb, t_ops ops);
+/*stack_operations*/
 int		push(t_info *tb, char c);
 void	rotate(t_info *tb, char c);
 void	reverse_rotate(t_info *tb, char c);
 void	swap(t_info *tb, char c);
+t_stack *swap_one(t_stack **head_adr);
+/*count_ops*/
 t_ops	count_ops(int num, int i, t_info *tb);
 t_ops	get_best_ops(t_ops ops);
 t_ops	adjust_ops(t_ops ops, int code);
-t_ops	ops_code3(t_ops ops);
+t_ops	ops_code23(t_ops ops, int code);
 int	ft_min(int num1, int num2);
-void	free_list(t_stack *head);
 
-
-void printstack(t_stack *stack_a, t_stack *stack_b); //delete later!!
+//void printstack(t_stack *stack_a, t_stack *stack_b); //delete later!!
 
 #endif
