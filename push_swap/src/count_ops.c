@@ -47,7 +47,7 @@ t_ops	get_best_ops(t_ops ops)
 	code = 0;
 	if (ops.rra + ops.rb < ops.sum)
 	{
-		ops.sum = ops.rra + ops.rrb;
+		ops.sum = ops.rra + ops.rb;
 		code = 1;
 	}
 	if (ops.ra + ops.rb - ops.rr < ops.sum)
