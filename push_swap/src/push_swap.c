@@ -16,6 +16,7 @@ int	main(int argc, char **argv)
 	if (!stack_a)
 	{
 		ft_putstr_fd("Error\n", 2);
+		free_all(argc, stack_a, stack_b, array);
 		exit(EXIT_FAILURE);
 	}
 	tb = init_info(&stack_a, &stack_b);

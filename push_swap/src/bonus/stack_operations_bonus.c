@@ -1,26 +1,26 @@
 #include "push_swap_bonus.h"
 
-void	push(t_stack **to, t_stack **from) 
+void	push(t_stack **to, t_stack **from)
 {
-	t_stack *from_tail;
-	t_stack *from_head;
+	t_stack	*from_tail;
+	t_stack	*from_head;
 
 	if (*from == NULL)
 		return ;
 	from_tail = (*from)->pre;
 	from_head = (*from)->next;
-	*to = insert_node(*to, *from); 
+	*to = insert_node(*to, *from);
 	if (*from == from_head)
 		*from = NULL;
 	else
 	{
 		from_head->pre = from_tail;
 		from_tail->next = from_head;
-		*from = from_head; 
+		*from = from_head;
 	}
 }
 
-void	rotate(t_stack **stack_a, t_stack **stack_b,  char c)
+void	rotate(t_stack **stack_a, t_stack **stack_b, char c)
 {
 	if (*stack_a && (c == 'a' || c == 'r'))
 		*stack_a = (*stack_a)->next;
@@ -28,7 +28,7 @@ void	rotate(t_stack **stack_a, t_stack **stack_b,  char c)
 		*stack_b = (*stack_b)->next;
 }
 
-void reverse_rotate(t_stack **stack_a, t_stack **stack_b,  char c)
+void	reverse_rotate(t_stack **stack_a, t_stack **stack_b, char c)
 {
 	if (stack_a && (c == 'a' || c == 'r'))
 		*stack_a = (*stack_a)->pre;
@@ -36,7 +36,7 @@ void reverse_rotate(t_stack **stack_a, t_stack **stack_b,  char c)
 		*stack_b = (*stack_b)->pre;
 }
 
-void swap(t_stack **stack_a, t_stack **stack_b,  char c)
+void	swap(t_stack **stack_a, t_stack **stack_b, char c)
 {
 	if (c == 'a' || c == 's')
 		*stack_a = swap_one(stack_a);
@@ -44,20 +44,20 @@ void swap(t_stack **stack_a, t_stack **stack_b,  char c)
 		*stack_b = swap_one(stack_b);
 }
 
-t_stack *swap_one(t_stack **head_adr)
+t_stack	*swap_one(t_stack **head_adr)
 {
 	t_stack	*head;
-	t_stack *newhead;
-	t_stack *third;
-	t_stack *tail;
+	t_stack	*newhead;
+	t_stack	*third;
+	t_stack	*tail;
 
 	head = *head_adr;
 	newhead = head->next;
 	third = newhead->next;
 	tail = head->pre;
-	if (third  == head) //len of stack is two, we just need to rotate
+	if (third == head)
 		return (newhead);
-	tail->next = newhead; 
+	tail->next = newhead;
 	newhead->pre = tail;
 	newhead->next = head;
 	head->pre = newhead;
@@ -65,6 +65,3 @@ t_stack *swap_one(t_stack **head_adr)
 	third->pre = head;
 	return (newhead);
 }
-
-
-
