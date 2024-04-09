@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   solve_fts.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eusatiko <eusatiko@student.42berlin.d      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/09 11:30:04 by eusatiko          #+#    #+#             */
+/*   Updated: 2024/04/09 11:30:07 by eusatiko         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "push_swap.h"
 
 void	solve_three(t_info *tb)
@@ -60,7 +72,7 @@ void	solve(t_info *tb)
 		ptr = *(tb->adr_a);
 		i = 0;
 		min_ops = count_ops(ptr->num, 0, tb);
-		while (++i < min_ops.sum)
+		while (++i < tb->len_a)
 		{
 			ptr = ptr->next;
 			ops = count_ops(ptr->num, i, tb);
@@ -85,7 +97,7 @@ void	back_to_stack_a(t_info *tb)
 	ptr = *(tb->adr_a);
 	while (++i && ptr->num > tb->min_a)
 		ptr = ptr->next;
-	if (i < tb->len_a / 2)
+	if (i < tb->len_a / 2 + 1)
 	{
 		while (--i > 0)
 			rotate(tb, 'a');

@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   stack_operations.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eusatiko <eusatiko@student.42berlin.d      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/09 11:30:12 by eusatiko          #+#    #+#             */
+/*   Updated: 2024/04/09 11:30:15 by eusatiko         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "push_swap.h"
 
-int	push(t_info *tb, char c)
+void	push(t_info *tb, char c)
 {
 	t_stack	**to;
 	t_stack	**from;
@@ -16,13 +28,14 @@ int	push(t_info *tb, char c)
 		to = tb->adr_b;
 		from = tb->adr_a;
 	}
+	else
+		return ;
 	moved = move_node(to, from);
 	if (moved)
 		update_tb(tb, c, (*to)->num);
 	ft_putstr_fd("p", 1);
 	ft_putchar_fd(c, 1);
 	ft_putstr_fd("\n", 1);
-	return ((*to)->num);
 }
 
 void	rotate(t_info *tb, char c)
@@ -59,9 +72,14 @@ void	reverse_rotate(t_info *tb, char c)
 
 void	swap(t_info *tb, char c)
 {
-	if (c == 'a' || c == 's')
+	t_stack	*stack_a;
+	t_stack	*stack_b;
+
+	stack_a = *(tb->adr_a);
+	stack_b = *(tb->adr_b);
+	if (stack_a && (c == 'a' || c == 's'))
 		*(tb->adr_a) = swap_one(tb->adr_a);
-	if (c == 'b' || c == 's')
+	if (stack_b && (c == 'b' || c == 's'))
 		*(tb->adr_b) = swap_one(tb->adr_b);
 	ft_putstr_fd("s", 1);
 	ft_putchar_fd(c, 1);

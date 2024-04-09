@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   stack_operations_bonus.c                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eusatiko <eusatiko@student.42berlin.d      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/09 11:31:48 by eusatiko          #+#    #+#             */
+/*   Updated: 2024/04/09 11:31:51 by eusatiko         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "push_swap_bonus.h"
 
 void	push(t_stack **to, t_stack **from)
@@ -30,17 +42,17 @@ void	rotate(t_stack **stack_a, t_stack **stack_b, char c)
 
 void	reverse_rotate(t_stack **stack_a, t_stack **stack_b, char c)
 {
-	if (stack_a && (c == 'a' || c == 'r'))
+	if (*stack_a && (c == 'a' || c == 'r'))
 		*stack_a = (*stack_a)->pre;
-	if (stack_b && (c == 'b' || c == 'r'))
+	if (*stack_b && (c == 'b' || c == 'r'))
 		*stack_b = (*stack_b)->pre;
 }
 
 void	swap(t_stack **stack_a, t_stack **stack_b, char c)
 {
-	if (c == 'a' || c == 's')
+	if (*stack_a && (c == 'a' || c == 's'))
 		*stack_a = swap_one(stack_a);
-	if (c == 'b' || c == 's')
+	if (*stack_b && (c == 'b' || c == 's'))
 		*stack_b = swap_one(stack_b);
 }
 

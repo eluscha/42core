@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   push_swap.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eusatiko <eusatiko@student.42berlin.d      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/09 11:29:56 by eusatiko          #+#    #+#             */
+/*   Updated: 2024/04/09 11:29:59 by eusatiko         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "push_swap.h"
 
 int	main(int argc, char **argv)
@@ -19,6 +31,7 @@ int	main(int argc, char **argv)
 		free_all(argc, stack_a, stack_b, array);
 		exit(EXIT_FAILURE);
 	}
+	check_sort_exit(argc, stack_a, array);
 	tb = init_info(&stack_a, &stack_b);
 	if (tb.len_a <= 3)
 		solve_three(&tb);
@@ -28,43 +41,15 @@ int	main(int argc, char **argv)
 	exit(EXIT_SUCCESS);
 }
 
-/*
-void printstack(t_stack *stack_a, t_stack *stack_b) // does not have to be norm
+void	check_sort_exit(int ac, t_stack *stack_a, t_stack **array)
 {
-	t_stack *ptr_a = stack_a;
-	t_stack *ptr_b = stack_b;
+	t_stack	*ptr;
 
-	if (ptr_a)
-	{
-		printf("%10d   ", ptr_a->num);
-		ptr_a = ptr_a->next;
-	}
-	else
-		printf("          ");
-	if (ptr_b)
-	{
-		printf("%10d\n", ptr_b->num);
-		ptr_b = ptr_b->next;
-	}
-	else
-		printf("\n");
-	while (ptr_a != stack_a || ptr_b != stack_b)
-	{
-		if (ptr_a != stack_a)
-		{
-			printf("%10d   ", ptr_a->num);
-			ptr_a = ptr_a->next;
-		}
-		else
-			printf("          ");
-		if (ptr_b != stack_b)
-		{
-			printf("%10d\n", ptr_b->num);
-			ptr_b = ptr_b->next;
-		}
-		else
-			printf("\n");
-	}
-	printf("  stack_a     stack_b\n");
+	ptr = stack_a;
+	while (ptr->num < ptr->next->num)
+		ptr = ptr->next;
+	if (ptr->next != stack_a)
+		return ;
+	free_all(ac, stack_a, NULL, array);
+	exit(EXIT_SUCCESS);
 }
-*/

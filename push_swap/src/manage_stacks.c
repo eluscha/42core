@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   manage_stacks.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eusatiko <eusatiko@student.42berlin.d      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/09 11:29:27 by eusatiko          #+#    #+#             */
+/*   Updated: 2024/04/09 11:29:31 by eusatiko         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "push_swap.h"
 
 t_stack	*get_stack_a(int ac, char **av, t_stack **array)
@@ -40,14 +52,14 @@ int	get_num(int ac, char *str, int *result, t_stack **array)
 	i = neg;
 	while (str[i] >= 48 && str[i] <= 57)
 	{
-		if (i - neg == 9)
+		if (num > 214748364)
+			return (0); 
+		num *= 10;
+		if (num == 2147483640)
 		{
 			if (str[i] - 48 > 7 + neg)
 				return (0);
 		}
-		else if (i - neg == 10)
-			return (0);
-		num *= 10;
 		num += str[i++] - 48;
 	}
 	*result = num * (-2 * neg + 1);
