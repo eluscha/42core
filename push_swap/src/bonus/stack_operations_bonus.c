@@ -65,6 +65,8 @@ t_stack	*swap_one(t_stack **head_adr)
 
 	head = *head_adr;
 	newhead = head->next;
+	if (head == newhead)
+		return (head);
 	third = newhead->next;
 	tail = head->pre;
 	if (third == head)

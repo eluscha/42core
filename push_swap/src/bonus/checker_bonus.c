@@ -19,12 +19,11 @@ int	main(int argc, char **argv)
 	t_stack	**array;
 	char	*cmd;
 
+	if (argc == 1)
+		exit(EXIT_SUCCESS);
 	array = ft_calloc(argc, sizeof(t_stack *));
 	stack_b = NULL;
-	if (argc == 1)
-		stack_a = NULL;
-	else
-		stack_a = get_stack_a(argc, argv, array);
+	stack_a = get_stack_a(argc, argv, array);
 	if (!stack_a)
 		error(argc, stack_a, stack_b, array);
 	cmd = get_next_line(0);
