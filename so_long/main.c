@@ -4,25 +4,23 @@ int main(int argc, char **argv)
 {
     int fd;
     int idx;
-    t_map *mapdata;
+    t_map mapdata;
 
     fd = 0;
     if (argc != 1)
         fd = open(argv[1], O_RDONLY);
     if (fd == -1)
-        return (1);
-    init_mapdata(mapdata);
-    get_map(mapdata, NULL, fd, 100);
+        return (1);    
+    init_mapdata(&mapdata);
+    get_map(&mapdata, NULL, fd, 100);
     close(fd);
     printf("got the map\n");
     int i = -1;
-    while(mapdata->map[++i])
-        printf("line number %i is %s\n", i, mapdata->map[i]);
-    if (!valid_map(mapdata))
-        close_free_exit(0, mapdata->map, NULL, 2);
+    if (!valid_map(&mapdata))
+        close_free_exit(0, mapdata.map, NULL, 2);
     i = -1;
-    while(mapdata->map[++i])
-        printf("line number %i is %s\n", i, mapdata->map[i]);
+    while(mapdata.map[++i])
+        printf("line number %i is %s\n", i, mapdata.map[i]);
     printf("map is valid\n");
     //draw_map(mapdata);
 }
@@ -50,7 +48,7 @@ void get_map(t_map *mapdata, char *oldline, int fd, int size)
         line = get_next_line(fd);
     while (line && ++idx < size)
     {
-        mapdata->map[idx] = line; //will cause memory leaks
+        mapdata->map[idx] = line;
         line = get_next_line(fd);
     }
     if (line)
@@ -58,19 +56,12 @@ void get_map(t_map *mapdata, char *oldline, int fd, int size)
 }
 
 void    close_free_exit(int fd, char **map, char *line, int excode) //excode can code for wrong map vs failed malloc..
-{
-    int idx = 0;
-    
+{   
     if (fd)
         close(fd);
     if (line)
         free(line);
-    if (map)
-    {
-        while(map[idx])
-            free(map[idx++]);
-        free(map);
-    }
+    free_map(map);
     if (excode == 2)
         printf("Map is invalid");
     exit(EXIT_FAILURE);
@@ -79,8 +70,18 @@ void    close_free_exit(int fd, char **map, char *line, int excode) //excode can
 void init_mapdata(t_map *mapdata)
 {
 	mapdata->map = NULL;
-	mapdata->player[0] = 0; //init to 0,-
-	mapdata->exit[0] = 0; //init to 0,-
+	mapdata->px = 0; //init to 0
+	mapdata->exit = 0; //init to 0,-
 	mapdata->goal = 0;
 	mapdata->score = 0; 
+}
+
+void free_map(char **map)
+{
+    int idx = 0;
+    if (!map)
+        return ;
+    while(map[idx])
+        free(map[idx++]);
+    free(map);
 }

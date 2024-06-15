@@ -14,15 +14,29 @@ typedef struct s_map
 	int	width;
 	int height;
 	char **map;
-	int player[2]; //init to 0,0
-	int exit[2]; //init to 0,0
+	int px; //init to 0
+	int py;
+	int exit; //init to 0
 	int goal;
 	int score; //has to be initialized to 0
 }		t_map;
+
+typedef struct s_pos
+{
+	int	x;
+	int y;
+	struct s_pos *next; 
+}		t_pos;
 
 void get_map(t_map *mapdata, char *oldline, int fd, int size);
 void    close_free_exit(int fd, char **map, char *line, int excode);
 int valid_map(t_map *mapdata);
 void init_mapdata(t_map *mapdata);
+void free_map(char **map);
+int valid_path(t_map *mapdata);
+t_pos *create_node(int x, int y);
+char **copy_map(t_map *mapdatat);
+t_pos *add_nbs(char **map, int x, int y, t_pos* tail); //unprotected mallocs!
+
 
 #endif
