@@ -7,6 +7,57 @@ static void error(void)
 	exit(EXIT_FAILURE);
 }
 
+void	key_hook(mlx_key_data_t keydata, void* param)
+{
+	t_map* md;
+
+	md = param;
+	if (keydata.key == MLX_KEY_A && keydata.action == MLX_PRESS)
+	{
+		if (md->map[md->py][md->px-1] != '1')
+		{
+			md->px--;
+			md->img_pl2->enabled = !md->img_pl2->enabled;
+			md->img_pl1->enabled = !md->img_pl1->enabled;
+			md->img_pl1->instances[0].x -= 60;
+			md->img_pl2->instances[0].x -= 60;
+		}
+	}
+	if (keydata.key == MLX_KEY_W && keydata.action == MLX_PRESS)
+	{
+		if (md->map[md->py-1][md->px] != '1')
+		{
+			md->py--;
+			md->img_pl2->enabled = !md->img_pl2->enabled;
+			md->img_pl1->enabled = !md->img_pl1->enabled;
+			md->img_pl1->instances[0].y -= 60;
+			md->img_pl2->instances[0].y -= 60;
+		}
+	}
+	if (keydata.key == MLX_KEY_D && keydata.action == MLX_PRESS)
+	{
+		if (md->map[md->py][md->px+1] != '1')
+		{
+			md->px++;
+			md->img_pl2->enabled = !md->img_pl2->enabled;
+			md->img_pl1->enabled = !md->img_pl1->enabled;
+			md->img_pl1->instances[0].x += 60;
+			md->img_pl2->instances[0].x += 60;
+		}
+	}
+	if (keydata.key == MLX_KEY_S && keydata.action == MLX_PRESS)
+	{
+		if (md->map[md->py+1][md->px] != '1')
+		{
+			md->py++;
+			md->img_pl2->enabled = !md->img_pl2->enabled;
+			md->img_pl1->enabled = !md->img_pl1->enabled;
+			md->img_pl1->instances[0].y += 60;
+			md->img_pl2->instances[0].y += 60;
+		}
+	}
+}
+
 void	hook(void* param)
 {
 	t_map* md;
@@ -14,17 +65,19 @@ void	hook(void* param)
 	md = param;
 	if (mlx_is_key_down(md->mlx, MLX_KEY_ESCAPE))
 		mlx_close_window(md->mlx);
-	if (mlx_is_key_down(md->mlx, MLX_KEY_S))
-		md->img_player->instances[0].y += 60;
-	if (mlx_is_key_down(md->mlx, MLX_KEY_W))
-		md->img_player->instances[0].y -= 60;
-	if (mlx_is_key_down(md->mlx, MLX_KEY_A))
-		md->img_player->instances[0].x -= 60;
-	if (mlx_is_key_down(md->mlx, MLX_KEY_D))
-		md->img_player->instances[0].x += 60;
-	//for (uint32_t x = 0; x < g_img->width; x++)
-	//	for(uint32_t y= 0; y < g_img->height; y++)
-	//		mlx_put_pixel(g_img, x, y, rand());
+	
+	if (md->map[md->py][md->px] == 'C')
+	{
+		md->map[md->py][md->px] = '0';
+		md->score++;
+		ft_printf("Score is %i\n", md->score);
+		size_t i = -1;
+		while (++i < md->img_cllct->count)
+		{
+			if (md->img_cllct->instances[i].x == md->px*60 && md->img_cllct->instances[i].y == md->py*60)
+				md->img_cllct->instances[i].enabled = 0;
+		}
+	}
 }
 
 int32_t	draw_map(t_map *md)
@@ -34,14 +87,22 @@ int32_t	draw_map(t_map *md)
 		exit(EXIT_FAILURE);
 	mlx_texture_t* wall_texture = mlx_load_png("./textures/wall.png");
     mlx_texture_t* pl1_texture = mlx_load_png("./textures/pl1.png");
-	if (!wall_texture || !pl1_texture)
+	mlx_texture_t* pl2_texture = mlx_load_png("./textures/pl2.png");
+	mlx_texture_t* c_texture = mlx_load_png("./textures/cllct.png");
+	if (!wall_texture || !pl1_texture || !pl2_texture || !c_texture)
         error();
 	md->img_wall = mlx_texture_to_image(md->mlx, wall_texture);
-    md->img_player = mlx_texture_to_image(md->mlx, pl1_texture);
-	if (!md->img_wall || !md->img_player)
+    md->img_pl1 = mlx_texture_to_image(md->mlx, pl1_texture);
+	md->img_pl2 = mlx_texture_to_image(md->mlx, pl2_texture);
+	md->img_cllct = mlx_texture_to_image(md->mlx, c_texture);
+	if (!md->img_wall || !md->img_pl1 || !md->img_pl2 || !md->img_cllct)
         error();
-    if (mlx_image_to_window(md->mlx, md->img_player, md->px*60, md->py*60) < 0)
+    if (mlx_image_to_window(md->mlx, md->img_pl1, md->px*60, md->py*60) < 0)
 		error();
+	if (mlx_image_to_window(md->mlx, md->img_pl2, md->px*60, md->py*60) < 0)
+		error();
+	md->img_pl2->enabled = 0;
+
     int idx;
 	int lnum;
 	char *line = md->map[0];
@@ -57,22 +118,27 @@ int32_t	draw_map(t_map *md)
                 if (mlx_image_to_window(md->mlx, md->img_wall, idx*60, lnum*60) < 0)
 		            error();
             }
-            //else if (line[idx] == 'C')
-            //{
-            //    if (mlx_image_to_window(md->mlx, md->img_player, idx*60, lnum*60) < 0)
-		    //        error();
-            //}
-            //also check for P and E and C..
+            else if (line[idx] == 'C')
+			{
+            	if (mlx_image_to_window(md->mlx, md->img_cllct, idx*60, lnum*60) < 0)
+		            error();
+            }
+            //also check for E
         }
     }
-	
+	mlx_key_hook(md->mlx, &key_hook, md);
 	mlx_loop_hook(md->mlx, &hook, md);
 	mlx_loop(md->mlx);
+
 	mlx_delete_image(md->mlx, md->img_wall);
-    mlx_delete_image(md->mlx, md->img_player);
+    mlx_delete_image(md->mlx, md->img_pl1);
+	mlx_delete_image(md->mlx, md->img_pl2);
+	mlx_delete_image(md->mlx, md->img_cllct);
 
 	mlx_delete_texture(wall_texture);
     mlx_delete_texture(pl1_texture);
+	mlx_delete_texture(pl2_texture);
+	mlx_delete_texture(c_texture);
 
 	mlx_terminate(md->mlx);
 	return (EXIT_SUCCESS);

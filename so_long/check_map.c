@@ -22,7 +22,7 @@ int valid_map(t_map *mapdata)
 	while (line)
 	{
 		idx = -1;
-		while (line[++idx] != '\n')
+		while (line[++idx] && line[idx] != '\n')
 		{
 			if (idx == mapdata->width)
 				return (0);
@@ -66,10 +66,12 @@ int valid_map(t_map *mapdata)
 	if (!mapdata->exit || !mapdata->px || !mapdata->goal)
 		return (0);
 	if (valid_path(mapdata))
+	{
 		printf("There is valid path!\n");
-	else
-		printf("no path\n");
-	return (1);
+		return (1);
+	}
+	printf("no path\n");
+	return (0);
 }
 
 int valid_path(t_map *mapdata)
@@ -92,14 +94,14 @@ int valid_path(t_map *mapdata)
 	tail = head;
 	while (head && tail && !valid_path)
 	{
-		printf("map[head->y][head->x] is map[%i][%i]\n", head->y, head->x);
 		val = map[head->y][head->x];
+		printf("map[head->y][head->x] is map[%i][%i] and val is %c\n", head->y, head->x, val);
 		if (val == 'E')
 			exit = 1;
 		else if (val == 'C' || val == '0')
 		{
 			if (val == 'C')
-				mapdata->score++;
+				score++;
 			tail = add_nbs(map, head->x, head->y, tail);
 		}
 		map[head->y][head->x] = 'X'; //visited
@@ -109,6 +111,7 @@ int valid_path(t_map *mapdata)
 		temp = head;
 		head = head->next;
 		free(temp);
+		printf("exit is %i, score is %i\n", exit, score);
 		if (exit && score == mapdata->goal)
 			valid_path = 1;
 	}
@@ -124,7 +127,7 @@ int valid_path(t_map *mapdata)
 
 t_pos *create_node(int x, int y)
 {
-	printf("in create with x %i and y %i\n", x, y);
+	//printf("in create with x %i and y %i\n", x, y);
 	t_pos *node = malloc(sizeof(t_pos));
 
 	if (!node)

@@ -75,8 +75,10 @@ void init_mapdata(t_map *mapdata)
 	mapdata->score = 0;
 	mapdata->mlx = NULL;
 	mapdata->img_wall = NULL;
-	mapdata->img_player = NULL;
+	mapdata->img_pl1 = NULL;
+	mapdata->img_pl2 = NULL;
 	mapdata->img_exit = NULL;
+	mapdata->img_cllct = NULL;
 }
 
 void free_map(char **map)

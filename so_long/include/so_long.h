@@ -23,7 +23,9 @@ typedef struct s_map
 	mlx_t*    mlx;
 	mlx_image_t	*img_wall;
 	mlx_image_t	*img_exit;
-	mlx_image_t	*img_player;
+	mlx_image_t	*img_pl1;
+	mlx_image_t	*img_pl2;
+	mlx_image_t	*img_cllct;
 }		t_map;
 
 typedef struct s_pos
@@ -43,5 +45,7 @@ t_pos *create_node(int x, int y);
 char **copy_map(t_map *mapdatat);
 t_pos *add_nbs(char **map, int x, int y, t_pos* tail);
 int32_t	draw_map(t_map *mapdata);
+void	key_hook(mlx_key_data_t keydata, void* param);
+void	hook(void* param);
 
 #endif
