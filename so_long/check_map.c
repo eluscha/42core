@@ -8,7 +8,7 @@ int valid_map(t_map *mapdata)
 	
 
 	idx = -1;
-	while (line[++idx] != '\n')
+	while (line[++idx] && line[idx] != '\n')
 	{
 		if (line[idx] != '1')
 			return (0);
@@ -24,6 +24,7 @@ int valid_map(t_map *mapdata)
 		idx = -1;
 		while (line[++idx] && line[idx] != '\n')
 		{
+			printf("lnum is %i, idx is %i\n", lnum, idx);
 			if (idx == mapdata->width)
 				return (0);
 			if (idx == 0 || idx == mapdata->width - 1)

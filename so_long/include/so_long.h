@@ -3,7 +3,7 @@
 # define SO_LONG_H
 
 #include <stdio.h>
-#include "MLX42/MLX42.h"
+#include "MLX42.h"
 #include <memory.h>
 # include <unistd.h>
 # include <stdlib.h>
@@ -17,6 +17,8 @@ typedef struct s_map
 	char **map;
 	int px; //init to 0
 	int py;
+	int ex;
+	int ey;
 	int exit; //init to 0
 	int goal;
 	int score; //has to be initialized to 0
@@ -26,6 +28,8 @@ typedef struct s_map
 	mlx_image_t	*img_pl1;
 	mlx_image_t	*img_pl2;
 	mlx_image_t	*img_cllct;
+	mlx_image_t	*img_enemy;
+	size_t time;
 }		t_map;
 
 typedef struct s_pos

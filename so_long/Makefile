@@ -3,7 +3,7 @@ CFLAGS	:= -Wextra -Wall -Werror -Wunreachable-code -Ofast
 LIBMLX	:= ./MLX42
 LIBFT   := ./libft
 
-HEADERS	:= -I $(LIBMLX)/include -I ./include
+HEADERS	:= -I $(LIBMLX)/include/MLX42/ -I ./include
 LIBS	:= $(LIBFT)/libft.a $(LIBMLX)/build/libmlx42.a -ldl -lglfw -pthread -lm
 SRCS	:= main.c check_map.c draw_map.c
 OBJS	:= ${SRCS:.c=.o}
