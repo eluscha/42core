@@ -19,10 +19,10 @@ void	key_hook(mlx_key_data_t keydata, void* param)
 			md->px--;
 			md->moves++;
 			ft_printf("Moves: %i\n", md->moves);
-			md->img_pl2->enabled = !md->img_pl2->enabled;
-			md->img_pl1->enabled = !md->img_pl1->enabled;
-			md->img_pl1->instances[0].x -= UNIT_SIZE;
-			md->img_pl2->instances[0].x -= UNIT_SIZE;
+			md->img_pl[1]->enabled = !md->img_pl[1]->enabled;
+			md->img_pl[0]->enabled = !md->img_pl[0]->enabled;
+			md->img_pl[0]->instances[0].x -= UNIT_SIZE;
+			md->img_pl[1]->instances[0].x -= UNIT_SIZE;
 		}
 	}
 	if (keydata.key == MLX_KEY_W && keydata.action == MLX_PRESS)
@@ -32,10 +32,10 @@ void	key_hook(mlx_key_data_t keydata, void* param)
 			md->py--;
 			md->moves++;
 			ft_printf("Moves: %i\n", md->moves);
-			md->img_pl2->enabled = !md->img_pl2->enabled;
-			md->img_pl1->enabled = !md->img_pl1->enabled;
-			md->img_pl1->instances[0].y -= UNIT_SIZE;
-			md->img_pl2->instances[0].y -= UNIT_SIZE;
+			md->img_pl[1]->enabled = !md->img_pl[1]->enabled;
+			md->img_pl[0]->enabled = !md->img_pl[0]->enabled;
+			md->img_pl[0]->instances[0].y -= UNIT_SIZE;
+			md->img_pl[1]->instances[0].y -= UNIT_SIZE;
 		}
 	}
 	if (keydata.key == MLX_KEY_D && keydata.action == MLX_PRESS)
@@ -45,10 +45,10 @@ void	key_hook(mlx_key_data_t keydata, void* param)
 			md->px++;
 			md->moves++;
 			ft_printf("Moves: %i\n", md->moves);
-			md->img_pl2->enabled = !md->img_pl2->enabled;
-			md->img_pl1->enabled = !md->img_pl1->enabled;
-			md->img_pl1->instances[0].x += UNIT_SIZE;
-			md->img_pl2->instances[0].x += UNIT_SIZE;
+			md->img_pl[1]->enabled = !md->img_pl[1]->enabled;
+			md->img_pl[0]->enabled = !md->img_pl[0]->enabled;
+			md->img_pl[0]->instances[0].x += UNIT_SIZE;
+			md->img_pl[1]->instances[0].x += UNIT_SIZE;
 		}
 	}
 	if (keydata.key == MLX_KEY_S && keydata.action == MLX_PRESS)
@@ -58,10 +58,10 @@ void	key_hook(mlx_key_data_t keydata, void* param)
 			md->py++;
 			md->moves++;
 			ft_printf("Moves: %i\n", md->moves);
-			md->img_pl2->enabled = !md->img_pl2->enabled;
-			md->img_pl1->enabled = !md->img_pl1->enabled;
-			md->img_pl1->instances[0].y += UNIT_SIZE;
-			md->img_pl2->instances[0].y += UNIT_SIZE;
+			md->img_pl[1]->enabled = !md->img_pl[1]->enabled;
+			md->img_pl[0]->enabled = !md->img_pl[0]->enabled;
+			md->img_pl[0]->instances[0].y += UNIT_SIZE;
+			md->img_pl[1]->instances[0].y += UNIT_SIZE;
 		}
 	}
 }
@@ -88,7 +88,7 @@ void	hook(void* param)
 	}
 	int addx;
 	int addy;
-	if (md->time % 100 == 0)
+	if (md->time % 50 == 0)
 	{
 		addx = rand() % 3 - 1;
 		addy = rand() % 3 - 1;
@@ -122,11 +122,11 @@ int32_t	draw_map(t_map *md)
         error();
 
 	md->img_wall = mlx_texture_to_image(md->mlx, wall_texture);
-    md->img_pl1 = mlx_texture_to_image(md->mlx, pl1_texture);
-	md->img_pl2 = mlx_texture_to_image(md->mlx, pl2_texture);
+    md->img_pl[0] = mlx_texture_to_image(md->mlx, pl1_texture);
+	md->img_pl[1] = mlx_texture_to_image(md->mlx, pl2_texture);
 	md->img_cllct = mlx_texture_to_image(md->mlx, c_texture);
 	md->img_enemy = mlx_texture_to_image(md->mlx, e_texture);
-	if (!md->img_wall || !md->img_pl1 || !md->img_pl2 || !md->img_cllct || !md->img_enemy)
+	if (!md->img_wall || !md->img_pl[0] || !md->img_pl[1] || !md->img_cllct || !md->img_enemy)
         error();
 
     int idx;
@@ -155,13 +155,33 @@ int32_t	draw_map(t_map *md)
         }
     }
 
-	if (mlx_image_to_window(md->mlx, md->img_pl1, md->px*UNIT_SIZE, md->py*UNIT_SIZE) < 0)
+	if (mlx_image_to_window(md->mlx, md->img_pl[0], md->px*UNIT_SIZE, md->py*UNIT_SIZE) < 0)
 		error();
-	if (mlx_image_to_window(md->mlx, md->img_pl2, md->px*UNIT_SIZE, md->py*UNIT_SIZE) < 0)
+	if (mlx_image_to_window(md->mlx, md->img_pl[1], md->px*UNIT_SIZE, md->py*UNIT_SIZE) < 0)
 		error();
-	if (mlx_image_to_window(md->mlx, md->img_enemy, md->ex*UNIT_SIZE, md->ey*UNIT_SIZE) < 0)
-		error();
-	md->img_pl2->enabled = 0;
+	
+	md->img_pl[1]->enabled = 0;
+
+	//place enemy
+	int tries = -1;
+	int ex; 
+	int ey;
+	while(++tries < 1000)
+	{
+		ex = rand() % md->width;
+		ey = rand() % md->height;
+		if (md->map[ey][ex] == '0' && dist(ex, ey, md->px, md->py) > 2)
+			break ;
+	}
+	
+	if (tries < 1000)
+	{
+		md->ex = ex;
+		md->ey = ey;
+		if (mlx_image_to_window(md->mlx, md->img_enemy, md->ex*UNIT_SIZE, md->ey*UNIT_SIZE) < 0)
+			error();
+	}
+	
 
 	mlx_key_hook(md->mlx, &key_hook, md);
 	mlx_loop_hook(md->mlx, &hook, md);
@@ -170,8 +190,8 @@ int32_t	draw_map(t_map *md)
 	mlx_loop(md->mlx);
 
 	mlx_delete_image(md->mlx, md->img_wall);
-    mlx_delete_image(md->mlx, md->img_pl1);
-	mlx_delete_image(md->mlx, md->img_pl2);
+    mlx_delete_image(md->mlx, md->img_pl[0]);
+	mlx_delete_image(md->mlx, md->img_pl[1]);
 	mlx_delete_image(md->mlx, md->img_cllct);
 	mlx_delete_image(md->mlx, md->img_enemy);
 	mlx_delete_image(md->mlx, bg_img);
@@ -185,4 +205,22 @@ int32_t	draw_map(t_map *md)
 
 	mlx_terminate(md->mlx);
 	return (EXIT_SUCCESS);
+}
+
+int dist(int x1, int y1, int x2, int y2)
+{
+	int dist_x;
+	int dist_y;
+	
+	if (x1 > x2)
+		dist_x = x1 - x2;
+	else
+		dist_x = x2 - x1;
+
+	if (y1 > y2)
+		dist_y = y1 - y2;
+	else
+		dist_y = y2 - y1;
+
+	return (dist_x * dist_x + dist_y * dist_y);
 }
