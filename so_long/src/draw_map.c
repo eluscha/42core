@@ -17,10 +17,12 @@ void	key_hook(mlx_key_data_t keydata, void* param)
 		if (md->map[md->py][md->px-1] != '1')
 		{
 			md->px--;
+			md->moves++;
+			ft_printf("Moves: %i\n", md->moves);
 			md->img_pl2->enabled = !md->img_pl2->enabled;
 			md->img_pl1->enabled = !md->img_pl1->enabled;
-			md->img_pl1->instances[0].x -= 60;
-			md->img_pl2->instances[0].x -= 60;
+			md->img_pl1->instances[0].x -= UNIT_SIZE;
+			md->img_pl2->instances[0].x -= UNIT_SIZE;
 		}
 	}
 	if (keydata.key == MLX_KEY_W && keydata.action == MLX_PRESS)
@@ -28,10 +30,12 @@ void	key_hook(mlx_key_data_t keydata, void* param)
 		if (md->map[md->py-1][md->px] != '1')
 		{
 			md->py--;
+			md->moves++;
+			ft_printf("Moves: %i\n", md->moves);
 			md->img_pl2->enabled = !md->img_pl2->enabled;
 			md->img_pl1->enabled = !md->img_pl1->enabled;
-			md->img_pl1->instances[0].y -= 60;
-			md->img_pl2->instances[0].y -= 60;
+			md->img_pl1->instances[0].y -= UNIT_SIZE;
+			md->img_pl2->instances[0].y -= UNIT_SIZE;
 		}
 	}
 	if (keydata.key == MLX_KEY_D && keydata.action == MLX_PRESS)
@@ -39,10 +43,12 @@ void	key_hook(mlx_key_data_t keydata, void* param)
 		if (md->map[md->py][md->px+1] != '1')
 		{
 			md->px++;
+			md->moves++;
+			ft_printf("Moves: %i\n", md->moves);
 			md->img_pl2->enabled = !md->img_pl2->enabled;
 			md->img_pl1->enabled = !md->img_pl1->enabled;
-			md->img_pl1->instances[0].x += 60;
-			md->img_pl2->instances[0].x += 60;
+			md->img_pl1->instances[0].x += UNIT_SIZE;
+			md->img_pl2->instances[0].x += UNIT_SIZE;
 		}
 	}
 	if (keydata.key == MLX_KEY_S && keydata.action == MLX_PRESS)
@@ -50,10 +56,12 @@ void	key_hook(mlx_key_data_t keydata, void* param)
 		if (md->map[md->py+1][md->px] != '1')
 		{
 			md->py++;
+			md->moves++;
+			ft_printf("Moves: %i\n", md->moves);
 			md->img_pl2->enabled = !md->img_pl2->enabled;
 			md->img_pl1->enabled = !md->img_pl1->enabled;
-			md->img_pl1->instances[0].y += 60;
-			md->img_pl2->instances[0].y += 60;
+			md->img_pl1->instances[0].y += UNIT_SIZE;
+			md->img_pl2->instances[0].y += UNIT_SIZE;
 		}
 	}
 }
@@ -71,11 +79,10 @@ void	hook(void* param)
 	{
 		md->map[md->py][md->px] = '0';
 		md->score++;
-		ft_printf("Score is %i\n", md->score);
 		size_t i = -1;
 		while (++i < md->img_cllct->count)
 		{
-			if (md->img_cllct->instances[i].x == md->px*60 && md->img_cllct->instances[i].y == md->py*60)
+			if (md->img_cllct->instances[i].x == md->px*UNIT_SIZE && md->img_cllct->instances[i].y == md->py*UNIT_SIZE)
 				md->img_cllct->instances[i].enabled = 0;
 		}
 	}
@@ -88,9 +95,9 @@ void	hook(void* param)
 		if (md->map[md->ey + addy][md->ex + addx] != '1')
 		{
 			md->ex += addx;
-			md->img_enemy->instances[0].x += 60 * addx;
+			md->img_enemy->instances[0].x += UNIT_SIZE * addx;
 			md->ey += addy;
-			md->img_enemy->instances[0].y += 60 * addy;
+			md->img_enemy->instances[0].y += UNIT_SIZE * addy;
 		}
 	}
 
@@ -98,11 +105,11 @@ void	hook(void* param)
 
 int32_t	draw_map(t_map *md)
 {
-	md->mlx = mlx_init(md->width * 60, md->height * 60, "Game", true);
+	md->mlx = mlx_init(md->width * UNIT_SIZE, md->height * UNIT_SIZE, "Game", true);
 	if (!md->mlx)
 		exit(EXIT_FAILURE);
-	mlx_texture_t* background = mlx_load_png("./textures/stars.png");
-	mlx_texture_t* wall_texture = mlx_load_png("./textures/wall.png");
+	mlx_texture_t* background = mlx_load_png("./textures/Floor.png");
+	mlx_texture_t* wall_texture = mlx_load_png("./textures/ducky.png");
     mlx_texture_t* pl1_texture = mlx_load_png("./textures/pl1.png");
 	mlx_texture_t* pl2_texture = mlx_load_png("./textures/pl2.png");
 	mlx_texture_t* c_texture = mlx_load_png("./textures/cllct.png");
@@ -110,22 +117,9 @@ int32_t	draw_map(t_map *md)
 	if (!background || !wall_texture || !pl1_texture || !pl2_texture || !c_texture || !e_texture)
         error();
 
-	int fillx;
-	int filly = -1;
-
 	mlx_image_t	*bg_img = mlx_texture_to_image(md->mlx, background);
 	if (!bg_img)
         error();
-	while(++filly * 224 < md->height * 60)
-	{
-		fillx = -1;
-		while(++fillx * 256 < md->width * 60)
-		{
-			if (mlx_image_to_window(md->mlx, bg_img, fillx * 256, filly * 224) < 0)
-				error();
-		}
-	}
-	
 
 	md->img_wall = mlx_texture_to_image(md->mlx, wall_texture);
     md->img_pl1 = mlx_texture_to_image(md->mlx, pl1_texture);
@@ -134,13 +128,6 @@ int32_t	draw_map(t_map *md)
 	md->img_enemy = mlx_texture_to_image(md->mlx, e_texture);
 	if (!md->img_wall || !md->img_pl1 || !md->img_pl2 || !md->img_cllct || !md->img_enemy)
         error();
-    if (mlx_image_to_window(md->mlx, md->img_pl1, md->px*60, md->py*60) < 0)
-		error();
-	if (mlx_image_to_window(md->mlx, md->img_pl2, md->px*60, md->py*60) < 0)
-		error();
-	if (mlx_image_to_window(md->mlx, md->img_enemy, md->ex*60, md->ey*60) < 0)
-		error();
-	md->img_pl2->enabled = 0;
 
     int idx;
 	int lnum;
@@ -152,21 +139,34 @@ int32_t	draw_map(t_map *md)
 		idx = -1;
 		while (++idx < md->width)
 		{
+			if (mlx_image_to_window(md->mlx,bg_img, idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
+		            error();
             if (line[idx] == '1')
             {
-                if (mlx_image_to_window(md->mlx, md->img_wall, idx*60, lnum*60) < 0)
+                if (mlx_image_to_window(md->mlx, md->img_wall, idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
 		            error();
             }
             else if (line[idx] == 'C')
 			{
-            	if (mlx_image_to_window(md->mlx, md->img_cllct, idx*60, lnum*60) < 0)
+            	if (mlx_image_to_window(md->mlx, md->img_cllct, idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
 		            error();
             }
             //also check for E
         }
     }
+
+	if (mlx_image_to_window(md->mlx, md->img_pl1, md->px*UNIT_SIZE, md->py*UNIT_SIZE) < 0)
+		error();
+	if (mlx_image_to_window(md->mlx, md->img_pl2, md->px*UNIT_SIZE, md->py*UNIT_SIZE) < 0)
+		error();
+	if (mlx_image_to_window(md->mlx, md->img_enemy, md->ex*UNIT_SIZE, md->ey*UNIT_SIZE) < 0)
+		error();
+	md->img_pl2->enabled = 0;
+
 	mlx_key_hook(md->mlx, &key_hook, md);
 	mlx_loop_hook(md->mlx, &hook, md);
+
+	ft_printf("Moves: %i\n", md->moves);
 	mlx_loop(md->mlx);
 
 	mlx_delete_image(md->mlx, md->img_wall);

@@ -83,6 +83,7 @@ void init_mapdata(t_map *mapdata)
 	mapdata->img_cllct = NULL;
 	mapdata->img_enemy = NULL;
 	mapdata->time = 0;
+	mapdata->moves = 0;
 }
 
 void free_map(char **map)

@@ -66,7 +66,7 @@ int valid_map(t_map *mapdata)
 	}
 	if (!mapdata->exit || !mapdata->px || !mapdata->goal)
 		return (0);
-	if (valid_path(mapdata))
+	if (valid_path(*mapdata))
 	{
 		printf("There is valid path!\n");
 		return (1);
@@ -75,45 +75,43 @@ int valid_map(t_map *mapdata)
 	return (0);
 }
 
-int valid_path(t_map *mapdata)
+int valid_path(t_map md)
 {
 	char	val;
-	int		valid_path = 0;
+	bool		valid_path = 0;
 	t_pos *head;
 	t_pos *tail;
 	t_pos *temp;
 
 	int i;
-	char **map;
 	printf("in valid_path\n");
-	map = copy_map(mapdata);
-	if (!map)
+	md.map = copy_map(&md);
+	if (!md.map)
 		return (-1);
-	int exit = 0;
-	int score = 0;
-	head = create_node(mapdata->px, mapdata->py);
+	md.exit = 0;
+	head = create_node(md.px, md.py);
 	tail = head;
 	while (head && tail && !valid_path)
 	{
-		val = map[head->y][head->x];
+		val = md.map[head->y][head->x];
 		printf("map[head->y][head->x] is map[%i][%i] and val is %c\n", head->y, head->x, val);
 		if (val == 'E')
-			exit = 1;
+			md.exit = 1;
 		else if (val == 'C' || val == '0')
 		{
 			if (val == 'C')
-				score++;
-			tail = add_nbs(map, head->x, head->y, tail);
+				md.score++;
+			tail = add_nbs(md.map, head->x, head->y, tail);
 		}
-		map[head->y][head->x] = 'X'; //visited
+		md.map[head->y][head->x] = 'X'; //visited
 		i = -1;
-		while (map[++i])
-			printf("line number %i is %s\n", i, map[i]);
+		while (md.map[++i])
+			printf("line number %i is %s\n", i, md.map[i]);
 		temp = head;
 		head = head->next;
 		free(temp);
-		printf("exit is %i, score is %i\n", exit, score);
-		if (exit && score == mapdata->goal)
+		printf("exit is %i, score is %i\n", md.exit, md.score);
+		if (md.exit && md.score == md.goal)
 			valid_path = 1;
 	}
 	while (head)
@@ -122,7 +120,7 @@ int valid_path(t_map *mapdata)
 		head = head->next;
 		free(temp);
 	}
-	free_map(map);
+	free_map(md.map);
 	return (valid_path);
 }
 

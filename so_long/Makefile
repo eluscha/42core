@@ -1,35 +1,45 @@
-NAME	:= so_long
-CFLAGS	:= -Wextra -Wall -Werror -Wunreachable-code -Ofast
-LIBMLX	:= ./MLX42
-LIBFT   := ./libft
+NAME		:= so_long
+CFLAGS		:= -Wextra -Wall -Werror -Wunreachable-code -Ofast
+SRC_DIR		:= ./src/
+LIBMLX		:= ./MLX42
+LIBFT   	:= ./libft
 
-HEADERS	:= -I $(LIBMLX)/include/MLX42/ -I ./include
-LIBS	:= $(LIBFT)/libft.a $(LIBMLX)/build/libmlx42.a -ldl -lglfw -pthread -lm
-SRCS	:= main.c check_map.c draw_map.c
-OBJS	:= ${SRCS:.c=.o}
+HEADERS		:= -I $(LIBMLX)/include/MLX42/ -I ./include
+LIBS		:= $(LIBFT)/libft.a $(LIBMLX)/build/libmlx42.a -ldl -lglfw -pthread -lm
 
-all: libmlx $(NAME)
+SRC_FILES	:= main check_map draw_map
+SRCS 		:= $(addprefix $(SRC_DIR), $(addsuffix .c, $(SRC_FILES)))
+OBJS 		:= $(SRCS:.c=.o) 
 
-libmlx:
+all: $(NAME)
+
+libmlx:	.libmlx_done
+
+.libmlx_done:
+	@touch $@
 	@cmake $(LIBMLX) -B $(LIBMLX)/build -DDEBUG=1 && make -C $(LIBMLX)/build -j4
 
-libft:
+libft:	.libft_done
+
+.libft_done:
+	@touch $@
 	@make -C $(LIBFT)
 
-$(NAME):	$(OBJS) $(LIBMLX) $(LIBFT) ./include/so_long.h
+$(NAME):	$(OBJS) .libmlx_done .libft_done ./include/so_long.h
 	$(CC) $(OBJS) $(LIBS) $(HEADERS) -o $(NAME)
 	@echo "so_long compiled!"
 
-%.o: %.c
-	@echo "Compiling: $(notdir $<)"
+.c.o:
+	@echo "Compiling:  $(notdir $<)"
 	@$(CC) $(CFLAGS) -o $@ -c $< $(HEADERS)
-
+	
 clean:
 	@rm -rf $(OBJS)
-	@rm -rf $(LIBMLX)/build
 
 fclean: clean
-	@rm -rf $(NAME)
+	@rm -f $(NAME)
+	@rm -rf $(LIBMLX)/build
+	@rm -f .libmlx_done .libft_done
 
 re: clean all
 
