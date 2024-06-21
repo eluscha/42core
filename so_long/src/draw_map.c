@@ -88,15 +88,15 @@ void	hook(void* param)
 	}
 	int addx;
 	int addy;
-	if (md->time % 50 == 0)
+	if (md->enx && md->time % 50 == 0)
 	{
 		addx = rand() % 3 - 1;
 		addy = rand() % 3 - 1;
-		if (md->map[md->ey + addy][md->ex + addx] != '1')
+		if (md->map[md->eny + addy][md->enx + addx] == '0' )
 		{
-			md->ex += addx;
+			md->enx += addx;
 			md->img_enemy->instances[0].x += UNIT_SIZE * addx;
-			md->ey += addy;
+			md->eny += addy;
 			md->img_enemy->instances[0].y += UNIT_SIZE * addy;
 		}
 	}
@@ -176,9 +176,9 @@ int32_t	draw_map(t_map *md)
 	
 	if (tries < 1000)
 	{
-		md->ex = ex;
-		md->ey = ey;
-		if (mlx_image_to_window(md->mlx, md->img_enemy, md->ex*UNIT_SIZE, md->ey*UNIT_SIZE) < 0)
+		md->enx = ex;
+		md->eny = ey;
+		if (mlx_image_to_window(md->mlx, md->img_enemy, md->enx*UNIT_SIZE, md->eny*UNIT_SIZE) < 0)
 			error();
 	}
 	
