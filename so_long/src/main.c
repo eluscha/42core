@@ -18,15 +18,14 @@ int main(int argc, char **argv)
 	draw_map(&mapdata);
 }
 
-void get_map(t_map *mapdata, char *oldline, int fd, int size)
+void get_map(t_map *mapdata, char *line, int fd, int size)
 {
 	int idx;
-	char *line;
 	char **newmap;
 	
 	newmap = ft_calloc(size + 1, sizeof(char*));
 	if (!newmap)
-		close_free_exit(fd, mapdata->map, oldline, -1);
+		close_free_exit(fd, mapdata->map, line, -1);
 	idx = -1;
 	if (mapdata->map)
 	{
@@ -36,7 +35,6 @@ void get_map(t_map *mapdata, char *oldline, int fd, int size)
 		free(mapdata->map);
 	}
 	mapdata->map = newmap;
-	line = oldline;
 	if (!line)
 		line = get_next_line(fd);
 	while (line && ++idx < size)
@@ -58,7 +56,7 @@ void    close_free_exit(int fd, char **map, char *line, int error)
 	if (error == -1)
 		ft_printf("Error: failed to allocate space on the heap\n");
 	else if (error == 1)
-		ft_printf("Error: no valid path (to all collectables and exit) exists\n");
+		ft_printf("Error: no valid path (to all collectables and exit)\n");
 	else if (error == 2)
 		ft_printf("Error: the map has to be rectangular and surrounded by walls\n");
 	else if (error == 3)
@@ -66,9 +64,10 @@ void    close_free_exit(int fd, char **map, char *line, int error)
 	else if (error == 4)
 		ft_printf("Error: there can be only 1 exit (E)\n");
 	else if (error == 5)
-		ft_printf("Error: only characters 0, 1, C, E, and P are allowed in the map\n");
+		ft_printf("Error: only characters 0, 1, C, E, and P are allowed\n");
 	else if (error == 6)
-		ft_printf("Error: there has to be 1 player (P), 1 exit (E), and at least 1 collectable (C)\n");
+		ft_printf("Error: there has to be 1 player (P), 1 exit (E), \
+and at least 1 collectable (C)\n");
 	exit(EXIT_FAILURE);
 }
 
@@ -85,7 +84,7 @@ void init_mapdata(t_map *mapdata)
 	mapdata->img_wall = NULL;
 	mapdata->img_pl[0] = NULL;
 	mapdata->img_pl[1] = NULL;
-	mapdata->img_exit = NULL;
+	//mapdata->img_exit[] = NULL;
 	mapdata->img_cllct = NULL;
 	mapdata->img_enemy = NULL;
 	mapdata->time = 0;

@@ -1,9 +1,10 @@
 #include "so_long.h"
 
 
-static void error(void)
+static void error(t_map *mapdata)
 {
 	puts(mlx_strerror(mlx_errno));
+	free_map(mapdata->map);
 	exit(EXIT_FAILURE);
 }
 
@@ -101,33 +102,33 @@ void	hook(void* param)
 		}
 	}
 
+	static int i;
+	int idx = -1;
+	if (md->time % 10 == 0)
+	{
+		while (++idx < 4)
+		{
+			if (idx == i)
+				md->img_exit[idx]->enabled = 1;
+			else
+				md->img_exit[idx]->enabled = 0;
+		}
+		if (i == 3)
+			i = 0;
+		i++;
+	}
+
 }
 
 int32_t	draw_map(t_map *md)
 {
+	t_textures txtr;
+
 	md->mlx = mlx_init(md->width * UNIT_SIZE, md->height * UNIT_SIZE, "Game", true);
 	if (!md->mlx)
-		exit(EXIT_FAILURE);
-	mlx_texture_t* background = mlx_load_png("./textures/Floor.png");
-	mlx_texture_t* wall_texture = mlx_load_png("./textures/ducky.png");
-    mlx_texture_t* pl1_texture = mlx_load_png("./textures/pl1.png");
-	mlx_texture_t* pl2_texture = mlx_load_png("./textures/pl2.png");
-	mlx_texture_t* c_texture = mlx_load_png("./textures/cllct.png");
-	mlx_texture_t* e_texture = mlx_load_png("./textures/bh.png");
-	if (!background || !wall_texture || !pl1_texture || !pl2_texture || !c_texture || !e_texture)
-        error();
-
-	mlx_image_t	*bg_img = mlx_texture_to_image(md->mlx, background);
-	if (!bg_img)
-        error();
-
-	md->img_wall = mlx_texture_to_image(md->mlx, wall_texture);
-    md->img_pl[0] = mlx_texture_to_image(md->mlx, pl1_texture);
-	md->img_pl[1] = mlx_texture_to_image(md->mlx, pl2_texture);
-	md->img_cllct = mlx_texture_to_image(md->mlx, c_texture);
-	md->img_enemy = mlx_texture_to_image(md->mlx, e_texture);
-	if (!md->img_wall || !md->img_pl[0] || !md->img_pl[1] || !md->img_cllct || !md->img_enemy)
-        error();
+		error(md);
+	init_txtr(md, &txtr);
+	make_images(md, &txtr);
 
     int idx;
 	int lnum;
@@ -139,26 +140,36 @@ int32_t	draw_map(t_map *md)
 		idx = -1;
 		while (++idx < md->width)
 		{
-			if (mlx_image_to_window(md->mlx,bg_img, idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
-		            error();
+			if (mlx_image_to_window(md->mlx, md->img_bckgr, idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
+		            error(md);
             if (line[idx] == '1')
             {
                 if (mlx_image_to_window(md->mlx, md->img_wall, idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
-		            error();
+		            error(md);
             }
             else if (line[idx] == 'C')
 			{
             	if (mlx_image_to_window(md->mlx, md->img_cllct, idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
-		            error();
+		            error(md);
             }
-            //also check for E
+            else if (line[idx] == 'E')
+			{
+            	if (mlx_image_to_window(md->mlx, md->img_exit[0], idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
+		            error(md);
+				if (mlx_image_to_window(md->mlx, md->img_exit[1], idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
+		            error(md);
+				if (mlx_image_to_window(md->mlx, md->img_exit[2], idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
+		            error(md);
+				if (mlx_image_to_window(md->mlx, md->img_exit[3], idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
+		            error(md);
+            }
         }
     }
 
 	if (mlx_image_to_window(md->mlx, md->img_pl[0], md->px*UNIT_SIZE, md->py*UNIT_SIZE) < 0)
-		error();
+		error(md);
 	if (mlx_image_to_window(md->mlx, md->img_pl[1], md->px*UNIT_SIZE, md->py*UNIT_SIZE) < 0)
-		error();
+		error(md);
 	
 	md->img_pl[1]->enabled = 0;
 
@@ -179,32 +190,17 @@ int32_t	draw_map(t_map *md)
 		md->enx = ex;
 		md->eny = ey;
 		if (mlx_image_to_window(md->mlx, md->img_enemy, md->enx*UNIT_SIZE, md->eny*UNIT_SIZE) < 0)
-			error();
+			error(md);
 	}
 	
-
 	mlx_key_hook(md->mlx, &key_hook, md);
 	mlx_loop_hook(md->mlx, &hook, md);
-
 	ft_printf("Moves: %i\n", md->moves);
 	mlx_loop(md->mlx);
-
-	mlx_delete_image(md->mlx, md->img_wall);
-    mlx_delete_image(md->mlx, md->img_pl[0]);
-	mlx_delete_image(md->mlx, md->img_pl[1]);
-	mlx_delete_image(md->mlx, md->img_cllct);
-	mlx_delete_image(md->mlx, md->img_enemy);
-	mlx_delete_image(md->mlx, bg_img);
-
-	mlx_delete_texture(wall_texture);
-    mlx_delete_texture(pl1_texture);
-	mlx_delete_texture(pl2_texture);
-	mlx_delete_texture(c_texture);
-	mlx_delete_texture(e_texture);
-	mlx_delete_texture(background);
-
+	delete_images(md);
+	delete_textures(&txtr);
 	mlx_terminate(md->mlx);
-	return (EXIT_SUCCESS);
+	return (EXIT_SUCCESS); //still need to free map
 }
 
 int dist(int x1, int y1, int x2, int y2)
@@ -223,4 +219,80 @@ int dist(int x1, int y1, int x2, int y2)
 		dist_y = y2 - y1;
 
 	return (dist_x * dist_x + dist_y * dist_y);
+}
+
+void init_txtr(t_map *md, t_textures *t)
+{
+	t->bckgr = mlx_load_png("./textures/Floor.png");
+	t->wall = mlx_load_png("./textures/ducky.png");
+	t->cllct = mlx_load_png("./textures/cllct.png");
+    t->pl1 = mlx_load_png("./textures/pl1.png");
+	t->pl2 = mlx_load_png("./textures/pl2.png");
+	t->e1 = mlx_load_png("./textures/e1.png");
+	t->e2 = mlx_load_png("./textures/e2.png");
+	t->e3 = mlx_load_png("./textures/e3.png");
+	t->e4 = mlx_load_png("./textures/e4.png");
+	t->enemy = mlx_load_png("./textures/bh.png");
+	if (!t->bckgr || !t->wall || !t->cllct)
+		error(md);
+	if (!t->pl1 || !t->pl2 || !t->e1 || !t->e2 || !t->e3 || !t->e4)
+		error(md);
+	if (!t->enemy)
+		error(md);
+}
+
+void make_images(t_map *md, t_textures *txtr)
+{
+	md->img_bckgr = mlx_texture_to_image(md->mlx, txtr->bckgr);
+	md->img_wall = mlx_texture_to_image(md->mlx, txtr->wall);
+	md->img_cllct = mlx_texture_to_image(md->mlx, txtr->cllct);
+    md->img_pl[0] = mlx_texture_to_image(md->mlx, txtr->pl1);
+	md->img_pl[1] = mlx_texture_to_image(md->mlx, txtr->pl2);
+
+	if (!md->img_wall || !md->img_wall || !md->img_cllct)
+        error(md);
+	if (!md->img_pl[0] || !md->img_pl[1])
+		error(md);
+
+	md->img_exit[0] = mlx_texture_to_image(md->mlx, txtr->e1);
+	md->img_exit[1] = mlx_texture_to_image(md->mlx, txtr->e2);
+	md->img_exit[2] = mlx_texture_to_image(md->mlx, txtr->e3);
+	md->img_exit[3] = mlx_texture_to_image(md->mlx, txtr->e4);
+	
+	if (!md->img_exit[0] || !md->img_exit[1]  || !md->img_exit[2] || !md->img_exit[3])
+        error(md);
+
+	md->img_enemy = mlx_texture_to_image(md->mlx, txtr->enemy);
+
+	if (!md->img_enemy)
+		error(md);
+}
+
+void	delete_textures(t_textures *t)
+{
+	mlx_delete_texture(t->bckgr);
+	mlx_delete_texture(t->wall);
+	mlx_delete_texture(t->cllct);
+    mlx_delete_texture(t->pl1);
+	mlx_delete_texture(t->pl2);
+	mlx_delete_texture(t->e1);
+	mlx_delete_texture(t->e2);
+	mlx_delete_texture(t->e3);
+	mlx_delete_texture(t->e4);
+	mlx_delete_texture(t->enemy);
+}
+
+void	delete_images(t_map *md)
+{
+	mlx_delete_image(md->mlx, md->img_wall);
+    mlx_delete_image(md->mlx, md->img_pl[0]);
+	mlx_delete_image(md->mlx, md->img_pl[1]);
+	mlx_delete_image(md->mlx, md->img_cllct);
+	mlx_delete_image(md->mlx, md->img_enemy);
+	mlx_delete_image(md->mlx, md->img_bckgr);
+
+	mlx_delete_image(md->mlx, md->img_exit[0]);
+	mlx_delete_image(md->mlx, md->img_exit[1]);
+	mlx_delete_image(md->mlx, md->img_exit[2]);
+	mlx_delete_image(md->mlx, md->img_exit[3]);
 }
