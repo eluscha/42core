@@ -92,4 +92,9 @@ void	draw_10CE(t_map *md);
 void draw_exit(t_map *md, int idx, int lnum);
 void	place_enemy(t_map *md);
 
+void	move_left(t_map *md);
+void	move_up(t_map *md);
+void	move_right(t_map *md);
+void	move_down(t_map *md);
+
 #endif

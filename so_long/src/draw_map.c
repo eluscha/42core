@@ -14,57 +14,13 @@ void	key_hook(mlx_key_data_t keydata, void* param)
 
 	md = param;
 	if (keydata.key == MLX_KEY_A && keydata.action == MLX_PRESS)
-	{
-		if (md->map[md->py][md->px-1] != '1')
-		{
-			md->px--;
-			md->moves++;
-			ft_printf("Moves: %i\n", md->moves);
-			md->img_pl[1]->enabled = !md->img_pl[1]->enabled;
-			md->img_pl[0]->enabled = !md->img_pl[0]->enabled;
-			md->img_pl[0]->instances[0].x -= UNIT_SIZE;
-			md->img_pl[1]->instances[0].x -= UNIT_SIZE;
-		}
-	}
+		move_left(md);
 	if (keydata.key == MLX_KEY_W && keydata.action == MLX_PRESS)
-	{
-		if (md->map[md->py-1][md->px] != '1')
-		{
-			md->py--;
-			md->moves++;
-			ft_printf("Moves: %i\n", md->moves);
-			md->img_pl[1]->enabled = !md->img_pl[1]->enabled;
-			md->img_pl[0]->enabled = !md->img_pl[0]->enabled;
-			md->img_pl[0]->instances[0].y -= UNIT_SIZE;
-			md->img_pl[1]->instances[0].y -= UNIT_SIZE;
-		}
-	}
+		move_up(md);
 	if (keydata.key == MLX_KEY_D && keydata.action == MLX_PRESS)
-	{
-		if (md->map[md->py][md->px+1] != '1')
-		{
-			md->px++;
-			md->moves++;
-			ft_printf("Moves: %i\n", md->moves);
-			md->img_pl[1]->enabled = !md->img_pl[1]->enabled;
-			md->img_pl[0]->enabled = !md->img_pl[0]->enabled;
-			md->img_pl[0]->instances[0].x += UNIT_SIZE;
-			md->img_pl[1]->instances[0].x += UNIT_SIZE;
-		}
-	}
+		move_right(md);
 	if (keydata.key == MLX_KEY_S && keydata.action == MLX_PRESS)
-	{
-		if (md->map[md->py+1][md->px] != '1')
-		{
-			md->py++;
-			md->moves++;
-			ft_printf("Moves: %i\n", md->moves);
-			md->img_pl[1]->enabled = !md->img_pl[1]->enabled;
-			md->img_pl[0]->enabled = !md->img_pl[0]->enabled;
-			md->img_pl[0]->instances[0].y += UNIT_SIZE;
-			md->img_pl[1]->instances[0].y += UNIT_SIZE;
-		}
-	}
+		move_down(md);
 }
 
 void	hook(void* param)
@@ -324,4 +280,57 @@ void	move_enemy(t_map *md, int intrvl)
 			md->img_enemy->instances[0].y += UNIT_SIZE * addy;
 		}
 	}
+}
+
+void	move_left(t_map *md)
+{
+	if (md->map[md->py][md->px-1] == '1')
+		return ;
+	md->px--;
+	md->moves++;
+	ft_printf("Moves: %i\n", md->moves);
+	md->img_pl[1]->enabled = !md->img_pl[1]->enabled;
+	md->img_pl[0]->enabled = !md->img_pl[0]->enabled;
+	md->img_pl[0]->instances[0].x -= UNIT_SIZE;
+	md->img_pl[1]->instances[0].x -= UNIT_SIZE;
+}
+
+
+void	move_up(t_map *md)
+{
+	if (md->map[md->py-1][md->px] == '1')
+		return ;
+	md->py--;
+	md->moves++;
+	ft_printf("Moves: %i\n", md->moves);
+	md->img_pl[1]->enabled = !md->img_pl[1]->enabled;
+	md->img_pl[0]->enabled = !md->img_pl[0]->enabled;
+	md->img_pl[0]->instances[0].y -= UNIT_SIZE;
+	md->img_pl[1]->instances[0].y -= UNIT_SIZE;
+}
+
+void	move_right(t_map *md)
+{
+	if (md->map[md->py][md->px+1] == '1')
+		return ;
+	md->px++;
+	md->moves++;
+	ft_printf("Moves: %i\n", md->moves);
+	md->img_pl[1]->enabled = !md->img_pl[1]->enabled;
+	md->img_pl[0]->enabled = !md->img_pl[0]->enabled;
+	md->img_pl[0]->instances[0].x += UNIT_SIZE;
+	md->img_pl[1]->instances[0].x += UNIT_SIZE;
+}
+
+void	move_down(t_map *md)
+{
+	if (md->map[md->py+1][md->px] == '1')
+		return ;
+	md->py++;
+	md->moves++;
+	ft_printf("Moves: %i\n", md->moves);
+	md->img_pl[1]->enabled = !md->img_pl[1]->enabled;
+	md->img_pl[0]->enabled = !md->img_pl[0]->enabled;
+	md->img_pl[0]->instances[0].y += UNIT_SIZE;
+	md->img_pl[1]->instances[0].y += UNIT_SIZE;
 }
