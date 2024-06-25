@@ -80,11 +80,16 @@ void init_mapdata(t_map *mapdata)
 	mapdata->score = 0;
 	mapdata->enx = 0;
 	mapdata->eny = 0;
+	mapdata->go = 0;
 	mapdata->mlx = NULL;
 	mapdata->img_wall = NULL;
 	mapdata->img_pl[0] = NULL;
 	mapdata->img_pl[1] = NULL;
-	//mapdata->img_exit[] = NULL;
+	mapdata->img_pl[2] = NULL;
+	mapdata->img_exit[0] = NULL;
+	mapdata->img_exit[1] = NULL;
+	mapdata->img_exit[2] = NULL;
+	mapdata->img_exit[3] = NULL;
 	mapdata->img_cllct = NULL;
 	mapdata->img_enemy = NULL;
 	mapdata->time = 0;

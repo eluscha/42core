@@ -25,12 +25,13 @@ typedef struct s_map
 	bool exit; //init to 0
 	int goal;
 	int score; //has to be initialized to 0
+	int go;
 	size_t moves;
 	mlx_t*    mlx;
 	mlx_image_t	*img_bckgr;
 	mlx_image_t	*img_wall;
 	mlx_image_t	*img_exit[4];
-	mlx_image_t	*img_pl[2];
+	mlx_image_t	*img_pl[3];
 	mlx_image_t	*img_cllct;
 	mlx_image_t	*img_enemy;
 	size_t time;
@@ -51,6 +52,7 @@ typedef struct s_textures
 	mlx_texture_t* cllct;
     mlx_texture_t* pl1;
 	mlx_texture_t* pl2;
+	mlx_texture_t* pl3;
 	mlx_texture_t* e1;
 	mlx_texture_t* e2;
 	mlx_texture_t* e3;

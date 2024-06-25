@@ -13,6 +13,10 @@ void	key_hook(mlx_key_data_t keydata, void* param)
 	t_map* md;
 
 	md = param;
+	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
+		mlx_close_window(md->mlx);
+	if (md->go)
+		return ;
 	if (keydata.key == MLX_KEY_A && keydata.action == MLX_PRESS)
 		move_left(md);
 	if (keydata.key == MLX_KEY_W && keydata.action == MLX_PRESS)
@@ -29,8 +33,40 @@ void	hook(void* param)
 
 	md = param;
 	md->time++;
-	if (mlx_is_key_down(md->mlx, MLX_KEY_ESCAPE))
-		mlx_close_window(md->mlx);
+
+	static int addx;
+	static int addy;
+	if (md->go)
+	{
+		if (md->time % 10 != 0)
+			return ;
+		if (md->go == 11)
+		{
+			md->img_pl[0]->enabled = 0;
+			md->img_pl[1]->enabled = 0;
+			if (mlx_image_to_window(md->mlx, md->img_pl[2], md->enx * UNIT_SIZE, md->eny * UNIT_SIZE) < 0)
+				error(md);
+			md->go++;
+			return ;
+		}
+		else if (md->go == 12)
+			mlx_close_window(md->mlx);
+		md->img_pl[0]->instances[0].x -= addx;
+		md->img_pl[1]->instances[0].x -= addx;
+		//md->img_pl[2]->instances[0].x -= addx;
+		md->img_pl[0]->instances[0].y -= addy;
+		md->img_pl[1]->instances[0].y -= addy;
+		//md->img_pl[2]->instances[0].y -= addy;
+		md->go++;
+		return ;
+	}
+	if (dist(md->px, md->py, md->enx, md->eny) <= 2)
+	{
+		addx = (md->px * UNIT_SIZE - md->enx * UNIT_SIZE) / 10;
+		addy = (md->py * UNIT_SIZE - md->eny * UNIT_SIZE) / 10;
+		md->go = 1;
+		return ;
+	}
 	collect_item(md);
 	move_enemy(md, 50);
 	exit_animation(md);
@@ -46,8 +82,8 @@ int32_t	draw_map(t_map *md)
 	init_txtr(md, &txtr);
 	make_images(md, &txtr);
     draw_10CE(md);
-	draw_player(md);
 	place_enemy(md);
+	draw_player(md);
 	mlx_key_hook(md->mlx, &key_hook, md);
 	mlx_loop_hook(md->mlx, &hook, md);
 	ft_printf("Moves: %i\n", md->moves);
@@ -83,6 +119,7 @@ void init_txtr(t_map *md, t_textures *t)
 	t->cllct = mlx_load_png("./textures/cllct.png");
     t->pl1 = mlx_load_png("./textures/pl1.png");
 	t->pl2 = mlx_load_png("./textures/pl2.png");
+	t->pl3 = mlx_load_png("./textures/go.png");
 	t->e1 = mlx_load_png("./textures/e1.png");
 	t->e2 = mlx_load_png("./textures/e2.png");
 	t->e3 = mlx_load_png("./textures/e3.png");
@@ -90,7 +127,9 @@ void init_txtr(t_map *md, t_textures *t)
 	t->enemy = mlx_load_png("./textures/bh.png");
 	if (!t->bckgr || !t->wall || !t->cllct)
 		error(md);
-	if (!t->pl1 || !t->pl2 || !t->e1 || !t->e2 || !t->e3 || !t->e4)
+	if (!t->pl1 || !t->pl2 || !t->pl3)
+		error(md);
+	if (!t->e1 || !t->e2 || !t->e3 || !t->e4)
 		error(md);
 	if (!t->enemy)
 		error(md);
@@ -103,10 +142,11 @@ void make_images(t_map *md, t_textures *txtr)
 	md->img_cllct = mlx_texture_to_image(md->mlx, txtr->cllct);
     md->img_pl[0] = mlx_texture_to_image(md->mlx, txtr->pl1);
 	md->img_pl[1] = mlx_texture_to_image(md->mlx, txtr->pl2);
+	md->img_pl[2] = mlx_texture_to_image(md->mlx, txtr->pl3);
 
 	if (!md->img_wall || !md->img_wall || !md->img_cllct)
         error(md);
-	if (!md->img_pl[0] || !md->img_pl[1])
+	if (!md->img_pl[0] || !md->img_pl[1] || !md->img_pl[2])
 		error(md);
 
 	md->img_exit[0] = mlx_texture_to_image(md->mlx, txtr->e1);
@@ -130,6 +170,7 @@ void	delete_textures(t_textures *t)
 	mlx_delete_texture(t->cllct);
     mlx_delete_texture(t->pl1);
 	mlx_delete_texture(t->pl2);
+	mlx_delete_texture(t->pl3);
 	mlx_delete_texture(t->e1);
 	mlx_delete_texture(t->e2);
 	mlx_delete_texture(t->e3);
@@ -142,6 +183,7 @@ void	delete_images(t_map *md)
 	mlx_delete_image(md->mlx, md->img_wall);
     mlx_delete_image(md->mlx, md->img_pl[0]);
 	mlx_delete_image(md->mlx, md->img_pl[1]);
+	mlx_delete_image(md->mlx, md->img_pl[2]);
 	mlx_delete_image(md->mlx, md->img_cllct);
 	mlx_delete_image(md->mlx, md->img_enemy);
 	mlx_delete_image(md->mlx, md->img_bckgr);
@@ -320,6 +362,7 @@ void	move_right(t_map *md)
 	md->img_pl[0]->enabled = !md->img_pl[0]->enabled;
 	md->img_pl[0]->instances[0].x += UNIT_SIZE;
 	md->img_pl[1]->instances[0].x += UNIT_SIZE;
+
 }
 
 void	move_down(t_map *md)
