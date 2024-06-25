@@ -83,4 +83,13 @@ void make_images(t_map *md, t_textures *txtr);
 void	delete_textures(t_textures *t);
 void	delete_images(t_map *md);
 
+void	move_enemy(t_map *md, int intrvl);
+void	collect_item(t_map *md);
+void	exit_animation(t_map *md);
+
+void	draw_player(t_map *md);
+void	draw_10CE(t_map *md);
+void draw_exit(t_map *md, int idx, int lnum);
+void	place_enemy(t_map *md);
+
 #endif

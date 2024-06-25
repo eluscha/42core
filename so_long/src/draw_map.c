@@ -72,52 +72,12 @@ void	hook(void* param)
 	t_map* md;
 
 	md = param;
-	md->time ++;
+	md->time++;
 	if (mlx_is_key_down(md->mlx, MLX_KEY_ESCAPE))
 		mlx_close_window(md->mlx);
-	
-	if (md->map[md->py][md->px] == 'C')
-	{
-		md->map[md->py][md->px] = '0';
-		md->score++;
-		size_t i = -1;
-		while (++i < md->img_cllct->count)
-		{
-			if (md->img_cllct->instances[i].x == md->px*UNIT_SIZE && md->img_cllct->instances[i].y == md->py*UNIT_SIZE)
-				md->img_cllct->instances[i].enabled = 0;
-		}
-	}
-	int addx;
-	int addy;
-	if (md->enx && md->time % 50 == 0)
-	{
-		addx = rand() % 3 - 1;
-		addy = rand() % 3 - 1;
-		if (md->map[md->eny + addy][md->enx + addx] == '0' )
-		{
-			md->enx += addx;
-			md->img_enemy->instances[0].x += UNIT_SIZE * addx;
-			md->eny += addy;
-			md->img_enemy->instances[0].y += UNIT_SIZE * addy;
-		}
-	}
-
-	static int i;
-	int idx = -1;
-	if (md->time % 10 == 0)
-	{
-		while (++idx < 4)
-		{
-			if (idx == i)
-				md->img_exit[idx]->enabled = 1;
-			else
-				md->img_exit[idx]->enabled = 0;
-		}
-		if (i == 3)
-			i = 0;
-		i++;
-	}
-
+	collect_item(md);
+	move_enemy(md, 50);
+	exit_animation(md);
 }
 
 int32_t	draw_map(t_map *md)
@@ -129,70 +89,9 @@ int32_t	draw_map(t_map *md)
 		error(md);
 	init_txtr(md, &txtr);
 	make_images(md, &txtr);
-
-    int idx;
-	int lnum;
-	char *line = md->map[0];
-	lnum = -1;
-	while (++lnum < md->height)
-	{
-        line = md->map[lnum];
-		idx = -1;
-		while (++idx < md->width)
-		{
-			if (mlx_image_to_window(md->mlx, md->img_bckgr, idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
-		            error(md);
-            if (line[idx] == '1')
-            {
-                if (mlx_image_to_window(md->mlx, md->img_wall, idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
-		            error(md);
-            }
-            else if (line[idx] == 'C')
-			{
-            	if (mlx_image_to_window(md->mlx, md->img_cllct, idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
-		            error(md);
-            }
-            else if (line[idx] == 'E')
-			{
-            	if (mlx_image_to_window(md->mlx, md->img_exit[0], idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
-		            error(md);
-				if (mlx_image_to_window(md->mlx, md->img_exit[1], idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
-		            error(md);
-				if (mlx_image_to_window(md->mlx, md->img_exit[2], idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
-		            error(md);
-				if (mlx_image_to_window(md->mlx, md->img_exit[3], idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
-		            error(md);
-            }
-        }
-    }
-
-	if (mlx_image_to_window(md->mlx, md->img_pl[0], md->px*UNIT_SIZE, md->py*UNIT_SIZE) < 0)
-		error(md);
-	if (mlx_image_to_window(md->mlx, md->img_pl[1], md->px*UNIT_SIZE, md->py*UNIT_SIZE) < 0)
-		error(md);
-	
-	md->img_pl[1]->enabled = 0;
-
-	//place enemy
-	int tries = -1;
-	int ex; 
-	int ey;
-	while(++tries < 1000)
-	{
-		ex = rand() % md->width;
-		ey = rand() % md->height;
-		if (md->map[ey][ex] == '0' && dist(ex, ey, md->px, md->py) > 2)
-			break ;
-	}
-	
-	if (tries < 1000)
-	{
-		md->enx = ex;
-		md->eny = ey;
-		if (mlx_image_to_window(md->mlx, md->img_enemy, md->enx*UNIT_SIZE, md->eny*UNIT_SIZE) < 0)
-			error(md);
-	}
-	
+    draw_10CE(md);
+	draw_player(md);
+	place_enemy(md);
 	mlx_key_hook(md->mlx, &key_hook, md);
 	mlx_loop_hook(md->mlx, &hook, md);
 	ft_printf("Moves: %i\n", md->moves);
@@ -295,4 +194,134 @@ void	delete_images(t_map *md)
 	mlx_delete_image(md->mlx, md->img_exit[1]);
 	mlx_delete_image(md->mlx, md->img_exit[2]);
 	mlx_delete_image(md->mlx, md->img_exit[3]);
+}
+
+void	place_enemy(t_map *md)
+{
+	int tries = -1;
+	int ex; 
+	int ey;
+
+	while(++tries < 1000)
+	{
+		ex = rand() % md->width;
+		ey = rand() % md->height;
+		if (md->map[ey][ex] == '0' && dist(ex, ey, md->px, md->py) > 2)
+			break ;
+	}
+	
+	if (tries < 1000)
+	{
+		md->enx = ex;
+		md->eny = ey;
+		if (mlx_image_to_window(md->mlx, md->img_enemy, md->enx*UNIT_SIZE, md->eny*UNIT_SIZE) < 0)
+			error(md);
+	}
+}
+
+void draw_exit(t_map *md, int idx, int lnum)
+{
+    if (mlx_image_to_window(md->mlx, md->img_exit[0], idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
+		error(md);
+	if (mlx_image_to_window(md->mlx, md->img_exit[1], idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
+		error(md);
+	if (mlx_image_to_window(md->mlx, md->img_exit[2], idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
+		error(md);
+	if (mlx_image_to_window(md->mlx, md->img_exit[3], idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
+		error(md);
+}
+
+void	draw_10CE(t_map *md)
+{
+	int idx;
+	int lnum;
+	
+	lnum = -1;
+	while (++lnum < md->height)
+	{
+		idx = -1;
+		while (++idx < md->width)
+		{
+			if (mlx_image_to_window(md->mlx, md->img_bckgr, idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
+		            error(md);
+            if (md->map[lnum][idx] == '1')
+            {
+                if (mlx_image_to_window(md->mlx, md->img_wall, idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
+		            error(md);
+            }
+            else if (md->map[lnum][idx] == 'C')
+			{
+            	if (mlx_image_to_window(md->mlx, md->img_cllct, idx*UNIT_SIZE, lnum*UNIT_SIZE) < 0)
+		            error(md);
+            }
+            else if (md->map[lnum][idx] == 'E')
+				draw_exit(md, idx, lnum);
+        }
+    }
+}
+
+void	draw_player(t_map *md)
+{
+	if (mlx_image_to_window(md->mlx, md->img_pl[0], md->px*UNIT_SIZE, md->py*UNIT_SIZE) < 0)
+		error(md);
+	if (mlx_image_to_window(md->mlx, md->img_pl[1], md->px*UNIT_SIZE, md->py*UNIT_SIZE) < 0)
+		error(md);
+	md->img_pl[1]->enabled = 0;
+}
+
+void	exit_animation(t_map *md)
+{
+	static int i;
+	int idx;
+	
+	idx = -1;
+	if (md->time % 10 == 0)
+	{
+		while (++idx < 4)
+		{
+			if (idx == i)
+				md->img_exit[idx]->enabled = 1;
+			else
+				md->img_exit[idx]->enabled = 0;
+		}
+		if (i == 3)
+			i = 0;
+		i++;
+	}
+}
+
+void	collect_item(t_map *md)
+{
+	size_t i;
+	
+	if (md->map[md->py][md->px] == 'C')
+	{
+		md->map[md->py][md->px] = '0';
+		md->score++;
+		i = -1;
+		while (++i < md->img_cllct->count)
+		{
+			if (md->img_cllct->instances[i].x == md->px*UNIT_SIZE && md->img_cllct->instances[i].y == md->py*UNIT_SIZE)
+				md->img_cllct->instances[i].enabled = 0;
+		}
+	}
+}
+
+void	move_enemy(t_map *md, int intrvl)
+{
+	int addx;
+	int addy;
+
+	if (md->enx && md->time % intrvl == 0)
+	{
+		addx = rand() % 3 - 1;
+		addy = rand() % 3 - 1;
+		if (md->map[md->eny + addy][md->enx + addx] == '0' )
+		{
+			md->enx += addx;
+			md->img_enemy->instances[0].x += UNIT_SIZE * addx;
+			md->eny += addy;
+			md->img_enemy->instances[0].y += UNIT_SIZE * addy;
+		}
+	}
 }
