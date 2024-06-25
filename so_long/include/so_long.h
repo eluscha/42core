@@ -31,7 +31,8 @@ typedef struct s_map
 	mlx_image_t	*img_bckgr;
 	mlx_image_t	*img_wall;
 	mlx_image_t	*img_exit[4];
-	mlx_image_t	*img_pl[3];
+	mlx_image_t	*img_pl[2];
+	mlx_image_t *img_go;
 	mlx_image_t	*img_cllct;
 	mlx_image_t	*img_enemy;
 	size_t time;
@@ -88,6 +89,7 @@ void	delete_images(t_map *md);
 void	move_enemy(t_map *md, int intrvl);
 void	collect_item(t_map *md);
 void	exit_animation(t_map *md);
+void check_exiting(t_map *md);
 
 void	draw_player(t_map *md);
 void	draw_10CE(t_map *md);
@@ -98,5 +100,8 @@ void	move_left(t_map *md);
 void	move_up(t_map *md);
 void	move_right(t_map *md);
 void	move_down(t_map *md);
+void	move_player(t_map *md, int addx, int addy);
+
+void	gameover(t_map *md);
 
 #endif

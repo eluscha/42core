@@ -85,7 +85,7 @@ void init_mapdata(t_map *mapdata)
 	mapdata->img_wall = NULL;
 	mapdata->img_pl[0] = NULL;
 	mapdata->img_pl[1] = NULL;
-	mapdata->img_pl[2] = NULL;
+	mapdata->img_go = NULL;
 	mapdata->img_exit[0] = NULL;
 	mapdata->img_exit[1] = NULL;
 	mapdata->img_exit[2] = NULL;
