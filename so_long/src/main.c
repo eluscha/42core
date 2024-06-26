@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eusatiko <eusatiko@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/26 11:52:32 by eusatiko          #+#    #+#             */
+/*   Updated: 2024/06/26 12:52:42 by eusatiko         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "so_long.h"
 
 int main(int argc, char **argv)
 {
-	int fd;
-	t_map mapdata;
-	int error;
+	int		fd;
+	int		error;
+	t_map	mapdata;
 
 	fd = 0;
 	if (argc != 1)
@@ -16,6 +28,53 @@ int main(int argc, char **argv)
 	if (error)
 		close_free_exit(0, mapdata.map, NULL, error);
 	draw_map(&mapdata);
+}
+
+int	open_mapfile(char *path)
+{
+	int	fd;
+	int	len;
+
+	len = ft_strlen(path);
+	if (len < 5 || ft_strncmp(path + len - 4, ".ber", 4) != 0)
+	{
+		ft_printf("Error: map file has to be of format *.ber\n");
+		exit(EXIT_FAILURE);
+	}
+	fd = open(path, O_RDONLY);
+	if (fd == -1)
+	{
+		perror("Error: ");
+		exit(EXIT_FAILURE);
+	}
+	return (fd);
+}
+
+void	init_mapdata(t_map *mapdata)
+{
+	mapdata->map = NULL;
+	mapdata->px = 0;
+	mapdata->exit = 0;
+	mapdata->goal = 0;
+	mapdata->score = 0;
+	mapdata->enx = 0;
+	mapdata->eny = 0;
+	mapdata->go = 0;
+	mapdata->mlx = NULL;
+	mapdata->txtr = NULL;
+	mapdata->img_bckgr = NULL;
+	mapdata->img_wall = NULL;
+	mapdata->img_cllct = NULL;
+	mapdata->img_pl[0] = NULL;
+	mapdata->img_pl[1] = NULL;
+	mapdata->img_go = NULL;
+	mapdata->img_exit[0] = NULL;
+	mapdata->img_exit[1] = NULL;
+	mapdata->img_exit[2] = NULL;
+	mapdata->img_exit[3] = NULL;
+	mapdata->img_enemy = NULL;
+	mapdata->time = 0;
+	mapdata->moves = 0;
 }
 
 void get_map(t_map *mapdata, char *line, int fd, int size)
@@ -66,62 +125,9 @@ void    close_free_exit(int fd, char **map, char *line, int error)
 	else if (error == 5)
 		ft_printf("Error: only characters 0, 1, C, E, and P are allowed\n");
 	else if (error == 6)
-		ft_printf("Error: there has to be 1 player (P), 1 exit (E), \
-and at least 1 collectable (C)\n");
+	{
+		ft_printf("Error: there has to be 1 player (P), 1 exit (E),");
+		ft_printf("and at least 1 collectable (C)\n");
+	}
 	exit(EXIT_FAILURE);
-}
-
-void init_mapdata(t_map *mapdata)
-{
-	mapdata->map = NULL;
-	mapdata->px = 0; //init to 0
-	mapdata->exit = 0; //init to 0
-	mapdata->goal = 0;
-	mapdata->score = 0;
-	mapdata->enx = 0;
-	mapdata->eny = 0;
-	mapdata->go = 0;
-	mapdata->mlx = NULL;
-	mapdata->img_wall = NULL;
-	mapdata->img_pl[0] = NULL;
-	mapdata->img_pl[1] = NULL;
-	mapdata->img_go = NULL;
-	mapdata->img_exit[0] = NULL;
-	mapdata->img_exit[1] = NULL;
-	mapdata->img_exit[2] = NULL;
-	mapdata->img_exit[3] = NULL;
-	mapdata->img_cllct = NULL;
-	mapdata->img_enemy = NULL;
-	mapdata->time = 0;
-	mapdata->moves = 0;
-}
-
-void free_map(char **map)
-{
-	int idx = 0;
-	if (!map)
-		return ;
-	while(map[idx])
-		free(map[idx++]);
-	free(map);
-}
-
-int open_mapfile(char *path)
-{
-	int fd;
-	int len;
-	
-	len = ft_strlen(path);
-	if (len < 5 || ft_strncmp(path + len - 4, ".ber", 4) != 0)
-	{
-		ft_printf("Error: map file has to be of format *.ber\n");
-		exit(EXIT_FAILURE);
-	}
-	fd = open(path, O_RDONLY);
-	if (fd == -1)
-	{
-		perror("Error: ");
-		exit(EXIT_FAILURE);
-	}
-	return (fd);
 }
