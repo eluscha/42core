@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   move_player.c                                      :+:      :+:    :+:   */
+/*   move_player_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eusatiko <eusatiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 11:55:02 by eusatiko          #+#    #+#             */
-/*   Updated: 2024/06/28 12:27:23 by eusatiko         ###   ########.fr       */
+/*   Updated: 2024/06/28 12:29:24 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "so_long.h"
+#include "so_long_bonus.h"
 
 void	move_left(t_map *md)
 {
@@ -19,7 +19,10 @@ void	move_left(t_map *md)
 	md->px--;
 	md->moves++;
 	ft_printf("Moves: %i\n", md->moves);
-	md->img_pl->instances[0].x -= UNIT_SIZE;
+	md->img_pl[1]->enabled = !md->img_pl[1]->enabled;
+	md->img_pl[0]->enabled = !md->img_pl[0]->enabled;
+	md->img_pl[0]->instances[0].x -= UNIT_SIZE;
+	md->img_pl[1]->instances[0].x -= UNIT_SIZE;
 }
 
 void	move_up(t_map *md)
@@ -29,7 +32,10 @@ void	move_up(t_map *md)
 	md->py--;
 	md->moves++;
 	ft_printf("Moves: %i\n", md->moves);
-	md->img_pl->instances[0].y -= UNIT_SIZE;
+	md->img_pl[1]->enabled = !md->img_pl[1]->enabled;
+	md->img_pl[0]->enabled = !md->img_pl[0]->enabled;
+	md->img_pl[0]->instances[0].y -= UNIT_SIZE;
+	md->img_pl[1]->instances[0].y -= UNIT_SIZE;
 }
 
 void	move_right(t_map *md)
@@ -39,7 +45,10 @@ void	move_right(t_map *md)
 	md->px++;
 	md->moves++;
 	ft_printf("Moves: %i\n", md->moves);
-	md->img_pl->instances[0].x += UNIT_SIZE;
+	md->img_pl[1]->enabled = !md->img_pl[1]->enabled;
+	md->img_pl[0]->enabled = !md->img_pl[0]->enabled;
+	md->img_pl[0]->instances[0].x += UNIT_SIZE;
+	md->img_pl[1]->instances[0].x += UNIT_SIZE;
 }
 
 void	move_down(t_map *md)
@@ -49,5 +58,16 @@ void	move_down(t_map *md)
 	md->py++;
 	md->moves++;
 	ft_printf("Moves: %i\n", md->moves);
-	md->img_pl->instances[0].y += UNIT_SIZE;
+	md->img_pl[1]->enabled = !md->img_pl[1]->enabled;
+	md->img_pl[0]->enabled = !md->img_pl[0]->enabled;
+	md->img_pl[0]->instances[0].y += UNIT_SIZE;
+	md->img_pl[1]->instances[0].y += UNIT_SIZE;
+}
+
+void	move_player(t_map *md, int addx, int addy)
+{
+	md->img_pl[0]->instances[0].x -= addx;
+	md->img_pl[1]->instances[0].x -= addx;
+	md->img_pl[0]->instances[0].y -= addy;
+	md->img_pl[1]->instances[0].y -= addy;
 }

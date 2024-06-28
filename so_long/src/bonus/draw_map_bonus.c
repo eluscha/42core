@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   draw_map.c                                         :+:      :+:    :+:   */
+/*   draw_map_bonus.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eusatiko <eusatiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 11:50:17 by eusatiko          #+#    #+#             */
-/*   Updated: 2024/06/28 12:35:23 by eusatiko         ###   ########.fr       */
+/*   Updated: 2024/06/28 12:29:57 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "so_long.h"
+#include "so_long_bonus.h"
 
 void	error(t_map *mapdata)
 {
@@ -37,7 +37,8 @@ int32_t	draw_map(t_map *md)
 	init_txtr(md, &txtr);
 	make_images(md);
 	draw_10ce(md);
-	draw_check_error(md, md->img_pl, md->px, md->py);
+	place_enemy(md);
+	draw_player(md);
 	mlx_key_hook(md->mlx, &key_hook, md);
 	mlx_loop_hook(md->mlx, &hook, md);
 	ft_printf("Moves: %i\n", md->moves);
@@ -74,7 +75,30 @@ void	hook(void *param)
 
 	md = param;
 	md->time++;
-	if (check_exiting(md) == 0)
-		return ;
-	collect_item(md);
+	if (md->go || dist(md->px, md->py, md->enx, md->eny) <= 2)
+		gameover(md);
+	else
+	{
+		if (check_exiting(md) == 0)
+			return ;
+		collect_item(md);
+		move_enemy(md, 50);
+	}
+	exit_animation(md);
+}
+
+int	dist(int x1, int y1, int x2, int y2)
+{
+	int	dist_x;
+	int	dist_y;
+
+	if (x1 > x2)
+		dist_x = x1 - x2;
+	else
+		dist_x = x2 - x1;
+	if (y1 > y2)
+		dist_y = y1 - y2;
+	else
+		dist_y = y2 - y1;
+	return (dist_x * dist_x + dist_y * dist_y);
 }

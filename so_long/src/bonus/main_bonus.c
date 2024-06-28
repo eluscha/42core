@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eusatiko <eusatiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 11:52:32 by eusatiko          #+#    #+#             */
-/*   Updated: 2024/06/28 12:21:07 by eusatiko         ###   ########.fr       */
+/*   Updated: 2024/06/28 12:29:42 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "so_long.h"
+#include "so_long_bonus.h"
 
 int	main(int argc, char **argv)
 {
@@ -57,13 +57,22 @@ void	init_mapdata(t_map *mapdata)
 	mapdata->exit = 0;
 	mapdata->goal = 0;
 	mapdata->score = 0;
+	mapdata->enx = 0;
+	mapdata->eny = 0;
+	mapdata->go = 0;
 	mapdata->mlx = NULL;
 	mapdata->txtr = NULL;
 	mapdata->img_bckgr = NULL;
 	mapdata->img_wall = NULL;
 	mapdata->img_cllct = NULL;
-	mapdata->img_pl = NULL;
-	mapdata->img_exit = NULL;
+	mapdata->img_pl[0] = NULL;
+	mapdata->img_pl[1] = NULL;
+	mapdata->img_go = NULL;
+	mapdata->img_exit[0] = NULL;
+	mapdata->img_exit[1] = NULL;
+	mapdata->img_exit[2] = NULL;
+	mapdata->img_exit[3] = NULL;
+	mapdata->img_enemy = NULL;
 	mapdata->time = 0;
 	mapdata->moves = 0;
 }

@@ -6,7 +6,7 @@
 /*   By: eusatiko <eusatiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 11:56:30 by eusatiko          #+#    #+#             */
-/*   Updated: 2024/06/28 12:20:23 by eusatiko         ###   ########.fr       */
+/*   Updated: 2024/06/28 11:36:41 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,14 @@ typedef struct s_tx
 	mlx_texture_t	*bckgr;
 	mlx_texture_t	*wall;
 	mlx_texture_t	*cllct;
-	mlx_texture_t	*pl;
-	mlx_texture_t	*e;
+	mlx_texture_t	*pl1;
+	mlx_texture_t	*pl2;
+	mlx_texture_t	*pl3;
+	mlx_texture_t	*e1;
+	mlx_texture_t	*e2;
+	mlx_texture_t	*e3;
+	mlx_texture_t	*e4;
+	mlx_texture_t	*enemy;
 }		t_tx;
 
 typedef struct s_map
@@ -46,6 +52,8 @@ typedef struct s_map
 	int			height;
 	int			px;
 	int			py;
+	int			enx;
+	int			eny;
 	bool		exit;
 	int			goal;
 	int			score;
@@ -56,10 +64,11 @@ typedef struct s_map
 	t_tx		*txtr;
 	mlx_image_t	*img_bckgr;
 	mlx_image_t	*img_wall;
-	mlx_image_t	*img_exit;
-	mlx_image_t	*img_pl;
+	mlx_image_t	*img_exit[4];
+	mlx_image_t	*img_pl[2];
 	mlx_image_t	*img_go;
 	mlx_image_t	*img_cllct;
+	mlx_image_t	*img_enemy;
 }		t_map;
 
 typedef struct s_pos
