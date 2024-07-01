@@ -23,11 +23,15 @@ libmlx:	.libmlx_done
 
 .libmlx_done:
 	@touch $@
-	@git submodule add https://github.com/codam-coding-college/MLX42.git MLX42
-	@cd MLX42
-	@git reset --hard 26fdbd9
-	@cmake -B build # build here refers to the outputfolder.
-	@cmake --build build -j4 # or do make -C build -j4
+	@if [ ! -d $(LIBMLX) ]; then \
+        echo "Directory $(LIBMLX) does not exist. Cloning repository..."; \
+        git submodule add https://github.com/codam-coding-college/MLX42.git; \
+		cd MLX42; \
+		git reset --hard 26fdbd9; \
+		cd ..; \
+    else \
+        echo "Directory $(LIBMLX) already exists. Skipping clone."; \
+    fi
 	@cmake $(LIBMLX) -B $(LIBMLX)/build -DDEBUG=0 && make -C $(LIBMLX)/build -j4
 
 libft:	.libft_done
