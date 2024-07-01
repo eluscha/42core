@@ -23,6 +23,11 @@ libmlx:	.libmlx_done
 
 .libmlx_done:
 	@touch $@
+	@git submodule add https://github.com/codam-coding-college/MLX42.git MLX42
+	@cd MLX42
+	@git reset --hard 26fdbd9
+	@cmake -B build # build here refers to the outputfolder.
+	@cmake --build build -j4 # or do make -C build -j4
 	@cmake $(LIBMLX) -B $(LIBMLX)/build -DDEBUG=0 && make -C $(LIBMLX)/build -j4
 
 libft:	.libft_done
@@ -31,7 +36,8 @@ libft:	.libft_done
 	@touch $@
 	@make -C $(LIBFT)
 
-$(NAME):	$(OBJS) .libmlx_done .libft_done ./include/so_long.h
+$(NAME):	$(OBJS) .libmlx_done .libft_done ./include/so_long.h 
+	@rm -f .bonus 
 	$(CC) $(OBJS) $(LIBS) $(HEADERS) -o $(NAME)
 	@echo "so_long compiled!"
 

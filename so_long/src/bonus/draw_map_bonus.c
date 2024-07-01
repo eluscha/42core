@@ -6,7 +6,7 @@
 /*   By: eusatiko <eusatiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 11:50:17 by eusatiko          #+#    #+#             */
-/*   Updated: 2024/06/28 12:29:57 by eusatiko         ###   ########.fr       */
+/*   Updated: 2024/07/01 10:54:37 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int32_t	draw_map(t_map *md)
 	t_tx	txtr;
 
 	md->mlx = mlx_init(md->width * UNIT_SIZE, md->height * UNIT_SIZE, \
-						"Game", true);
+						"Game", false);
 	if (!md->mlx)
 		error(md);
 	init_txtr(md, &txtr);
@@ -75,8 +75,10 @@ void	hook(void *param)
 
 	md = param;
 	md->time++;
-	if (md->go || dist(md->px, md->py, md->enx, md->eny) <= 2)
+	if (md->go)
 		gameover(md);
+	else if (dist(md->px, md->py, md->enx, md->eny) <= 2)
+		md->go = 1;
 	else
 	{
 		if (check_exiting(md) == 0)

@@ -6,7 +6,7 @@
 /*   By: eusatiko <eusatiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 11:52:14 by eusatiko          #+#    #+#             */
-/*   Updated: 2024/06/28 12:36:18 by eusatiko         ###   ########.fr       */
+/*   Updated: 2024/07/01 10:53:04 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ void	gameover(t_map *md)
 	{
 		addx = (md->px * UNIT_SIZE - md->enx * UNIT_SIZE) / 10;
 		addy = (md->py * UNIT_SIZE - md->eny * UNIT_SIZE) / 10;
-		md->go = 1;
 	}
 	if (md->time % 10 != 0)
 		return ;
@@ -71,10 +70,12 @@ void	gameover(t_map *md)
 			error(md);
 		return ;
 	}
-	else if (md->go == 12)
+	else if (md->go > 11)
+	{
+		ft_printf("Game over\n");
 		mlx_close_window(md->mlx);
+	}
 	move_player(md, addx, addy);
-	md->go++;
 }
 
 void	exit_animation(t_map *md)

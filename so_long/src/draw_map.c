@@ -6,7 +6,7 @@
 /*   By: eusatiko <eusatiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 11:50:17 by eusatiko          #+#    #+#             */
-/*   Updated: 2024/06/28 12:35:23 by eusatiko         ###   ########.fr       */
+/*   Updated: 2024/07/01 10:41:28 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int32_t	draw_map(t_map *md)
 	t_tx	txtr;
 
 	md->mlx = mlx_init(md->width * UNIT_SIZE, md->height * UNIT_SIZE, \
-						"Game", true);
+						"Game", false);
 	if (!md->mlx)
 		error(md);
 	init_txtr(md, &txtr);
@@ -56,8 +56,6 @@ void	key_hook(mlx_key_data_t keydata, void *param)
 	md = param;
 	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
 		mlx_close_window(md->mlx);
-	if (md->go)
-		return ;
 	if (keydata.key == MLX_KEY_A && keydata.action == MLX_PRESS)
 		move_left(md);
 	if (keydata.key == MLX_KEY_W && keydata.action == MLX_PRESS)

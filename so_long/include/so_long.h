@@ -6,7 +6,7 @@
 /*   By: eusatiko <eusatiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 11:56:30 by eusatiko          #+#    #+#             */
-/*   Updated: 2024/06/28 12:20:23 by eusatiko         ###   ########.fr       */
+/*   Updated: 2024/07/01 10:42:34 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ typedef struct s_map
 	bool		exit;
 	int			goal;
 	int			score;
-	int			go;
 	size_t		moves;
 	size_t		time;
 	mlx_t		*mlx;
@@ -58,7 +57,6 @@ typedef struct s_map
 	mlx_image_t	*img_wall;
 	mlx_image_t	*img_exit;
 	mlx_image_t	*img_pl;
-	mlx_image_t	*img_go;
 	mlx_image_t	*img_cllct;
 }		t_map;
 
