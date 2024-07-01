@@ -71,8 +71,8 @@ re: fclean all
 	@echo "Cleaned and rebuilt everything for so_long!"
 
 norm:
-	@norminette $(SRCS)
+	@norminette $(SRCS) $(BONUS_SRCS)
 	@make norm -C $(LIBFT)
-	@norminette -R CheckDefine ./include/so_long.h ./include/libft.h
+	@norminette -R CheckDefine ./include/so_long.h ./include/so_long_bonus.h ./include/libft.h
 
 .PHONY: all, clean, fclean, re, libmlx, libft, bonus

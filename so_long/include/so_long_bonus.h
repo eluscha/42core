@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   so_long.h                                          :+:      :+:    :+:   */
+/*   so_long_bonus.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eusatiko <eusatiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 11:56:30 by eusatiko          #+#    #+#             */
-/*   Updated: 2024/06/28 11:36:41 by eusatiko         ###   ########.fr       */
+/*   Updated: 2024/07/01 12:40:49 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 - bdragon1727.itch.io/basic-pixel-health-bar-and-scroll-bar exit animation
 - bdragon1727.itch.io/pixel-holy-spell-effect-32x32-pack-3 black hole*/
 
-#ifndef SO_LONG_H
-# define SO_LONG_H
+#ifndef SO_LONG_BONUS_H
+# define SO_LONG_BONUS_H
 
 # include <stdio.h>
 # include <memory.h> //why
