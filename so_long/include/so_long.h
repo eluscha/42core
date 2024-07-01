@@ -6,7 +6,7 @@
 /*   By: eusatiko <eusatiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 11:56:30 by eusatiko          #+#    #+#             */
-/*   Updated: 2024/07/01 10:42:34 by eusatiko         ###   ########.fr       */
+/*   Updated: 2024/07/01 12:47:18 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@
 #ifndef SO_LONG_H
 # define SO_LONG_H
 
+# include <errno.h>
 # include <stdio.h>
-# include <memory.h> //why
 # include <unistd.h>
 # include <stdlib.h>
 # include <fcntl.h>

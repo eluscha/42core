@@ -6,7 +6,7 @@
 /*   By: eusatiko <eusatiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 11:50:17 by eusatiko          #+#    #+#             */
-/*   Updated: 2024/07/01 12:19:19 by eusatiko         ###   ########.fr       */
+/*   Updated: 2024/07/01 12:51:11 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,12 +77,12 @@ void	hook(void *param)
 	md->time++;
 	if (md->go)
 		gameover(md);
+	else if (check_exiting(md) == 0)
+		return ;
 	else if (dist(md->px, md->py, md->enx, md->eny) <= 2)
 		md->go = 1;
 	else
 	{
-		if (check_exiting(md) == 0)
-			return ;
 		collect_item(md);
 		move_enemy(md, 50);
 	}
