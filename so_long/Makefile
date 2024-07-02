@@ -40,7 +40,7 @@ libft:	.libft_done
 	@touch $@
 	@make -C $(LIBFT)
 
-$(NAME):	libmlx libft $(OBJS) ./include/so_long.h 
+$(NAME):	.libmlx_done .libft_done $(OBJS) ./include/so_long.h 
 	@rm -f .bonus 
 	$(CC) $(OBJS) $(LIBS) $(HEADERS) -o $(NAME)
 	@echo "so_long compiled!"

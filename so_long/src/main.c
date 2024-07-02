@@ -6,7 +6,7 @@
 /*   By: eusatiko <eusatiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 11:52:32 by eusatiko          #+#    #+#             */
-/*   Updated: 2024/06/28 12:21:07 by eusatiko         ###   ########.fr       */
+/*   Updated: 2024/07/02 10:24:39 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ int	main(int argc, char **argv)
 	error = check_valid_map(&mapdata);
 	if (error)
 		close_free_exit(0, mapdata.map, NULL, error);
+	mapdata.exit = 0;
 	draw_map(&mapdata);
 }
 
@@ -117,7 +118,7 @@ void	close_free_exit(int fd, char **map, char *line, int error)
 		ft_printf("Error: only characters 0, 1, C, E, and P are allowed\n");
 	else if (error == 6)
 	{
-		ft_printf("Error: there has to be 1 player (P), 1 exit (E),");
+		ft_printf("Error: there has to be 1 player (P), 1 exit (E), ");
 		ft_printf("and at least 1 collectable (C)\n");
 	}
 	exit(EXIT_FAILURE);

@@ -6,7 +6,7 @@
 /*   By: eusatiko <eusatiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 11:52:32 by eusatiko          #+#    #+#             */
-/*   Updated: 2024/06/28 12:29:42 by eusatiko         ###   ########.fr       */
+/*   Updated: 2024/07/02 10:27:02 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ int	main(int argc, char **argv)
 	error = check_valid_map(&mapdata);
 	if (error)
 		close_free_exit(0, mapdata.map, NULL, error);
+	mapdata.exit = 0;
 	draw_map(&mapdata);
 }
 

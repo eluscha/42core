@@ -6,7 +6,7 @@
 /*   By: eusatiko <eusatiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 11:52:14 by eusatiko          #+#    #+#             */
-/*   Updated: 2024/07/01 10:53:04 by eusatiko         ###   ########.fr       */
+/*   Updated: 2024/07/02 10:31:27 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,7 @@ int	check_exiting(t_map *md)
 	if (!time)
 	{
 		time = md->time;
+		md->exit = 1;
 		ft_printf("You won!\n");
 	}
 	else if (md->time == time + 20)

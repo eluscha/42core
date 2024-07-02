@@ -6,7 +6,7 @@
 /*   By: eusatiko <eusatiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 11:50:17 by eusatiko          #+#    #+#             */
-/*   Updated: 2024/07/01 12:51:11 by eusatiko         ###   ########.fr       */
+/*   Updated: 2024/07/02 10:28:12 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	key_hook(mlx_key_data_t keydata, void *param)
 	md = param;
 	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
 		mlx_close_window(md->mlx);
-	if (md->go)
+	if (md->go || md->exit)
 		return ;
 	if (keydata.key == MLX_KEY_A && keydata.action == MLX_PRESS)
 		move_left(md);
