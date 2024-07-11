@@ -20,19 +20,26 @@ typedef struct s_res
 }   t_res;
 
 
-int	try_to_eat(t_philo *my_args)
+int	try_to_eat(t_philo *my_args, struct timeval t0, unsigned long *lma)
 {
+	unsigned long elapsed;
+	struct timeval tcurr;
 	int left = my_args->N - 1;
 	int right = my_args->N % my_args->count;
-	printf("left is %d right is %d\n", left, right);
 	if (!pthread_mutex_lock(&my_args->forks[left]))
 	{
+		gettimeofday(&tcurr, 0);
+		elapsed = (tcurr.tv_sec-t0.tv_sec)*1000 + (tcurr.tv_usec-t0.tv_usec)/1000;
+		printf("%lu %d has taken a fork\n", elapsed, my_args->N);
 		if (!pthread_mutex_lock(&my_args->forks[right]))
 		{
-			printf("philosopher %i is eating\n", my_args->N);
-			usleep(100000);
+			gettimeofday(&tcurr, 0);
+			elapsed = (tcurr.tv_sec-t0.tv_sec)*1000 + (tcurr.tv_usec-t0.tv_usec)/1000;
+			printf("%lu %d is eating\n", elapsed, my_args->N);
+			usleep(200000);
 			pthread_mutex_unlock(&my_args->forks[right]);
 			pthread_mutex_unlock(&my_args->forks[left]);
+			*lma = elapsed;
 			return (1);
 		}
 		pthread_mutex_unlock(&my_args->forks[left]);
@@ -41,14 +48,15 @@ int	try_to_eat(t_philo *my_args)
 	return (0);
 }
 
-void *CreatePhilo(void *arg)
+void *PhiloThread(void *arg)
 {
 	
 	t_philo *my_args;
 	t_res *result;
   	struct timeval t0;
 	struct timeval tcurr;
-	long elapsed;
+	unsigned long elapsed;
+	unsigned long lastmeal;
 	int hungry = 1;  
 
 	gettimeofday(&t0, 0);
@@ -61,21 +69,29 @@ void *CreatePhilo(void *arg)
 	fflush(stdout);
 	pthread_mutex_unlock(my_args->plock);
 
-	while (!result->dead)
+	while (1)
 	{
+		gettimeofday(&tcurr, 0);
+		elapsed = (tcurr.tv_sec-t0.tv_sec)*1000 + (tcurr.tv_usec-t0.tv_usec)/1000;
+		if (elapsed - lastmeal == 10000 || elapsed >= 50000)
+		{
+			printf("%lu %d died\n", elapsed, my_args->N);
+			result->dead = 1;
+			break ;
+		}
 		if (!hungry)
-			usleep(10000);
+		{
+			printf("%lu %d is sleeping\n", elapsed, my_args->N);
+			hungry = 1;
+			usleep(300000);
+			printf("%lu %d is thinking\n", elapsed + 299, my_args->N);
+		}
 		else
 		{
-			if (!try_to_eat(my_args))
-				usleep(10000); //think();
-			else
+			if (try_to_eat(my_args, t0, &lastmeal))
 				hungry = 0;
 		}
-		gettimeofday(&tcurr, 0);
-		elapsed = (tcurr.tv_sec-t0.tv_sec)*1000000 + tcurr.tv_usec-t0.tv_usec;
-		if (elapsed > 5000000)
-			result->dead = 1;
+		
 	}
 	
 	pthread_mutex_lock(my_args->plock);
@@ -101,7 +117,7 @@ int main(int argc, char **argv)
 	count = atoi(argv[1]);	/* count is first argument */ 
 
 	thread_ids = malloc(sizeof(pthread_t)*count);
-	forks = calloc(count, sizeof(pthread_mutex_t));
+	forks = calloc(count, sizeof(pthread_mutex_t)); // can use malloc and memset..
 
 	pthread_mutex_init(&lock, NULL);
 
@@ -109,8 +125,8 @@ int main(int argc, char **argv)
 		pthread_mutex_init(&forks[t], NULL);
 	}
 
-	printf("main thread about to create %i philo threads\n", count);
-	fflush(stdout);
+	//printf("main thread about to create %i philo threads\n", count);
+	//fflush(stdout);
 
 	for(t=0; t < count; t++) {
 		args = malloc(sizeof(t_philo));
@@ -120,7 +136,7 @@ int main(int argc, char **argv)
 		args->forks = forks;
 		printf("main thread creating philo thread %i\n", t+1);
 		fflush(stdout);
-		err = pthread_create(&(thread_ids[t]), NULL, CreatePhilo, (void *)args);
+		err = pthread_create(&(thread_ids[t]), NULL, PhiloThread, (void *)args);
 		printf("main thread has created philo thread %i\n", t+1);
 		fflush(stdout);
 	}
