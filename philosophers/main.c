@@ -5,8 +5,16 @@
 #include <pthread.h>
 #include <sys/time.h>
 
+typedef enum e_state 
+{
+	THINKING, 
+	HUNGRY, 
+	EATING
+}	t_state;
+
 typedef struct s_philo
 {
+	t_state state;
 	int N;
 	int count;
 	int ttd;
@@ -16,8 +24,10 @@ typedef struct s_philo
 	int nmeals;
 	int *done;
 	int *onedead;
+	struct timeval t0;
 	pthread_mutex_t *plock;
 	pthread_mutex_t *dlock;
+	pthread_mutex_t *flock;
 	pthread_mutex_t *forks;
 }   t_philo;
 
@@ -27,6 +37,73 @@ typedef struct s_res
 }   t_res;
 
 
+void think(t_philo *my_args) 
+{
+	struct timeval t0;
+	struct timeval tcurr;
+	size_t elapsed;
+
+	t0 = my_args->t0;
+	gettimeofday(&tcurr, 0);
+	elapsed = (tcurr.tv_sec - t0.tv_sec) * 1000000 + (tcurr.tv_usec - t0.tv_usec);
+    pthread_mutex_lock(my_args->plock);
+	printf("%lu %d is thinking\n", elapsed / 1000, my_args->N);
+	pthread_mutex_unlock(my_args->plock);
+	my_args->state = THINKING;
+	usleep(100 * (my_args->N % 2));
+}
+
+void take_forks(t_philo *my_args)
+{
+	struct timeval t0;
+	struct timeval tcurr;
+	size_t elapsed;
+
+	t0 = my_args->t0;
+	my_args->state = HUNGRY;
+
+	int left = my_args->N - 1;
+	int right = my_args->N % my_args->count;
+
+	pthread_mutex_lock(my_args->flock);
+	pthread_mutex_lock(&my_args->forks[left]);
+	gettimeofday(&tcurr, 0);
+	elapsed = (tcurr.tv_sec-t0.tv_sec)*1000000 + (tcurr.tv_usec-t0.tv_usec);
+	pthread_mutex_lock(my_args->plock);
+	printf("%lu %d has taken a left fork\n", elapsed / 1000, my_args->N);
+	pthread_mutex_unlock(my_args->plock);
+	pthread_mutex_lock(&my_args->forks[right]);
+	gettimeofday(&tcurr, 0);
+	elapsed = (tcurr.tv_sec-t0.tv_sec)*1000000 + (tcurr.tv_usec-t0.tv_usec);
+	pthread_mutex_lock(my_args->plock);
+	printf("%lu %d has taken a right fork\n", elapsed / 1000, my_args->N);
+	pthread_mutex_unlock(my_args->flock);
+}
+
+
+void eat(t_philo *my_args, int left, int right)
+{
+	struct timeval t0;
+	struct timeval tcurr;
+	size_t elapsed;
+
+	my_args->state = EATING;
+	t0 = my_args->t0;
+
+	gettimeofday(&tcurr, 0);
+	elapsed = (tcurr.tv_sec - t0.tv_sec) * 1000000 + (tcurr.tv_usec - t0.tv_usec);
+
+    pthread_mutex_lock(my_args->plock);
+	printf("%lu %d is eating\n", elapsed / 1000, my_args->N);
+	pthread_mutex_unlock(my_args->plock);
+
+	usleep(my_args->tte * 1000);
+	pthread_mutex_unlock(&my_args->forks[right]);
+	pthread_mutex_unlock(&my_args->forks[left]);
+	*lma = elapsed;
+	my_args->nmeals++;
+}
+
 int	try_to_eat(t_philo *my_args, struct timeval t0, unsigned long *lma)
 {
 	unsigned long elapsed;
@@ -34,7 +111,7 @@ int	try_to_eat(t_philo *my_args, struct timeval t0, unsigned long *lma)
 	int left = my_args->N - 1;
 	int right = my_args->N % my_args->count;
 	//printf("philo num %d tries to eat\n", my_args->N);
-	if (!pthread_mutex_lock(&my_args->forks[left]))
+	if (!pthread_mutex_lock(my_args->flock))
 	{
 		gettimeofday(&tcurr, 0);
 		elapsed = (tcurr.tv_sec-t0.tv_sec)*1000000 + (tcurr.tv_usec-t0.tv_usec);
@@ -67,15 +144,12 @@ void *PhiloThread(void *arg)
 {
 	
 	t_philo *my_args;
-  	struct timeval t0;
 	struct timeval tcurr;
-	unsigned long elapsed;
-	unsigned long lastmeal;
-	int hungry = 1;  
+	size_t elapsed;
+	size_t lastmeal;
 
-	gettimeofday(&t0, 0);
 	my_args = arg;
-
+	think(my_args);
 	while (1)
 	{
 		gettimeofday(&tcurr, 0);
@@ -127,13 +201,12 @@ int main(int argc, char **argv)
 {
 	int t;
 	int params[5];
-	t_philo *args;
 	int *onedead;
-	int err;
 	pthread_t *thread_ids;
-	pthread_mutex_t plock;
-	pthread_mutex_t dlock;
 	pthread_mutex_t *forks;
+	struct timeval t0;
+
+	gettimeofday(&t0, 0);
 
 	if (argc != 5 && argc != 6)
 	{
@@ -160,13 +233,24 @@ time_to_die time_to_eat time_to_sleep \
 	int *done = malloc(sizeof(int));
 	*done = 0; 
 	thread_ids = malloc(sizeof(pthread_t) * params[0]);
-	forks = calloc(params[0], sizeof(pthread_mutex_t)); // can use malloc and memset..
+	ffree = malloc(sizeof(t_ffree) * params[0]);
+	memset(ffree, NOT_AVAIL, sizeof(t_ffree) * params[0]);
 
+	pthread_mutex_t plock;
+	pthread_mutex_t dlock;
+	pthread_mutex_t flock;
+
+	pthread_mutex_init(&flock, NULL);
 	pthread_mutex_init(&plock, NULL);
 	pthread_mutex_init(&dlock, NULL);
+
+	forks = malloc(sizeof(pthread_mutex_t) * params[0]);
+
 	for(t=0; t < params[0]; t++) {
 		pthread_mutex_init(&forks[t], NULL);
 	}
+
+	t_philo *args;
 
 	for(t=0; t < params[0]; t++) {
 		args = malloc(sizeof(t_philo));
@@ -181,11 +265,14 @@ time_to_die time_to_eat time_to_sleep \
 		args->onedead = onedead;
 		args->plock = &plock;
 		args->dlock = &dlock;
-		args->forks = forks;
+		args->flock = &flock;
+		args->t0 = t0;
+		args->state = THINKING;
 		//printf("main thread creating philo thread %i\n", t+1);
-		err = pthread_create(&(thread_ids[t]), NULL, PhiloThread, (void *)args);
+		pthread_create(&(thread_ids[t]), NULL, PhiloThread, (void *)args);
 		//printf("main thread has created philo thread %i\n", t+1);
 	}
+	memset(ffree, AVAIL, sizeof(t_ffree) * params[0]);
 
 	
 	/*
