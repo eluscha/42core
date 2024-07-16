@@ -2,17 +2,17 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <pthread.h>
 #include <sys/time.h>
 
-/*
-typedef enum e_state 
+
+typedef enum e_fstate 
 {
-	THINKING, 
-	HUNGRY, 
-	EATING
-}	t_state;
-*/
+	NOTFREE, 
+	FREE, 
+}	t_fstate;
+
 
 typedef struct s_philo
 {
@@ -26,6 +26,7 @@ typedef struct s_philo
 	int *done;
 	int *onedead;
 	struct timeval t0;
+	size_t *lmeal;
 	pthread_mutex_t *plock;
 	pthread_mutex_t *dlock;
 	pthread_mutex_t *flock;
@@ -54,7 +55,7 @@ void think(t_philo *my_args)
 }
 
 
-void eat(t_philo *my_args, int left, int right, size_t *lma)
+void eat(t_philo *my_args, int left, int right)
 {
 	struct timeval t0;
 	struct timeval tcurr;
@@ -72,11 +73,11 @@ void eat(t_philo *my_args, int left, int right, size_t *lma)
 	usleep(my_args->tte * 1000);
 	pthread_mutex_unlock(&my_args->forks[right]);
 	pthread_mutex_unlock(&my_args->forks[left]);
-	*lma = elapsed;
+	*my_args->lmeal = elapsed;
 	my_args->nmeals++;
 }
 
-int take_forks_eat(t_philo *my_args, size_t *lma)
+int take_forks_eat(t_philo *my_args)
 {
 	struct timeval t0;
 	struct timeval tcurr;
@@ -108,7 +109,7 @@ int take_forks_eat(t_philo *my_args, size_t *lma)
 	printf("%lu %d has taken a fork\n", elapsed / 1000, my_args->N);
 	pthread_mutex_unlock(my_args->plock);
 	pthread_mutex_unlock(my_args->flock);
-	eat(my_args, left, right, lma);
+	eat(my_args, left, right);
 	return (0);
 }
 
@@ -121,29 +122,22 @@ void *PhiloThread(void *arg)
 	t_philo *my_args;
 	struct timeval tcurr;
 	size_t elapsed;
-	
 	int hungry = 1;
 
 	my_args = arg;
 
 	t0 = my_args->t0;
-	size_t lastmeal = 0;
 	think(my_args);
 
 	while (1)
 	{
-		gettimeofday(&tcurr, 0);
-		elapsed = (tcurr.tv_sec-t0.tv_sec)*1000000 + (tcurr.tv_usec-t0.tv_usec);
-		if (elapsed - lastmeal >= my_args->ttd * 1000)
-		{
-			pthread_mutex_lock(my_args->plock);
-			printf("%lu %d died\n", elapsed / 1000, my_args->N);
-			*my_args->onedead = 1;
-			free(my_args);
-			return ((void *)1);
-		}
+		pthread_mutex_lock(my_args->dlock);
+		usleep(100);
+		pthread_mutex_unlock(my_args->dlock);
 		if (!hungry)
 		{
+			gettimeofday(&tcurr, 0);
+			elapsed = (tcurr.tv_sec - t0.tv_sec) * 1000000 + (tcurr.tv_usec - t0.tv_usec);
 			pthread_mutex_lock(my_args->plock);
 			printf("%lu %d is sleeping\n", elapsed / 1000, my_args->N);
 			pthread_mutex_unlock(my_args->plock);
@@ -152,7 +146,7 @@ void *PhiloThread(void *arg)
 			think(my_args);
 			continue ;
 		}
-		hungry = take_forks_eat(my_args, &lastmeal);
+		hungry = take_forks_eat(my_args);
 		if (my_args->ntme && my_args->nmeals >= my_args->ntme)
 		{
 			//printf("we are here\n");
@@ -162,8 +156,7 @@ void *PhiloThread(void *arg)
 			if (*my_args->done == my_args->count)
 			{
 				pthread_mutex_unlock(my_args->dlock);
-				free(my_args);
-				return (NULL);
+				break ;
 			}
 			pthread_mutex_unlock(my_args->dlock);
 		}
@@ -172,13 +165,19 @@ void *PhiloThread(void *arg)
 	return (NULL);
 }
 
+/*
+test that fails for sure:
+ ./philo/philo 5 800 200 200 7
+ */
+
 int main(int argc, char **argv)
 {
 	int t;
 	int params[5];
-	int *onedead;
+	size_t **lmeals;
 	pthread_t *thread_ids;
 	pthread_mutex_t *forks;
+	t_fstate *forkstates;
 	struct timeval t0;
 
 	gettimeofday(&t0, 0);
@@ -203,11 +202,19 @@ time_to_die time_to_eat time_to_sleep \
 	}
 	if (t == 4)
 		params[t] = 0;
-	onedead = malloc(sizeof(int));
-	*onedead = 0;
+	
 	int *done = malloc(sizeof(int));
-	*done = 0; 
+	*done = 0;
+
+	lmeals = malloc(sizeof(size_t *) * params[0]);
+	for(t=0; t < params[0]; t++) {
+		lmeals[t] = malloc(sizeof(size_t));
+		memset(lmeals[t], 0, sizeof(size_t));
+	}
+
 	thread_ids = malloc(sizeof(pthread_t) * params[0]);
+	forkstates = malloc(sizeof(forkstates) * params[0]);
+	memset(forkstates, NOTFREE, sizeof(forkstates) * params[0]);
 
 	pthread_mutex_t plock;
 	pthread_mutex_t dlock;
@@ -235,16 +242,17 @@ time_to_die time_to_eat time_to_sleep \
 		args->ntme = params[4];
 		args->nmeals = 0;
 		args->done = done;
-		args->onedead = onedead;
 		args->plock = &plock;
 		args->dlock = &dlock;
 		args->flock = &flock;
 		args->forks = forks;
 		args->t0 = t0;
+		args->lmeal = lmeals[t];
 		//printf("main thread creating philo thread %i\n", t+1);
 		pthread_create(&(thread_ids[t]), NULL, PhiloThread, (void *)args);
 		//printf("main thread has created philo thread %i\n", t+1);
 	}
+	memset(forkstates, FREE, sizeof(forkstates) * params[0]);
 	
 	/*
 	for(t=0; t < params[0]; t++) {
@@ -255,34 +263,41 @@ time_to_die time_to_eat time_to_sleep \
 		printf("main thread joined with philo thread %i, whose result is %i\n",t+1, result->dead);
 		free(dead);
 	}*/
+	struct timeval tcurr;
+	size_t elapsed = 0;
+	while(1)
+	{
+		if (params[4] && *done >= params[0])
+			break ;
+		pthread_mutex_lock(&plock);
+		pthread_mutex_lock(&dlock);
+		gettimeofday(&tcurr, 0);
+		elapsed = (tcurr.tv_sec-t0.tv_sec)*1000000 + (tcurr.tv_usec-t0.tv_usec);
+		for(t=0; t < params[0]; t++) {
+			if (elapsed - *lmeals[t] >= (size_t)(params[1] * 1000))
+			{
+				printf("%lu %d died\n", elapsed / 1000, t + 1);
+				break ;
+			}
+		}
+		if (t < params[0])
+			break ;
+		pthread_mutex_unlock(&plock);
+		pthread_mutex_unlock(&dlock);
+	}
 
-	if (params[4])
-	{
-		while ( !(*onedead) && *done < params[0])
-		{
-			//printf("params[4] is %d\n", params[4]);
-			usleep(1000);
-			continue ;
-		}
-	}
-	else
-	{
-		while (!(*onedead))
-		{
-			//printf("params[4] is %d\n", params[4]);
-			usleep(1000);
-			continue ;
-		}
-	}
-	
 	for(t=0; t < params[0]; t++) {
 		pthread_detach(thread_ids[t]);
 	}
 
 	usleep(200000);
 
-	if (*onedead)
+	if (t < params[0])
+	{
 		pthread_mutex_unlock(&plock);
+		pthread_mutex_unlock(&dlock);
+	}
+	
     pthread_mutex_destroy(&plock);
     pthread_mutex_destroy(&dlock);
 	pthread_mutex_destroy(&flock);
@@ -293,6 +308,10 @@ time_to_die time_to_eat time_to_sleep \
 	free(thread_ids);
 	free(forks);
 	free(done);
-	free(onedead);
+	free(forkstates);
+	for(t=0; t < params[0]; t++) {
+		free(lmeals[t]);
+	}
+	free(lmeals);
 	return (0);
 }
