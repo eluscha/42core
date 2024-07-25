@@ -4,15 +4,15 @@ CFLAGS		= -Wall -Werror -Wextra
 
 #Sources
 
-SRCS = main.c
+SRCS = main.c philo_thread.c philo_eat.c utils.c
 OBJS = $(SRCS:.c=.o) 
 
 ###
 
 all:		$(NAME)
 
-$(NAME):	$(OBJS)
-			$(CC) $(OBJS) -o $(NAME)
+$(NAME):	$(OBJS) ./philo.h
+			$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
 
 .c.o:
 			@echo "Compiling: $<"
@@ -29,6 +29,6 @@ re:				fclean all
 
 norm:
 			@norminette $(SRCS)
-			@norminette -R CheckDefine ./include
+			@norminette -R CheckDefine ./philo.h
 
 .PHONY:		all clean fclean re norm 
