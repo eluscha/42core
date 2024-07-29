@@ -27,7 +27,7 @@ int	check_args(int ac, char **av, t_main *d)
 {
 	if (ac != 5 && ac != 6)
 	{
-		printf("Usage: ./philo number_of_philosophers "); 
+		printf("Usage: ./philo number_of_philosophers ");
 		printf("time_to_die time_to_eat time_to_sleep ");
 		printf("[number_of_times_each_philosopher_must_eat]\n");
 		return (1);

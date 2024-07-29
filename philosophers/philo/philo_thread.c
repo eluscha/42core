@@ -31,13 +31,10 @@ void	*philo_thread(void *arg)
 			break ;
 		if (nowsleep(ph) == 1)
 			break ;
-		if (ph->tts < ph->tte)
-		{
-			if (think(ph, (ph->tte - ph->tts) * 1000 + 2000) == 1)
-				break ; 
-		}
-		else if (think(ph, 2000) == 1)
+		if (think(ph, 2000) == 1)
 			break ;
+		if (ph->tts < ph->tte)
+			usleep((ph->tte - ph->tts) * 1000);
 	}
 	return (NULL);
 }
