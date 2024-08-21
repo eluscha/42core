@@ -4,8 +4,9 @@
 #vscode
 */.vscode/
 
-#pft tester
+#testers
 ft_printf/pft/
+philosophers/LT/
 
 #push_swap visualizer
 push_swap/Vis
