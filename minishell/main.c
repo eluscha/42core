@@ -1,26 +1,33 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <stdlib.h>
+#include "libft.h"
 
 #include <stdio.h>
+
 
 typedef enum lex_state
 {
     WORD,
     DELIM,
     INSQTS,
-    INDQTS,
+    INDQTS
 } lex_state;
 
 typedef enum e_toktype
 {
     UNDETERM,
+    NWLINE,
     PIPE,
     CMD,
     ARGS,
+    HEREDOC,
     INPUT,
-    OUTPUT, 
-    END
+    OUTPUT,
+    BEGIN,
+    END,
+    SQERR,
+    DQERR
 }   t_toktype;
 
 typedef struct s_tok
@@ -29,6 +36,9 @@ typedef struct s_tok
     struct s_tok *next;
     t_toktype type;
 }   t_tok;
+
+void process_tokens(t_tok *head);
+
 
 size_t	ft_strlen(const char *s)
 {
@@ -65,30 +75,34 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	return (ptr);
 }
 
-t_tok *gen_token(char *input, int start, int len)
+t_tok *gen_token(t_toktype type, char *input, int start, int len)
 {
     t_tok *token = malloc(sizeof(t_tok));
     token->next = NULL;
-    if (!input)
+    token->type = type;
+    token->word = NULL;
+    if (type == END || type == BEGIN || type == NWLINE)
+        return (token);
+    token->word = ft_substr(input, start, len);
+    return token; //need to handle if it is NULL  
+}
+
+t_tok *lexer(char *input, lex_state state, t_tok *tail)
+{
+    char c;
+     t_tok *head;
+    if (!tail)
     {
-        token->type = END;
-        token->word = NULL;
+        tail = gen_token(BEGIN, NULL, 0, 0); // need to protect malloc
+        head = tail;
     }
     else
     {
-        token->type = UNDETERM;
-        token->word = ft_substr(input, start, len);
+        head = tail->next;
+        tail->next = gen_token(NWLINE, NULL, 0, 0);
+        tail = tail->next;
     }
-    return token; //need to handle if it is NULL somewhere 
-}
-
-t_tok *lexer(char *input)
-{
-    char c;
-    lex_state state = DELIM;
-    t_tok *token = NULL;
-    t_tok *head = NULL;
-    int start;
+    int start = 0;
     int wordlen;
     int i = -1;
     while(input[++i])
@@ -121,48 +135,25 @@ t_tok *lexer(char *input)
             wordlen = i - start;
             if (!input[i+1])
                 wordlen = i + 1 - start;
-            if (!token)
-            {
-                token = gen_token(input, start, wordlen);
-                head = token;
-            }
-            else
-            {
-                token->next = gen_token(input, start, wordlen);
-                token = token->next;
-            }
+            tail->next = gen_token(UNDETERM, input, start, wordlen);
+            tail = tail->next;
         }
     }
-    if (state == INDQTS || state == INSQTS)
-    {
-        if (state == INDQTS)
-            printf("unexpected EOF while looking for matching \"\n");
-        else
-            printf("unexpected EOF while looking for matching \'\n");
-        if (!token)
-        {
-            token = gen_token(input, start, i - start);
-            head = token;
-        }
-        else
-        {
-            token->next = gen_token(input, start, i - start);
-            token = token->next;
-        }
-    }
-    if (!token)
-    {
-        token = gen_token(NULL, 0, 0);
-        head = token;
-    }
+    if (state == INSQTS)
+        tail->next = gen_token(SQERR, input, start, i - start);
+    else if (state == INDQTS)
+        tail->next = gen_token(DQERR, input, start, i - start);
     else
-        token->next = gen_token(NULL, 0, 0);
-    return (head);
+        tail->next = gen_token(END, NULL, 0, 0);
+    tail = tail->next;
+    tail->next = head;
+    return (tail);
 }
 
 int main()
 {
     char *input = NULL;
+    t_tok *tail;
     t_tok *head;
     t_tok *ptr;
 
@@ -175,19 +166,63 @@ int main()
             break;
         if (*input)
             add_history(input);
-        head = lexer(input);
-        while (head)
+        tail = lexer(input, DELIM, NULL);
+        while (tail->type == SQERR)
         {
-            if (head->type == END)
-                printf("END\n");
+            input = readline("> ");
+            if (input == NULL) //will happen with ctrl+D
+                break;
+            tail = lexer(input, INSQTS, NULL);
+        }
+        while (tail->type == DQERR)
+        {
+            input = readline("> ");
+            if (input == NULL) //will happen with ctrl+D
+                break;
+            tail = lexer(input, INDQTS, tail);
+        }
+        head = tail->next;
+        process_tokens(head);
+        while (head->type != END)
+        {
+            if (head->type == BEGIN)
+                printf("BEGIN ");
+            else if (head->type == NWLINE)
+                printf("\n");
+            else if (head->type == PIPE)
+                printf("PIPE ");
             else
-            {
                 printf("%s ", head->word);
+            if (head->word)
                 free(head->word);
-            }
             ptr = head->next;
             free(head);
             head = ptr;
         }
+        printf("END\n");
+        free(head);
     }
+}
+
+void process_tokens(t_tok *head)
+{
+    if (head->type == END)
+        return ;
+    else if (head->type == BEGIN)
+    {
+        process_tokens(head->next);
+        return ;
+    }
+    if (ft_strncmp(head->word, "|", 2) == 0)
+        head->type = PIPE;
+    else if (head->word[0] == '<')
+    {
+        if (head->word[1] == '<')
+            head = input_type(head, 2);
+        else
+            head = input_type(head, 1);
+    }
+    //else if (head->word)
+    process_tokens(head->next);
+
 }
