@@ -1,5 +1,5 @@
 NAME = libft.a
-INCLUDE = ../include
+INCLUDE = ../include/
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -I
 AR = ar rcs
