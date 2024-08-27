@@ -24,6 +24,7 @@ typedef enum e_toktype
     HEREDOC,
     INPUT,
     OUTPUT,
+    APPEND,
     BEGIN,
     END,
     SQERR,
@@ -204,25 +205,56 @@ int main()
     }
 }
 
-void process_tokens(t_tok *head)
+void    io_type(t_tok *token, t_toktype type)
 {
-    if (head->type == END)
-        return ;
-    else if (head->type == BEGIN)
+    token->type = type;
+    t_tok *wcat;
+    int idx;
+    if (type == HEREDOC || type == APPEND)
+        idx = 2;
+    else
+        idx = 1;
+    if (!token->word[idx])
+        token->next->type = type;
+    else
     {
-        process_tokens(head->next);
-        return ;
+        token->type = type;
+        token->word = 
     }
-    if (ft_strncmp(head->word, "|", 2) == 0)
-        head->type = PIPE;
-    else if (head->word[0] == '<')
-    {
-        if (head->word[1] == '<')
-            head = input_type(head, 2);
-        else
-            head = input_type(head, 1);
-    }
-    //else if (head->word)
-    process_tokens(head->next);
+}
 
+
+void process_tokens(t_tok *token)
+{
+    static int cmd;
+
+    if (token->type == END)
+        return ;
+    else if (token->type == BEGIN)
+    {
+        cmd = 0;
+        process_tokens(token->next);
+        return ;
+    }
+    if (ft_strncmp(token->word, "|", 2) == 0)
+        token->type = PIPE;
+    else if (token->word[0] == '<')
+    {
+        if (token->word[1] == '<')
+            io_type(token, HEREDOC);
+        else
+            io_type(token, INPUT);
+    }
+    else if (token->word[0] == '>')
+    {
+        if (token->word[1] == '>')
+            io_type(token, APPEND);
+        else
+            io_type(token, OUTPUT);
+    }
+    else if (!cmd)
+        token->type = CMD;
+    else
+        token->type = ARGS;
+    process_tokens(token->next);
 }
