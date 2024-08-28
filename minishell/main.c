@@ -66,9 +66,9 @@ void print_toktype(t_tok *token)
     else if (token->type == OUTPUT)
         printf("OUTPUT ");
     else if (token->type == APPEND)
-        printf(" ");
-    else if (token->type == DISCARD)
         printf("APPEND ");
+    else if (token->type == DISCARD)
+        printf("DISCARD ");
 }
 
 t_tok *gen_token(t_toktype type, int len)
@@ -86,18 +86,13 @@ t_tok *gen_token(t_toktype type, int len)
     return token; //need to handle if it is NULL  
 }
 
-char    *expand(char *input, int idx, char **envp)
+char    *expand(char *start, int *lenvar, char **envp)
 {
-    int i = idx;
-    while(input[i])
-    {
-        if (input[i] == '\"' || input[i] == '\'')
-            break ;
-        if (!ft_isalnum(input[i]))
-            break ;
+    int i = 0;
+    while(start[i] && ft_isalnum(start[i]))
         i++;
-    }
-    char *var = ft_strdup(input + i + 1);
+    *lenvar = i;
+    char *var = ft_strdup(start);
     var[i] = '\0';
     int len = ft_strlen(var);
     while (*envp)
@@ -116,10 +111,14 @@ void    change_word(t_tok *token, char *var, int len)
 {
     int lenvar = ft_strlen(var);
     int lenword = ft_strlen(token->word);
-    char *newword = ft_calloc(lenvar + len, 1);
-    ft_strlcpy(newword, token->word, lenword);
-    ft_strlcpy(newword + lenword, var, lenvar);
+    char *newword = ft_calloc(lenvar + len + 1, sizeof(char));
+    ft_strlcpy(newword, token->word, lenword + 1);
+    ft_strlcat(newword, var, lenvar + len + 1);
+    free(token->word);
+    free(var);
+    token->word = newword;
     token->idx += lenvar;
+    //printf("idx is %d\n", token->idx);
 }
 
 t_tok *lexer(char *input, lex_state state, t_tok *tail, char **envp)
@@ -128,6 +127,10 @@ t_tok *lexer(char *input, lex_state state, t_tok *tail, char **envp)
     t_tok *head;
     int len = ft_strlen(input);
     int i = -1;
+
+    int lenvar;
+    char *varvalue;
+
     if (!tail)
     {
         tail = gen_token(UNDETERM, len); // need to protect malloc
@@ -169,14 +172,18 @@ t_tok *lexer(char *input, lex_state state, t_tok *tail, char **envp)
             else
                 tail->word[tail->idx++] = c;
         }
-        else if (state == WORD && (c == ' ' || c == '\t' || !input[i+1]))
+        else if (state == WORD && (c == ' ' || c == '\t'))
         {
             state = DELIM;
             tail->next = gen_token(UNDETERM, len);
             tail = tail->next;
         }
         else if (c == '$' && (state == WORD || state == INDQTS))
-            change_word(tail, expand(input, i, envp), len);
+        {
+            varvalue = expand(input + i + 1, &lenvar, envp);
+            change_word(tail, varvalue, len);
+            i += lenvar;
+        }
         else
             tail->word[tail->idx++] = c;
     }
@@ -184,13 +191,14 @@ t_tok *lexer(char *input, lex_state state, t_tok *tail, char **envp)
         tail->type = SQERR;
     else if (state == INDQTS)
         tail->type = DQERR;
+    else if (state == DELIM)
+        tail->type = END;
     else
     {
-        tail->word[tail->idx++] = c;
         tail->next = gen_token(END, 0);
         tail = tail->next;
     }
-        tail->next = head;
+    tail->next = head;
     return (tail);
 }
 
@@ -277,6 +285,11 @@ void process_tokens(t_tok *token)
 
     while (token->type != END)
     {
+        if (token->type >= HEREDOC)
+        {   
+            token = token->next;
+            continue ;
+        }
         if (ft_strncmp(token->word, "|", 2) == 0)
             token->type = PIPE;
         else if (token->word[0] == '<')
