@@ -5,6 +5,23 @@
 
 #include <stdio.h>
 
+typedef struct cmd
+{
+    char            *cmd;
+    char            **args; //("cmd", "args", NULL)
+    struct redirect *in_redirect;
+    struct redirect *out_redirect;
+    struct cmd      *next;
+}   t_cmd;
+
+typedef struct redirect
+{
+    int             type;
+    char            *value;
+    struct redirect *next;
+}   t_redirect;
+
+
 
 typedef enum lex_state
 {
@@ -39,7 +56,10 @@ typedef struct s_tok
     t_toktype type;
 }   t_tok;
 
-void process_tokens(t_tok *head);
+int process_tokens(t_tok *head);
+void insert_token(t_tok *token);
+int check_syntax(t_tok *head);
+t_cmd *generate_structs(t_tok *head, int numargs);
 
 void print_toktype(t_tok *token)
 {
@@ -236,7 +256,11 @@ int main(int argc, char **argv, char **envp)
             tail = lexer(input, INDQTS, tail, envp);
         }
         head = tail->next;
-        process_tokens(head);
+        int numargs = process_tokens(head);
+        printf("numargs is %d\n", numargs);
+        t_cmd *cmds;
+        if (check_syntax(head) == 0)
+            cmds = generate_structs(head, numargs);
         while (head->type != END)
         {
             print_toktype(head);
@@ -278,20 +302,33 @@ int    io_type(t_tok *token, t_toktype type)
     return (0);
 }
 
+void insert_token(t_tok *token)
+{
+    char *word = ft_strdup(token->word + 1);
+    t_tok *next = token->next;
+    token->next = gen_token(UNDETERM, ft_strlen(word));
+    token->next->word = word;
+    token->next->next = next;
+    token->word[1] = '\0';
+}
 
-void process_tokens(t_tok *token)
+int process_tokens(t_tok *token) //maybe return -1 always on malloc err ?
 {
     int cmd = 0;
-
+    int args = 0;
     while (token->type != END)
     {
-        if (token->type >= HEREDOC)
+        if (token->word[0] == '|')
+        {
+            token->type = PIPE;
+            if (token->word[1])
+                insert_token(token);
+        }
+        else if (token->type >= HEREDOC)
         {   
             token = token->next;
             continue ;
         }
-        if (ft_strncmp(token->word, "|", 2) == 0)
-            token->type = PIPE;
         else if (token->word[0] == '<')
         {
             if (token->word[1] == '<')
@@ -312,7 +349,54 @@ void process_tokens(t_tok *token)
             cmd = 1;
         }
         else
+        {
             token->type = ARGS;
+            args++;
+        }
         token = token->next;
     }
+    return args;
+}
+
+int check_syntax(t_tok *head)
+{
+    t_toktype ntype;
+    while(head->type != END)
+    {
+        if (head->type != PIPE)
+            continue ;
+        ntype = head->next->type;
+        if (ntype == CMD)
+            continue ;
+        if (ntype >= HEREDOC && ntype < DISCARD)
+            continue ;
+        if (ntype == DISCARD)
+        {
+            ntype = head->next->next->type;
+            if (ntype >= HEREDOC && ntype < DISCARD)
+                continue ;
+        }
+        printf("syntax error near unexpected token `");
+        printf("%s\'\n", head->word);
+        return (1);
+    }
+    return (0);
+}
+
+t_cmd *generate_structs(t_tok *head, int numargs)
+{
+    t_cmd *cmd = ft_calloc(1, sizeof(t_cmd));
+    cmd->args = ft_calloc(numargs, sizeof(char *));
+    int idx = 0;
+    while (head->type != END)
+    {
+        if (head->type == PIPE)
+            cmd->next = generate_structs(head->next, numargs);
+        else if (head->type == CMD)
+            cmd->cmd = head->word;
+        else if (head->type == ARGS)
+            cmd->args[idx] = head->word;
+        //else if (head->type ==
+    }
+    return (cmd);
 }
