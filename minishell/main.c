@@ -5,21 +5,7 @@
 
 #include <stdio.h>
 
-typedef struct cmd
-{
-    char            *cmd;
-    char            **args; //("cmd", "args", NULL)
-    struct redirect *in_redirect;
-    struct redirect *out_redirect;
-    struct cmd      *next;
-}   t_cmd;
 
-typedef struct redirect
-{
-    int             type;
-    char            *value;
-    struct redirect *next;
-}   t_redirect;
 
 
 
@@ -41,11 +27,11 @@ typedef enum e_toktype
     PIPE,
     CMD,
     ARGS,
+    DISCARD,
     HEREDOC,
     INPUT,
     OUTPUT,
-    APPEND,
-    DISCARD
+    APPEND
 }   t_toktype;
 
 typedef struct s_tok
@@ -55,6 +41,24 @@ typedef struct s_tok
     struct s_tok *next;
     t_toktype type;
 }   t_tok;
+
+
+typedef struct cmd
+{
+    char            *cmd;
+    char            **args; //("cmd", "args", NULL)
+    struct redirect *in_redirect;
+    struct redirect *out_redirect;
+    struct cmd      *next;
+}   t_cmd;
+
+typedef struct redirect
+{
+    t_toktype        type;
+    char            *value;
+    struct redirect *next;
+}   t_redirect;
+
 
 int process_tokens(t_tok *head);
 void insert_token(t_tok *token);
@@ -369,8 +373,8 @@ int check_syntax(t_tok *head)
     while(head->type != END)
     {
         ntype = head->next->type;
-        if (head->type == PIPE && ntype != CMD && ntype < HEREDOC)
-                err = 1;
+        if (head->type == PIPE && ntype != CMD && ntype < DISCARD)
+            err = 1;
         else if (head->type == DISCARD && ntype < HEREDOC)
             err = 1;
         if (err)
@@ -387,7 +391,9 @@ int check_syntax(t_tok *head)
 t_cmd *generate_structs(t_tok *head, int numargs)
 {
     t_cmd *cmd = ft_calloc(1, sizeof(t_cmd));
-    cmd->args = ft_calloc(numargs, sizeof(char *));
+    cmd->args = ft_calloc(numargs + 1, sizeof(char *));
+    t_redirect *ptr;
+    t_redirect **ptradr;
     int idx = 0;
     while (head->type != END)
     {
@@ -397,8 +403,28 @@ t_cmd *generate_structs(t_tok *head, int numargs)
             cmd->cmd = head->word;
         else if (head->type == ARGS)
             cmd->args[idx] = head->word;
-        //else if (head->type >= HEREDOC)
-        
+        else if (head->type >= HEREDOC)
+        {
+            if (head->type >= OUTPUT)
+            {
+                ptr = cmd->out_redirect;
+                ptradr = &cmd->out_redirect;
+            }
+            else
+            {
+                ptr = cmd->in_redirect;
+                ptradr = &cmd->in_redirect;
+            }
+            while (ptr)
+            {
+                ptr = ptr->next;
+                ptradr = &ptr->next;
+            }
+            ptr = ft_calloc(1, sizeof(t_redirect));
+            ptr->value = ft_strdup(head->word);
+            ptr->type = head->type;
+            *ptradr = ptr; 
+        }
         head = head->next;
     }
     return (cmd);
