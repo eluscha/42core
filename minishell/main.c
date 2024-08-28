@@ -103,6 +103,8 @@ t_tok *gen_token(t_toktype type, int len)
         free(token);
         return (NULL);
     }
+    if (type == END)
+        ft_strlcpy(token->word, "newline", 8);
     return token; //need to handle if it is NULL  
 }
 
@@ -215,7 +217,7 @@ t_tok *lexer(char *input, lex_state state, t_tok *tail, char **envp)
         tail->type = END;
     else
     {
-        tail->next = gen_token(END, 0);
+        tail->next = gen_token(END, 7);
         tail = tail->next;
     }
     tail->next = head;
@@ -288,7 +290,8 @@ int    io_type(t_tok *token, t_toktype type)
     if (!token->word[idx])
     {
         token->type = DISCARD;
-        token->next->type = type;
+        if (token->next->type != END)
+            token->next->type = type;
     }
     else
     {
@@ -321,6 +324,7 @@ int process_tokens(t_tok *token) //maybe return -1 always on malloc err ?
         if (token->word[0] == '|')
         {
             token->type = PIPE;
+            cmd = 0;
             if (token->word[1])
                 insert_token(token);
         }
@@ -361,24 +365,21 @@ int process_tokens(t_tok *token) //maybe return -1 always on malloc err ?
 int check_syntax(t_tok *head)
 {
     t_toktype ntype;
+    int err = 0;
     while(head->type != END)
     {
-        if (head->type != PIPE)
-            continue ;
         ntype = head->next->type;
-        if (ntype == CMD)
-            continue ;
-        if (ntype >= HEREDOC && ntype < DISCARD)
-            continue ;
-        if (ntype == DISCARD)
+        if (head->type == PIPE && ntype != CMD && ntype < HEREDOC)
+                err = 1;
+        else if (head->type == DISCARD && ntype < HEREDOC)
+            err = 1;
+        if (err)
         {
-            ntype = head->next->next->type;
-            if (ntype >= HEREDOC && ntype < DISCARD)
-                continue ;
+            printf("syntax error near unexpected token `");
+            printf("%s\'\n", head->next->word);
+            return (1);
         }
-        printf("syntax error near unexpected token `");
-        printf("%s\'\n", head->word);
-        return (1);
+        head = head->next;
     }
     return (0);
 }
@@ -396,7 +397,9 @@ t_cmd *generate_structs(t_tok *head, int numargs)
             cmd->cmd = head->word;
         else if (head->type == ARGS)
             cmd->args[idx] = head->word;
-        //else if (head->type ==
+        //else if (head->type >= HEREDOC)
+        
+        head = head->next;
     }
     return (cmd);
 }
