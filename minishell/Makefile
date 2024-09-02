@@ -3,7 +3,7 @@ LIBFT		:= ./libft
 INCLUDE		:= ./include
 SRC_DIR		:= ./
 CC			:= cc
-CFLAGS		:= -Wall -Werror -Wextra
+CFLAGS		:= -Wall -Werror -Wextra -g
 HEADERS		:= -I $(INCLUDE)
 LIBS		:= $(LIBFT)/libft.a -lreadline
 

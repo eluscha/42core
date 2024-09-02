@@ -65,6 +65,9 @@ void insert_token(t_tok *token);
 int check_syntax(t_tok *head);
 t_cmd *generate_structs(t_tok *head, int numargs);
 
+void print_struct(t_cmd *cmd);
+
+
 void print_toktype(t_tok *token)
 {
     if (token->type == UNDETERM)
@@ -263,20 +266,25 @@ int main(int argc, char **argv, char **envp)
         }
         head = tail->next;
         int numargs = process_tokens(head);
-        printf("numargs is %d\n", numargs);
         t_cmd *cmds;
         if (check_syntax(head) == 0)
             cmds = generate_structs(head, numargs);
+        printf("structs were generated\n");
+        printf("first cmd is %s\n", cmds->args[0]);
+        //printf("second cmd is %s\n", cmds->next->cmd);
+        //t_cmd *cmd = ft_calloc(1, sizeof(t_cmd));
+        //print_struct(cmd);
+        print_struct(cmds);
         while (head->type != END)
         {
-            print_toktype(head);
-            printf("%s ", head->word);
+            //print_toktype(head);
+            //printf("%s ", head->word);
             free(head->word);
             ptr = head->next;
             free(head);
             head = ptr;
         }
-        print_toktype(head);
+        //print_toktype(head);
         free(head->word);
         free(head);
     }
@@ -390,19 +398,27 @@ int check_syntax(t_tok *head)
 
 t_cmd *generate_structs(t_tok *head, int numargs)
 {
+    printf("in gen struct\n");
     t_cmd *cmd = ft_calloc(1, sizeof(t_cmd));
-    cmd->args = ft_calloc(numargs + 1, sizeof(char *));
+    cmd->args = ft_calloc(numargs + 2, sizeof(char *));
     t_redirect *ptr;
     t_redirect **ptradr;
-    int idx = 0;
+    int idx = 1;
     while (head->type != END)
     {
         if (head->type == PIPE)
+        {
             cmd->next = generate_structs(head->next, numargs);
+            break ;
+        }
         else if (head->type == CMD)
+        {
+            cmd->args[0] = head->word;
             cmd->cmd = head->word;
+            printf("cmd->cmd is %s\n", cmd->cmd);
+        }
         else if (head->type == ARGS)
-            cmd->args[idx] = head->word;
+            cmd->args[idx++] = head->word;
         else if (head->type >= HEREDOC)
         {
             if (head->type >= OUTPUT)
@@ -428,4 +444,30 @@ t_cmd *generate_structs(t_tok *head, int numargs)
         head = head->next;
     }
     return (cmd);
+}
+
+void print_struct(t_cmd *cmd)
+{
+    printf("in print_struct\n");
+    printf("cmd->cmd is %s\n", cmd->cmd);
+    //printf("cmd->args is %p\n", cmd->args);
+    printf("cmd->args[0] is %s\n", cmd->args[0]);
+    /*printf("CMD: %s ARGS: ", cmd->cmd);
+    int i = -1;
+    while (cmd->args[++i])
+        printf("%s ", cmd->args[i]);
+    printf("%s\n", cmd->args[i]);
+    t_redirect *ptr = cmd->in_redirect;
+    while (ptr)
+    {
+        printf("in_redirect type is %d value is %s\n", ptr->type, ptr->value);
+        ptr = ptr->next;
+    }
+    ptr = cmd->out_redirect;
+    while (ptr)
+    {
+        printf("out_redirect type is %d value is %s\n", ptr->type, ptr->value);
+        ptr = ptr->next;
+    }
+    */
 }
