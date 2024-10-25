@@ -22,6 +22,31 @@
 # define screenWidth 640
 # define screenHeight 480
 
+typedef struct s_coord
+{
+	double x;
+	double y;
+}	t_coord;
+
+typedef struct s_dda
+{
+	int		map_x;
+	int 	map_y;
+	double	side_dist_x;
+	double	side_dist_y;
+	double	delta_x;
+	double	delta_y;
+	int step_x;
+	int step_y;
+	int side;
+}	t_dda;
+
+typedef	struct s_ray
+{
+	t_coord dir;
+	t_coord origin;
+}	t_ray;
+
 typedef struct s_tx
 {
 	mlx_texture_t	*n;
@@ -35,12 +60,9 @@ typedef struct s_map
 	char			**map;
 	int				width;
 	int				height;
-	double			px;
-	double			py;
-	double			dirx;
-	double			diry;
-	double			planex;
-	double			planey;
+	t_coord			player;
+	t_coord			dir;
+	t_coord			plane;
 	mlx_t			*mlx;
 	mlx_image_t		*img;
 	t_tx			*txtr;
@@ -63,15 +85,13 @@ int		check_last_line(t_map *mapdata, int num);
 void	error_exit(t_map *mapdata);
 int32_t	draw_map(t_map *mapdata);
 //void	key_hook(mlx_key_data_t keydata, void *param);
-void	hook(void *param);
+void	draw_frame(t_map *md);
 
 /*txtr_img_utils.c*/
 void	init_txtr(t_map *md, t_tx *t);
-void	make_images(t_map *md);
 void	delete_textures(t_tx *t);
-void	delete_images(t_map *md);
 /*draw_fts.c*/
-void	draw_line(t_map *md, int x, int height, int side, int hit);
+void	draw_line(t_map *md, int x, int height, int side);
 /*move_player.c*/
 void	move_left(t_map *md);
 void	move_up(t_map *md);

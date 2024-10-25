@@ -1,16 +1,15 @@
 
 #include "cub3d.h"
 
-void	draw_line(t_map *md, int x, int height, int side, int hit)
+void	draw_line(t_map *md, int x, int height, int side)
 {
 	int			y;
 	uint32_t	color;
 
-	(void)hit;
 	if (side)
-		color = 0x3467882;
+		color = 0xFF0000FF;
 	else
-		color = 0x43645748;
+		color = 0x00FF00FF;
 
 	int line_lowest_p = screenHeight / 2 - height / 2;
 	int line_highest_p = screenHeight / 2 + height / 2;
