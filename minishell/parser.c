@@ -1,12 +1,11 @@
+/*
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <stdlib.h>
 #include "libft.h"
 
 #include <stdio.h>
-
-
-
+*/
 
 
 typedef enum lex_state
@@ -43,60 +42,29 @@ typedef struct s_tok
 }   t_tok;
 
 
-typedef struct cmd
-{
-    char            *cmd;
-    char            **args; //("cmd", "args", NULL)
-    struct redirect *in_redirect;
-    struct redirect *out_redirect;
-    struct cmd      *next;
-}   t_cmd;
-
+/*  !!!! NOTE :
 typedef struct redirect
 {
-    t_toktype        type;
+    t_toktype        type;   // changed YOUR struct here !!
     char            *value;
     struct redirect *next;
 }   t_redirect;
+*/
 
-
+t_cmd	*parser(char *input, char **envp);
+t_tok *lexer(char *input, lex_state state, t_tok *tail, char **envp);
+t_tok *gen_token(t_toktype type, int len);
+char    *expand(char *start, int *lenvar, char **envp);
+void    change_word(t_tok *token, char *var, int len);
 int process_tokens(t_tok *head);
+int    io_type(t_tok *token, t_toktype type);
 void insert_token(t_tok *token);
 int check_syntax(t_tok *head);
 t_cmd *generate_structs(t_tok *head, int numargs);
 
-void print_struct(t_cmd *cmd);
+//void print_struct(t_cmd *cmd);
+//void print_toktype(t_tok *token)
 
-
-void print_toktype(t_tok *token)
-{
-    if (token->type == UNDETERM)
-        printf("UNDETERM ");
-    else if (token->type == END)
-        printf("END\n");
-    else if (token->type == SQERR)
-        printf("SQERR ");
-    else if (token->type == DQERR)
-        printf("DQERR ");
-    else if (token->type == NWLINE)
-        printf("NWLINE ");
-    else if (token->type == PIPE)
-        printf("PIPE ");
-    else if (token->type == CMD)
-        printf("CMD ");
-    else if (token->type == ARGS)
-        printf("ARGS ");
-    else if (token->type == HEREDOC)
-        printf("HEREDOC ");
-    else if (token->type == INPUT)
-        printf("INPUT ");
-    else if (token->type == OUTPUT)
-        printf("OUTPUT ");
-    else if (token->type == APPEND)
-        printf("APPEND ");
-    else if (token->type == DISCARD)
-        printf("DISCARD ");
-}
 
 t_tok *gen_token(t_toktype type, int len)
 {
@@ -231,15 +199,14 @@ t_tok *lexer(char *input, lex_state state, t_tok *tail, char **envp)
     return (tail);
 }
 
-int main(int argc, char **argv, char **envp)
+t_cmd	*parser(char *input, char **envp)
 {
-    char *input = NULL;
+    int numargs;
     t_tok *tail;
     t_tok *head;
     t_tok *ptr;
-    if (argc != 1)
-        return 2 ;
-    (void)argv;
+    t_cmd *cmds = NULL;
+    /*  THIS is preliminary readline for multiple line input..
     while (1)
     {
         if (input)
@@ -265,29 +232,36 @@ int main(int argc, char **argv, char **envp)
             tail = lexer(input, INDQTS, tail, envp);
         }
         head = tail->next;
-        int numargs = process_tokens(head);
-        t_cmd *cmds;
-        if (check_syntax(head) == 0)
-            cmds = generate_structs(head, numargs);
-        printf("structs were generated\n");
-        printf("first cmd is %s\n", cmds->args[0]);
-        //printf("second cmd is %s\n", cmds->next->cmd);
-        //t_cmd *cmd = ft_calloc(1, sizeof(t_cmd));
-        //print_struct(cmd);
-        print_struct(cmds);
-        while (head->type != END)
+        */
+
+    tail = lexer(input, DELIM, NULL, envp);
+    head = tail->next;
+    numargs = process_tokens(head);
+    t_cmd *cmds = NULL;
+    if (check_syntax(head) == 0)
+        cmds = generate_structs(head, numargs);
+        
+        /* THIS IS for printing structs
+        t_cmd *ptrs = cmds;
+        while (ptrs)
         {
-            //print_toktype(head);
-            //printf("%s ", head->word);
-            free(head->word);
-            ptr = head->next;
-            free(head);
-            head = ptr;
+            print_struct(ptrs);
+            ptrs = ptrs->next;
         }
-        //print_toktype(head);
-        free(head->word);
+        */
+
+    while (head->type != END)
+    {
+        if (head->word)
+            free(head->word);
+        ptr = head->next;
         free(head);
+        head = ptr;
     }
+    free(head->word);
+    free(head);
+
+    return (cmds); 
 }
 
 int    io_type(t_tok *token, t_toktype type)
@@ -398,7 +372,6 @@ int check_syntax(t_tok *head)
 
 t_cmd *generate_structs(t_tok *head, int numargs)
 {
-    printf("in gen struct\n");
     t_cmd *cmd = ft_calloc(1, sizeof(t_cmd));
     cmd->args = ft_calloc(numargs + 2, sizeof(char *));
     t_redirect *ptr;
@@ -412,11 +385,7 @@ t_cmd *generate_structs(t_tok *head, int numargs)
             break ;
         }
         else if (head->type == CMD)
-        {
-            cmd->args[0] = head->word;
-            cmd->cmd = head->word;
-            printf("cmd->cmd is %s\n", cmd->cmd);
-        }
+            cmd->cmd = ft_strdup(head->word); // need to protect
         else if (head->type == ARGS)
             cmd->args[idx++] = head->word;
         else if (head->type >= HEREDOC)
@@ -437,7 +406,7 @@ t_cmd *generate_structs(t_tok *head, int numargs)
                 ptradr = &ptr->next;
             }
             ptr = ft_calloc(1, sizeof(t_redirect));
-            ptr->value = ft_strdup(head->word);
+            ptr->value = ft_strdup(head->word); //need to protect
             ptr->type = head->type;
             *ptradr = ptr; 
         }
@@ -446,13 +415,12 @@ t_cmd *generate_structs(t_tok *head, int numargs)
     return (cmd);
 }
 
+/*
 void print_struct(t_cmd *cmd)
 {
-    printf("in print_struct\n");
-    printf("cmd->cmd is %s\n", cmd->cmd);
-    //printf("cmd->args is %p\n", cmd->args);
-    printf("cmd->args[0] is %s\n", cmd->args[0]);
-    /*printf("CMD: %s ARGS: ", cmd->cmd);
+    if (!cmd)
+        return ;
+    printf("CMD: %s ARGS: ", cmd->cmd);
     int i = -1;
     while (cmd->args[++i])
         printf("%s ", cmd->args[i]);
@@ -469,5 +437,35 @@ void print_struct(t_cmd *cmd)
         printf("out_redirect type is %d value is %s\n", ptr->type, ptr->value);
         ptr = ptr->next;
     }
-    */
+} 
+
+void print_toktype(t_tok *token)
+{
+    if (token->type == UNDETERM)
+        printf("UNDETERM ");
+    else if (token->type == END)
+        printf("END\n");
+    else if (token->type == SQERR)
+        printf("SQERR ");
+    else if (token->type == DQERR)
+        printf("DQERR ");
+    else if (token->type == NWLINE)
+        printf("NWLINE ");
+    else if (token->type == PIPE)
+        printf("PIPE ");
+    else if (token->type == CMD)
+        printf("CMD ");
+    else if (token->type == ARGS)
+        printf("ARGS ");
+    else if (token->type == HEREDOC)
+        printf("HEREDOC ");
+    else if (token->type == INPUT)
+        printf("INPUT ");
+    else if (token->type == OUTPUT)
+        printf("OUTPUT ");
+    else if (token->type == APPEND)
+        printf("APPEND ");
+    else if (token->type == DISCARD)
+        printf("DISCARD ");
 }
+*/
