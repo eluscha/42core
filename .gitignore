@@ -3,10 +3,12 @@
 
 #vscode
 */.vscode/
+*/*/.vscode
 
 #testers
 ft_printf/pft/
 philosophers/LT/
+philosophers/lazyTester/
 
 #other libs
 */MLX42

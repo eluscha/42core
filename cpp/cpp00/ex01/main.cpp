@@ -4,14 +4,7 @@
 
 int main(void)
 {
-    int code;
     PhoneBook phonebook;
-    while (1)
-    {
-        code = phonebook.listen();
-        if (code == 0)
-            phonebook.add();
-        break ;
-    }
+    phonebook.listen();
     std::cout << phonebook.list[0].first_name << std::endl;
 }

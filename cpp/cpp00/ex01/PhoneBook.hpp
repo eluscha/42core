@@ -8,18 +8,12 @@ class PhoneBook
     public:
         Contact list[8];
         int size; 
-        PhoneBook() {
-            size = 0;
-        }
+        PhoneBook();
         //PhoneBook (const PhoneBook &c);
         //PhoneBook & operator = (const PhoneBook &c);
 
-        int listen()
-        {
-            std::cout << "Please enter command: ADD, SEARCH or EXIT" << std::endl;
-            return (0);
-        }
+        void listen();
         void add();
-        //void search(void);
-        //void exit(void); 
+        void search(void);
+        void exit(void); 
 };
