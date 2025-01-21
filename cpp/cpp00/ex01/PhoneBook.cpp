@@ -19,38 +19,124 @@ void PhoneBook::listen()
     }
 }
 
-void get_input(const std::string msg, std::string *field)
+std::string get_input(const std::string msg)
 {
-    while (!(*field).size())
+    std::string ret = "";
+
+    while (!ret.size())
     {
         std::cout << msg;
-        std::getline(std::cin, *field);
+        std::getline(std::cin, ret);
     }
+    return ret;
 }
 
 void PhoneBook::add()
 {
-    //Contact& c = list[size];
-    get_input("First name: ", &list[size].first_name);
-    get_input("Last name: ", &list[size].last_name);
-    get_input("Nickname: ", &list[size].nickname);
-    get_input("Phone (at least 5 digits): ", &list[size].phone);
-    get_input("Darkest secret: ",  &list[size].secret);
-    size++;
+    std::string fn = get_input("First name: ");
+    std::string ln = get_input("Last name: ");
+    std::string nn = get_input("Nickname: ");
+    std::string ph = "";
+    while (ph.size() < 5)
+    {
+        ph = get_input("Phone (at least 5 digits): ");
+        ph = check_phone(ph);
+    }
+    std::string se = get_input("Darkest secret: ");
+    list[size++] = Contact(fn, ln, nn, ph, se);
 }
 
 void PhoneBook::search()
 {
+    std::string spaces = "         ";
+    std::cout << " __________ __________ __________ __________\n";
+    std::cout << "|     index|first name| last name|  nickname|\n";
     for (int i=0; i < size; i++)
     {
-        std::cout << list[i].first_name << " | " << list[i].last_name << std::endl;
+        std::cout << "|" << spaces.substr(0, 10 - numdigits(i)) << i << "|"; 
+        short_data(list[i].get_first_name());
+        short_data(list[i].get_last_name());
+        short_data(list[i].get_nickname());
+        std::cout << std::endl;
     }
+    std::cout << "|__________|__________|__________|__________|\n";
+    if (!size)
+        return ;
+    std::string input;
+    int idx = -1;
+    while (idx < 0 || idx >= size)
+    {
+        input = get_input("Index of a contact to be displayed: ");
+        idx = get_idx(input);
+    }
+    full_data(list[idx]);
 }
 
 void PhoneBook::exit()
 {       
-    for (int i=0; i < size; i++)
+    for (int i = 0; i < size; i++)
         list[i] = Contact();
     size = 0;
     std::cout << "BYE" << std::endl;
+}
+
+/*Helper functions*/
+
+std::string check_phone(std::string ph)
+{
+    int len = (int)ph.size();
+    for (int i = 0; i < len; i++)
+    {
+        if (ph[i] < '0' || ph[i] > '9')
+            return ("");
+    }
+    return ph; 
+}
+
+void short_data(std::string data)
+{
+    std::string::size_type len = data.size();
+    std::string spaces = "         ";
+    if (len < 11)
+        std::cout << spaces.substr(0, 10 - len) << data << "|";
+    else
+        std::cout << data.substr(0, 9) << ".|";
+}
+
+void full_data(Contact c)
+{
+    std::cout << "First name: " << c.get_first_name() << std::endl;
+    std::cout << "Last name: " << c.get_last_name() << std::endl;
+    std::cout << "Nickname: " << c.get_nickname() << std::endl;
+    std::cout << "Phone number: " << c.get_phone() << std::endl;
+    std::cout << "Darkest secret: " << c.get_secret() << std::endl;
+}
+
+int get_idx(std::string input)
+{
+    int ret = 0;
+    std::string::size_type i;
+    for (i = 0; i < input.size(); i++)
+    {
+        if (input[i] < '0' || input[i] > '9')
+            return (-1);
+        ret *= 10;
+        ret += input[i] - '0';
+    }
+    return ret;
+}
+
+int numdigits(int n) 
+{
+    if (!n) 
+        return 1;
+    int len = 0;
+    while (n != 0) 
+    {
+        n /= 10;
+        len++;
+    }
+    if (len > 10)
+        return 10;
+    return len;
 }

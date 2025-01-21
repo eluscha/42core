@@ -17,3 +17,9 @@ class PhoneBook
         void search(void);
         void exit(void); 
 };
+
+std::string check_phone(std::string ph);
+int numdigits(int n);
+void short_data(std::string data);
+int get_idx(std::string input);
+void full_data(Contact c);
