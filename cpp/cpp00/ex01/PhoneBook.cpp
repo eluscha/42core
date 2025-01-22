@@ -77,7 +77,6 @@ void PhoneBook::exit()
     for (int i = 0; i < size; i++)
         list[i] = Contact();
     size = 0;
-    std::cout << "BYE" << std::endl;
 }
 
 /*Helper functions*/

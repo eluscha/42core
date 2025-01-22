@@ -1,5 +1,8 @@
 #include "Contact.hpp"
 
+Contact::Contact()
+    : first_name(""), last_name(""), nickname(""), phone(""), secret("") {}
+
 Contact::Contact(std::string fn, std::string ln, std::string nn, std::string ph, std::string sc)
     : first_name(fn), last_name(ln), nickname(nn), phone(ph), secret(sc) {}
 
