@@ -1,4 +1,7 @@
-#pragma once
+
+#ifndef __PHONEBOOK_H__
+#define __PHONEBOOK_H__
+
 #include <iostream>
 #include "Contact.hpp"
 
@@ -20,3 +23,5 @@ int numdigits(int n);
 void short_data(std::string data);
 int get_idx(std::string input);
 void full_data(Contact c);
+
+#endif

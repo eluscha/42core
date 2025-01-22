@@ -1,4 +1,7 @@
-#pragma once
+
+#ifndef __CONTACT_H__
+#define __CONTACT_H__
+
 #include <string>
 
 class Contact
@@ -9,7 +12,7 @@ public:
 
     Contact();
     Contact(std::string fn, std::string ln, std::string nn, std::string ph, std::string sc);
-    
+
     ~Contact() {};
 
     std::string get_first_name();
@@ -19,3 +22,5 @@ public:
     std::string get_secret();
 
 };
+
+#endif

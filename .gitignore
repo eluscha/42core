@@ -74,3 +74,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+#other
+cpp/cpp00/ex01/phonebook
