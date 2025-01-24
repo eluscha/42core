@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   PhoneBook.cpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eusatiko <eusatiko@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/24 14:18:16 by eusatiko          #+#    #+#             */
+/*   Updated: 2025/01/24 14:33:08 by eusatiko         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "PhoneBook.hpp"
 
 PhoneBook::PhoneBook()
@@ -8,8 +20,15 @@ void PhoneBook::listen()
     std::string input;
     while (1)
     {
+        if (std::cin.eof())
+        {
+            std::cout << std::endl;
+			break;
+        }
         std::cout << "Please enter command: ADD, SEARCH or EXIT" << std::endl;
         std::getline(std::cin, input);
+        if (std::cin.eof())
+			break;
         if (input == "ADD")
             add();
         else if (input == "SEARCH")
@@ -25,6 +44,8 @@ std::string get_input(const std::string msg)
 
     while (!ret.size())
     {
+        if (std::cin.eof())
+            break;
         std::cout << msg;
         std::getline(std::cin, ret);
     }
@@ -40,10 +61,16 @@ void PhoneBook::add()
     while (ph.size() < 5)
     {
         ph = get_input("Phone (at least 5 digits): ");
+        if (std::cin.eof())
+			break;
         ph = check_phone(ph);
     }
     std::string se = get_input("Darkest secret: ");
-    list[size++] = Contact(fn, ln, nn, ph, se);
+    if (!se.size())
+        return ;
+    list[size % 8] = Contact(fn, ln, nn, ph, se);
+    size = size % 8 + 1;
+    
 }
 
 void PhoneBook::search()
@@ -67,6 +94,8 @@ void PhoneBook::search()
     while (idx < 0 || idx >= size)
     {
         input = get_input("Index of a contact to be displayed: ");
+        if (std::cin.eof())
+			return ;
         idx = get_idx(input);
     }
     full_data(list[idx]);

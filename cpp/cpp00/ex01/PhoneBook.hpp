@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   PhoneBook.hpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eusatiko <eusatiko@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/24 14:18:23 by eusatiko          #+#    #+#             */
+/*   Updated: 2025/01/24 14:34:45 by eusatiko         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #ifndef __PHONEBOOK_H__
 #define __PHONEBOOK_H__
@@ -7,12 +18,13 @@
 
 class PhoneBook
 {
-public:
     Contact list[8];
-    int size; 
+    int size;
+public:
     PhoneBook();
-
     void listen();
+    
+private:
     void add();
     void search(void);
     void exit(void); 
