@@ -2,8 +2,9 @@ NAME		:= mysed
 CXX			:= c++
 CPPFLAGS	:= -Wall -Werror -Wextra -std=c++98
 
-SRCS 		:= main.cpp
-OBJS 		:= $(SRCS:.cpp=.o) 
+HEADER		:= mysed.hpp
+SRCS 		:= main.cpp edit_line.cpp
+OBJS 		:= $(SRCS:.cpp=.o)
 
 ###
 

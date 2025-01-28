@@ -1,25 +1,5 @@
 
-#include <iostream>
-#include <string>
-#include <fstream>
-
-std::string edit_line(std::string line, std::string s1, std::string s2)
-{
-    if (s1 == s2)
-        return (line);
-    size_t last_pos = 0;
-    size_t pos = line.find(s1, last_pos);
-    std::string ret;
-    while (pos != std::string::npos)
-    {
-        ret += line.substr(last_pos, pos - last_pos);
-        ret += s2;
-        last_pos = pos + s1.length();
-        pos = line.find(s1, last_pos);
-    }
-    ret += line.substr(last_pos);
-    return (ret);
-}
+#include "mysed.hpp"
 
 int main( int argc, char** argv ) 
 {
@@ -46,6 +26,16 @@ int main( int argc, char** argv )
         from.close();
         std::cerr << "Failed to open for writing: " << filename << ".replace" << std::endl;
         return (1);
+    }
+
+    if (s1.find('\n') != std::string::npos)
+    {
+        std::stringstream buffer;
+        buffer << from.rdbuf(); // Read the whole file into the stringstream
+        std::string lines = buffer.str();
+        to << edit_line(lines, s1, s2);
+        from.close();
+        to.close();
     }
 
     std::string line;
