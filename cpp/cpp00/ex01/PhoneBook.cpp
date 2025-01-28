@@ -6,7 +6,7 @@
 /*   By: eusatiko <eusatiko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/24 14:18:16 by eusatiko          #+#    #+#             */
-/*   Updated: 2025/01/24 14:33:08 by eusatiko         ###   ########.fr       */
+/*   Updated: 2025/01/28 12:37:51 by eusatiko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,16 +69,17 @@ void PhoneBook::add()
     if (!se.size())
         return ;
     list[size % 8] = Contact(fn, ln, nn, ph, se);
-    size = size % 8 + 1;
+    size ++;
     
 }
 
 void PhoneBook::search()
 {
+    int max = size < 8 ? size : 8;
     std::string spaces = "         ";
     std::cout << " __________ __________ __________ __________\n";
     std::cout << "|     index|first name| last name|  nickname|\n";
-    for (int i=0; i < size; i++)
+    for (int i=0; i < max; i++)
     {
         std::cout << "|" << spaces.substr(0, 10 - numdigits(i)) << i << "|"; 
         short_data(list[i].get_first_name());
@@ -91,7 +92,7 @@ void PhoneBook::search()
         return ;
     std::string input;
     int idx = -1;
-    while (idx < 0 || idx >= size)
+    while (idx < 0 || idx >= max)
     {
         input = get_input("Index of a contact to be displayed: ");
         if (std::cin.eof())
@@ -103,7 +104,7 @@ void PhoneBook::search()
 
 void PhoneBook::exit()
 {       
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < 8; i++)
         list[i] = Contact();
     size = 0;
 }
