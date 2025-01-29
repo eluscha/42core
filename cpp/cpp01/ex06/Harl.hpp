@@ -1,6 +1,15 @@
 
 #include <iostream>
 
+enum e_level 
+{
+    INVALID,
+    DEBUG, 
+    INFO, 
+    WARNING,
+    ERROR
+};
+
 class Harl
 {
     void debug( void );
@@ -8,19 +17,12 @@ class Harl
     void warning( void );
     void error( void );
 
-    typedef struct s_level 
-    {
-        const char* name;
-        void (Harl::*funcptr)();
-    }   t_level;
-
-    t_level levelTable[4];
-
 public:
 
     Harl();
     ~Harl();
 
     void complain( std::string level );
-
 };
+
+enum e_level get_index( std::string level );

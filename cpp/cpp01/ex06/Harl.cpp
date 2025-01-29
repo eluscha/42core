@@ -1,17 +1,7 @@
 
 #include "Harl.hpp"
 
-Harl::Harl() 
-{
-    levelTable[0].name = "DEBUG";
-    levelTable[0].funcptr = &Harl::debug;
-    levelTable[1].name = "INFO";
-    levelTable[1].funcptr = &Harl::info;
-    levelTable[2].name = "WARNING";
-    levelTable[2].funcptr = &Harl::warning;
-    levelTable[3].name = "ERROR";
-    levelTable[3].funcptr = &Harl::error;
-}
+Harl::Harl() {}
 
 Harl::~Harl() {}
 
@@ -43,12 +33,26 @@ void Harl::error( void )
 
 void Harl::complain( std::string level )
 {
-    for (size_t i = 0; i < sizeof(levelTable) / sizeof(t_level); ++i)
+    switch(get_index(level))
     {
-        if (level != levelTable[i].name)
-            continue;
-        (this->*(levelTable[i].funcptr))();
-        return ;
+        case DEBUG:     debug();
+        case INFO:      info();
+        case WARNING:   warning();
+        case ERROR:     error(); break;
+        default:        
+            std::cout << "[ Probably complaining about insignificant problems ]" << std::endl;
     }
-    std::cerr << "Invalid level of complaint. Enter DEBUG, INFO, WARNING, or ERROR." << std::endl;
+}
+
+enum e_level get_index( std::string level )
+{
+    if (level == "DEBUG")
+        return DEBUG;
+    if (level == "INFO")
+        return INFO;
+    if (level == "WARNING")
+        return WARNING;
+    if (level == "ERROR")
+        return ERROR;
+    return INVALID;
 }
