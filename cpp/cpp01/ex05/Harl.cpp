@@ -3,14 +3,19 @@
 
 Harl::Harl() 
 {
-    levelTable[0].name = "DEBUG";
-    levelTable[0].funcptr = &Harl::debug;
-    levelTable[1].name = "INFO";
-    levelTable[1].funcptr = &Harl::info;
-    levelTable[2].name = "WARNING";
-    levelTable[2].funcptr = &Harl::warning;
-    levelTable[3].name = "ERROR";
-    levelTable[3].funcptr = &Harl::error;
+    for (int i = 0; i < 10; i++)
+    {
+        levelTable[i].name = "";
+        levelTable[i].funcptr = &Harl::nop;
+    }
+    levelTable[9].name = "DEBUG";
+    levelTable[9].funcptr = &Harl::debug;
+    levelTable[2].name = "INFO";
+    levelTable[2].funcptr = &Harl::info;
+    levelTable[3].name = "WARNING";
+    levelTable[3].funcptr = &Harl::warning;
+    levelTable[4].name = "ERROR";
+    levelTable[4].funcptr = &Harl::error;
 }
 
 Harl::~Harl() {}
@@ -41,14 +46,15 @@ void Harl::error( void )
     std::cout << "This is unacceptable! I want to speak to the manager now.\n" << std::endl;
 }
 
+void Harl::nop( void ) {}
+
 void Harl::complain( std::string level )
 {
-    for (size_t i = 0; i < sizeof(levelTable) / sizeof(t_level); ++i)
-    {
-        if (level != levelTable[i].name)
-            continue;
-        (this->*(levelTable[i].funcptr))();
-        return ;
-    }
-    std::cerr << "Invalid level of complaint. Enter DEBUG, INFO, WARNING, or ERROR." << std::endl;
+    unsigned int hash = 0;
+    for (int i = 0; i < 5; i++)
+        hash = level[i] + (hash << 6) + (hash << 16) - hash; //sdbm
+    hash %= 10;
+    (this->*(levelTable[hash].funcptr))();
+    //if (level == levelTable[hash].name)
+    //    (this->*(levelTable[hash].funcptr))();
 }

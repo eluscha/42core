@@ -7,6 +7,7 @@ class Harl
     void info( void );
     void warning( void );
     void error( void );
+    void nop( void );
 
     typedef struct s_level 
     {
@@ -14,7 +15,7 @@ class Harl
         void (Harl::*funcptr)();
     }   t_level;
 
-    t_level levelTable[4];
+    t_level levelTable[10];
 
 public:
 
