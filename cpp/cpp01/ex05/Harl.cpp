@@ -58,10 +58,10 @@ void Harl::invalid( void )
 
 void Harl::complain( std::string level )
 {
-    unsigned int hash = 0;
+    unsigned int hashval = 0;
     for (int i = 0; i < 5; i++)
-        hash = level[i] + (hash << 6) + (hash << 16) - hash; //sdbm
-    hash %= HASHTSIZE;
-    hashTable[hash].to_check = level;
-    (this->*(hashTable[hash].funcptr))();
+        hashval = level[i] + (hashval << 6) + (hashval << 16) - hashval; //sdbm
+    hashval %= HASHTSIZE;
+    hashTable[hashval].to_check = level;
+    (this->*(hashTable[hashval].funcptr))();
 }
