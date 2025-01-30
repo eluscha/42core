@@ -9,4 +9,6 @@ int main()
     harl.complain("WARNING");
     harl.complain("ERROR");
     harl.complain("invalid");
+    harl.complain("ejfwhwkehf");
+    harl.complain("DEB");
 }

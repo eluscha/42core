@@ -1,21 +1,24 @@
 
 #include <iostream>
 
+#define HASHTSIZE 10
+
 class Harl
 {
     void debug( void );
     void info( void );
     void warning( void );
     void error( void );
-    void nop( void );
+    void invalid( void );
 
     typedef struct s_level 
     {
-        const char* name;
+        std::string name;
+        std::string to_check;
         void (Harl::*funcptr)();
     }   t_level;
 
-    t_level levelTable[10];
+    t_level hashTable[HASHTSIZE];
 
 public:
 
