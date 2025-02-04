@@ -16,8 +16,7 @@ Fixed::Fixed( const int ival ) : _value(ival << _numfract)
 Fixed::Fixed( const float fval )
 {
     std::cout << "Float constructor called" << std::endl;
-    int fp_one = 1 << _numfract;
-    _value = roundf(fval * fp_one);
+    _value = roundf(fval * (1 << _numfract));
 }
 
 Fixed::Fixed (const Fixed& other)
@@ -51,13 +50,12 @@ void Fixed::setRawBits( int const raw )
 
 float Fixed::toFloat( void ) const
 {
-    int fp_one = 1 << _numfract;
-    return ((float)_value / fp_one);
+    return ((float)_value / (1 << _numfract));
 }
 
 int Fixed::toInt( void ) const
 {
-    return (getRawBits() >> _numfract);
+    return (_value / (1 << _numfract));
 }
 
 std::ostream& operator<<(std::ostream &o, Fixed const &fixed)

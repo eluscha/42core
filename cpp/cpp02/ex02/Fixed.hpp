@@ -17,47 +17,33 @@ public:
     ~Fixed();
     Fixed& operator=( const Fixed &other );
 
-    bool operator==(const Fixed &f) const
-    {
-        return (_value == f._value);
-    }
-
-    bool operator!=(const Fixed &f) const
-    {
-        return (_value != f._value);
-    }
-
-    bool operator>=(const Fixed &f) const
-    {
-        return (_value >= f._value);
-    }
-
-    bool operator<=(const Fixed &f) const
-    {
-        return (_value <= f._value);
-    }
-
-    bool operator>(const Fixed &f) const
-    {
-        return (_value > f._value);
-    }
-
-    bool operator<(const Fixed &f) const
-    {
-        return (_value < f._value);
-    }
-
-    Fixed operator+(Fixed const& other) 
-    {
-        return Fixed(this->getRawBits() + other.getRawBits());
-    }
-
     int getRawBits( void ) const;
     void setRawBits( int const raw );
     
     float toFloat( void ) const;
     int toInt( void ) const;
-    
+
+    bool operator==(const Fixed &f) const;
+    bool operator!=(const Fixed &f) const;
+    bool operator>=(const Fixed &f) const;
+    bool operator<=(const Fixed &f) const;
+    bool operator>(const Fixed &f) const;
+    bool operator<(const Fixed &f) const;
+
+    Fixed operator+(Fixed const& other) const;
+    Fixed operator-(Fixed const& other) const;
+    Fixed operator*(Fixed const& right) const;
+    Fixed operator/(Fixed const& div) const;
+
+    Fixed& operator++();
+    Fixed operator++(int);
+    Fixed& operator--();
+    Fixed operator--(int);
+
+    static Fixed& min(Fixed& first, Fixed& second);
+    static Fixed const& min(Fixed const& first, Fixed const& second);
+    static Fixed& max(Fixed& first, Fixed& second);
+    static Fixed const& max(Fixed const& first, Fixed const& second);
 };
 
 std::ostream& operator<<(std::ostream &o, Fixed const &fixed);
