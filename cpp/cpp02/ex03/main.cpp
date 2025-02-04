@@ -27,11 +27,5 @@ int main( void )
     std::cout << a << std::endl;
     std::cout << b << std::endl;
     std::cout << Fixed::max( a, b ) << std::endl;
-    Fixed c;
-    try {
-        Fixed div_zero = b / c;
-    } catch (const std::runtime_error& e) {
-        std::cout << "Error: " << e.what() << std::endl;
-    }
     return 0;
 }
