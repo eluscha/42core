@@ -1,31 +1,15 @@
+#include "Point.hpp"
 
-#include "Fixed.hpp"
-
-/*
-int main( void ) 
-{
-    Fixed a(100);
-    Fixed b(-0.125f);
-    Fixed const c(--a/b);
-    std::cout << "c was made" << std::endl;
-    Fixed const d( 100/-0.125f );
-    if (c == a / b)
-        std::cout << "Equal!" << std::endl;
-    std::cout << "c = " << c << std::endl;
-    std::cout << "min(a, b) = " << Fixed::min(a,b) << std::endl;
-}
-*/
+bool bsp( const Point a, const Point b, const Point c, const Point point );
 
 int main( void )
 {
-    Fixed a;
-    Fixed const b( Fixed( 5.05f ) * Fixed( 2 ) );
-    std::cout << a << std::endl;
-    std::cout << ++a << std::endl;
-    std::cout << a << std::endl;
-    std::cout << a++ << std::endl;
-    std::cout << a << std::endl;
-    std::cout << b << std::endl;
-    std::cout << Fixed::max( a, b ) << std::endl;
-    return 0;
+    Point a;
+    Point b(1, 0);
+    Point c(0, 1);
+    Point p1(0, -0.01);
+    Point p2(0.01, 0.01);
+    std::cout << "Point p1 is in ABC triangle: " << (bsp(a,b,c,p1)? "true" : "false") << std::endl;
+    std::cout << "Point p2 is in ABC triangle: " << (bsp(a,b,c,p2)? "true" : "false") << std::endl;
+    return (0);
 }

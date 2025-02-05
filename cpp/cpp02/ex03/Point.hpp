@@ -4,12 +4,16 @@
 
 class Point
 {
-    Fixed const x;
-    Fixed const y;
+    const Fixed _x;
+    const Fixed _y;
 
 public:
     Point();
-    Point( float const newx, float const newy );
-    Point( Point const& p );
-    Point& operator=( Point const& p);
+    Point( const float newx, const float newy );
+    Point( const Point& other );
+    Point& operator=( const Point& other );
+    ~Point();
+
+    const Fixed& getX( void );
+    const Fixed& getY( void );
 };
