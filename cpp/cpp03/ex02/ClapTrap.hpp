@@ -1,7 +1,11 @@
+#pragma once
 #include <iostream>
 
 class ClapTrap
 {
+    
+protected:
+
     std::string     _name;
     unsigned int    _hit_pts;
     unsigned int    _en_pts;

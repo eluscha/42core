@@ -2,23 +2,28 @@
 
 ClapTrap::ClapTrap() : _name("noname"), _hit_pts(10), _en_pts(10), _attack_dmg(0) 
 {
-    std::cout << "Default constructor is called" << std::endl;
+    std::cout << "ClapTrap default constructor is called" << std::endl;
 }
 
 ClapTrap::ClapTrap( std::string name ) : _name(name), _hit_pts(10), _en_pts(10), _attack_dmg(0)
 {
-    std::cout << "Name constructor is called" << std::endl;
+    std::cout << "ClapTrap name constructor is called" << std::endl;
 }
 
 ClapTrap::ClapTrap( const ClapTrap& other )
 {
-    std::cout << "Copy constructor is called" << std::endl;
+    std::cout << "ClapTrap copy constructor is called" << std::endl;
     *this = other;
+}
+
+ClapTrap::~ClapTrap()
+{
+    std::cout << "ClapTrap destructor is called" << std::endl;
 }
 
 ClapTrap& ClapTrap::operator=( const ClapTrap& other )
 {
-    std::cout << "Copy assignment operator is called" << std::endl;
+    std::cout << "ClapTrap copy assignment operator is called" << std::endl;
     if (this == &other)
         return (*this);
     _name = other._name;
@@ -28,16 +33,11 @@ ClapTrap& ClapTrap::operator=( const ClapTrap& other )
     return (*this);
 }
 
-ClapTrap::~ClapTrap()
-{
-    std::cout << "Destructor is called" << std::endl;
-}
-
 void ClapTrap::attack( const std::string& target )
 {
     if (!_en_pts || !_hit_pts)
     {
-        std::cout << "ClapTrap " << _name << " cannot attack" << std::endl;
+        std::cout << _name << " cannot attack" << std::endl;
         return ;
     }
     --_en_pts;
@@ -67,3 +67,4 @@ void ClapTrap::beRepaired( unsigned int amount )
     std::cout << "ClapTrap " << _name << " is repaired by " << amount << " points. ";
     std::cout << _name << " now has " << _hit_pts << " hit points." << std::endl;
 }
+
