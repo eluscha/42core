@@ -1,21 +1,19 @@
 #include "ScavTrap.hpp"
 
-ScavTrap::ScavTrap()
+ScavTrap::ScavTrap() : ClapTrap(), _gateKeeper(false)
 {
     std::cout << "ScavTrap default constructor is called" << std::endl;
 	_hit_pts = 100;
 	_en_pts = 50;
 	_attack_dmg = 20;
-    _gateKeeper = false;
 }
 
-ScavTrap::ScavTrap( std::string name ) : ClapTrap(name)
+ScavTrap::ScavTrap( std::string name ) : ClapTrap(name), _gateKeeper(false)
 {
     std::cout << "ScavTrap name constructor is called" << std::endl;
 	_hit_pts = 100;
 	_en_pts = 50;
 	_attack_dmg = 20;
-    _gateKeeper = false;
 }
 
 ScavTrap::ScavTrap( const ScavTrap& other ) : ClapTrap(other), _gateKeeper(other._gateKeeper)

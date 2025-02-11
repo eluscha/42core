@@ -1,15 +1,13 @@
 #include "DiamondTrap.hpp"
 
-DiamondTrap::DiamondTrap() : ClapTrap("noname_clap_name")
+DiamondTrap::DiamondTrap() : ClapTrap("noname_clap_name"), _name("noname")
 {
     std::cout << "DiamondTrap default constructor is called" << std::endl;
-    _name = "noname";
 }
 
-DiamondTrap::DiamondTrap( std::string name ) : ClapTrap(name + "_clap_name")
+DiamondTrap::DiamondTrap( std::string name ) : ClapTrap(name + "_clap_name"), _name(name)
 {
     std::cout << "DiamondTrap name constructor is called" << std::endl;
-    _name = name;
 }
 
 DiamondTrap::DiamondTrap( const DiamondTrap& other ) 
