@@ -7,6 +7,10 @@ class DiamondTrap: public ScavTrap, public FragTrap
 {
     std::string _name;
 
+    using FragTrap::_hit_pts;
+    using ScavTrap::_en_pts;
+    using FragTrap::_attack_dmg;
+
 public:
     
     //Constructors
@@ -18,10 +22,10 @@ public:
     ~DiamondTrap();
 
     //Overloaded operators
-    DiamondTrap( const DiamondTrap& other );
+    // ....
 
     //Other methods
-    void attack( const std::string& target );
+    using ScavTrap::attack;
     void whoAmI();
 
 };

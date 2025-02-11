@@ -2,20 +2,14 @@
 
 DiamondTrap::DiamondTrap() : ClapTrap("noname_clap_name")
 {
-    std::cout << "DiamondTrap constructor is called" << std::endl;
+    std::cout << "DiamondTrap default constructor is called" << std::endl;
     _name = "noname";
-    _hit_pts = FragTrap::_hit_pts;
-    _en_pts = ScavTrap::_en_pts;
-    _attack_dmg = FragTrap::_attack_dmg;
 }
 
 DiamondTrap::DiamondTrap( std::string name ) : ClapTrap(name + "_clap_name")
 {
     std::cout << "DiamondTrap name constructor is called" << std::endl;
     _name = name;
-    _hit_pts = FragTrap::_hit_pts;
-    _en_pts = ScavTrap::_en_pts;
-    _attack_dmg = FragTrap::_attack_dmg;
 }
 
 DiamondTrap::DiamondTrap( const DiamondTrap& other )
@@ -24,8 +18,13 @@ DiamondTrap::DiamondTrap( const DiamondTrap& other )
     *this = other;
 }
 
-void DiamondTrap::attack( const std::string& target )
+DiamondTrap::~DiamondTrap()
 {
-    ScavTrap::attack(target);
+    std::cout << "DiamondTrap destructor is called" << std::endl;
+}
+
+void DiamondTrap::whoAmI()
+{
+    std::cout << "My name is " << _name << " and my ClapTrap name is " << ClapTrap::_name << std::endl;
 }
 
