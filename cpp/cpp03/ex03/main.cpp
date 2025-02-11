@@ -14,4 +14,7 @@ int main()
     nn = dt;
     nn.attack("another robot");
     nn.whoAmI();
+    DiamondTrap cp = DiamondTrap(dt);
+    cp.whoAmI();
+    cp.attack("dt");
 }

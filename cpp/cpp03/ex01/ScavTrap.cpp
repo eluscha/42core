@@ -18,10 +18,9 @@ ScavTrap::ScavTrap( std::string name ) : ClapTrap(name)
     _gateKeeper = false;
 }
 
-ScavTrap::ScavTrap( const ScavTrap& other ) : ClapTrap(other)
+ScavTrap::ScavTrap( const ScavTrap& other ) : ClapTrap(other), _gateKeeper(other._gateKeeper)
 {
     std::cout << "ScavTrap copy constructor is called" << std::endl;
-	_gateKeeper = other._gateKeeper;
 }
 
 ScavTrap::~ScavTrap()
