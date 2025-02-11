@@ -10,4 +10,8 @@ int main()
     nn.whoAmI();
     nn.guardGate();
     dt.highFivesGuys();
+    nn.attack("another robot");
+    nn = dt;
+    nn.attack("another robot");
+    nn.whoAmI();
 }

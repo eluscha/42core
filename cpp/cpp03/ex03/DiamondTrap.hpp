@@ -22,7 +22,7 @@ public:
     ~DiamondTrap();
 
     //Overloaded operators
-    // ....
+    DiamondTrap& operator=( const DiamondTrap& other );
 
     //Other methods
     using ScavTrap::attack;

@@ -4,6 +4,7 @@
 class  ScavTrap : virtual public ClapTrap
 {
 
+protected:
     bool _gateKeeper;
 
 public:
@@ -21,4 +22,5 @@ public:
         //Other methods
         void attack( const std::string& target );
         void guardGate();
+
 };

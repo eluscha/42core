@@ -30,6 +30,7 @@ FragTrap& FragTrap::operator=( const FragTrap& other )
 {
     if (this == &other)
         return (*this);
+    _name = other._name;
     _hit_pts = other._hit_pts;
     _en_pts = other._en_pts;
     _attack_dmg = other._attack_dmg;
@@ -50,5 +51,5 @@ void FragTrap::attack( const std::string& target )
 
 void FragTrap::highFivesGuys( void )
 {
-    std::cout << "High five, guys?" << std::endl;
+    std::cout << "FragTrap " << _name << " says: High five, guys?" << std::endl;
 }
