@@ -55,3 +55,8 @@ void ScavTrap::guardGate( void )
     _gateKeeper = true;
     std::cout << "ScavTrap " << _name << " is now a gate keeper." << std::endl;
 }
+
+int ScavTrap::getEnPts()
+{
+    return (_en_pts);
+}

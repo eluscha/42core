@@ -7,10 +7,6 @@ class DiamondTrap: public ScavTrap, public FragTrap
 {
     std::string _name;
 
-    using FragTrap::_hit_pts;
-    using ScavTrap::_en_pts;
-    using FragTrap::_attack_dmg;
-
 public:
     
     //Constructors
@@ -27,5 +23,9 @@ public:
     //Other methods
     using ScavTrap::attack;
     void whoAmI();
+
+    //Getters
+    int getHitPts();
+    int getEnPts();
 
 };

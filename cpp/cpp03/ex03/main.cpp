@@ -9,6 +9,8 @@ int main()
     dt.whoAmI();
     nn.whoAmI();
     nn.guardGate();
+    dt.beRepaired(1);
+    std::cout << "dt has " << dt.getEnPts() << " energy points" << std::endl;
     dt.highFivesGuys();
     nn.attack("another robot");
     nn = dt;
