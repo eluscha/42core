@@ -2,7 +2,7 @@ NAME		:= poly
 CXX			:= c++
 CPPFLAGS	:= -Wall -Werror -Wextra -std=c++98
 
-CLASSES		:= Animal Dog Cat
+CLASSES		:= Animal Dog Cat WrongAnimal WrongCat
 HEADERS		:= $(addsuffix .hpp, $(CLASSES))
 SRCS 		:= main.cpp $(addsuffix .cpp, $(CLASSES))
 OBJS 		:= $(SRCS:.cpp=.o) 
