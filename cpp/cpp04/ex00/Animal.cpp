@@ -5,6 +5,12 @@ Animal::Animal() : _type("none")
 {
     std::cout << "Animal default constructor called" << std::endl;
 }
+
+Animal::Animal( std::string type ) : _type(type)
+{
+    std::cout << "Animal parameterized constructor called" << std::endl;
+}
+
 Animal::Animal( const Animal& other ) : _type(other._type)
 {
     std::cout << "Animal copy constructor called" << std::endl;

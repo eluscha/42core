@@ -12,6 +12,7 @@ protected:
 public:
     //Constructors
     Animal();
+    Animal( std::string type );
     Animal( const Animal& other );
 
     //Destructors
