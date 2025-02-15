@@ -33,7 +33,7 @@ const std::string& Brain::getIdea( int num ) const
     if (num < 0 || num > 99)
     {
         std::cerr << "Error: Brain obj.getIdea(): Invalid index for _ideas array" << std::endl;
-        return (_ideas[0]);
+        return (_ideas[99]);
     }
     return (_ideas[num]);
 }

@@ -4,18 +4,26 @@
 
 int main()
 {
-    const Animal* meta = new Animal();
     const Animal* d = new Dog();
-    const Animal* c = new Cat();
-    Animal* copy = new Animal(Dog());
-    Cat stack_cat1;
-    Cat stack_cat2(stack_cat1);
-
+    
     ((Dog *)d)->getBrain()->setIdea("my first idea!", 0);
     std::cout << "Dog d has an idea: " << ((Dog *)d)->getBrain()->getIdea(0) << std::endl;
+    Animal* dcopy = new Dog(*(Dog *)d);
+    std::cout << "Dog dcopy has an idea: " << ((Dog *)dcopy)->getBrain()->getIdea(0) << std::endl;
 
-    delete meta;
     delete d;
-    delete c;
-    delete copy;
+    delete dcopy;
+
+    Animal *array[100];
+    for (int i = 0; i < 50; i++)
+        array[i] = new Dog();
+    for (int i = 50; i < 100; i++)
+        array[i] = new Cat();
+
+    ((Cat *)array[51])->getBrain()->setIdea("a nice idea here", 10);
+    std::cout << "Animal 51 (cat) idea number 10: " << ((Cat *)array[51])->getBrain()->getIdea(10) << std::endl;
+    std::cout << "Animal 51 (cat) idea number 9: " << ((Cat *)array[51])->getBrain()->getIdea(9) << std::endl;
+
+    for (int i = 0; i < 100; i++)
+        delete array[i];
 }
