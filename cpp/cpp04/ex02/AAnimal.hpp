@@ -3,27 +3,27 @@
 #include <string>
 #include <iostream>
 
-class Animal
+class AAnimal
 {
 
 protected:
     std::string _type;
 
     //Constructors
-    Animal();
-    Animal( std::string type );
-    Animal( const Animal& other );
+    AAnimal();
+    AAnimal( std::string type );
+    AAnimal( const AAnimal& other );
 
 public:
 
     //Destructors
-    virtual ~Animal() = 0;
+    virtual ~AAnimal();
 
     //Overloaded operators
-    Animal& operator=( const Animal& other );
+    AAnimal& operator=( const AAnimal& other );
 
     //Other methods
-    virtual void makeSound() const;
+    virtual void makeSound() const = 0; //pure virtual
     const std::string& getType() const;
 
 };

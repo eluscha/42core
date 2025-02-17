@@ -1,12 +1,12 @@
 #include "Cat.hpp"
 
 //Constructors
-Cat::Cat() : Animal("Cat")
+Cat::Cat() : AAnimal("Cat")
 {
     std::cout << "Cat default constructor called" << std::endl;
     _brain = new Brain();
 }
-Cat::Cat( const Cat& other ) : Animal(other)
+Cat::Cat( const Cat& other ) : AAnimal(other)
 {
     std::cout << "Cat copy constructor called" << std::endl;
     _brain = new Brain(*other._brain);

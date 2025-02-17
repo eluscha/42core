@@ -1,31 +1,31 @@
 #include "AAnimal.hpp"
 
 //Constructors
-Animal::Animal() : _type("none")
+AAnimal::AAnimal() : _type("none")
 {
-    std::cout << "Animal default constructor called" << std::endl;
+    std::cout << "AAnimal default constructor called" << std::endl;
 }
 
-Animal::Animal( std::string type ) : _type(type)
+AAnimal::AAnimal( std::string type ) : _type(type)
 {
-    std::cout << "Animal parameterized constructor called" << std::endl;
+    std::cout << "AAnimal parameterized constructor called" << std::endl;
 }
 
-Animal::Animal( const Animal& other ) : _type(other._type)
+AAnimal::AAnimal( const AAnimal& other ) : _type(other._type)
 {
-    std::cout << "Animal copy constructor called" << std::endl;
+    std::cout << "AAnimal copy constructor called" << std::endl;
 }
 
 //Destructors
-Animal::~Animal()
+AAnimal::~AAnimal()
 {
-    std::cout << "Animal destructor called" << std::endl;
+    std::cout << "AAnimal destructor called" << std::endl;
 }
 
 //Overloaded operators
-Animal& Animal::operator=( const Animal& other )
+AAnimal& AAnimal::operator=( const AAnimal& other )
 {
-    std::cout << "Animal operator= called" << std::endl;
+    std::cout << "AAnimal operator= called" << std::endl;
     if (this == &other)
         return (*this);
     _type = other._type;
@@ -33,12 +33,12 @@ Animal& Animal::operator=( const Animal& other )
 }
 
 //Other methods
-void Animal::makeSound() const
+void AAnimal::makeSound() const 
 {
     std::cout << "[generic animal sound...]" << std::endl;
 }
 
-const std::string& Animal::getType() const
+const std::string& AAnimal::getType() const
 {
     return(_type);
 }
