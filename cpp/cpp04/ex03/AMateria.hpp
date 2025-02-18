@@ -1,12 +1,12 @@
 #pragma once
 
-#include <string>
-#include "ICharacter.hpp"
+#include <iostream>
+class ICharacter;
 
 class AMateria
 {
 protected:
-    std::string type;
+    std::string _type;
 
     AMateria();
     AMateria( const AMateria& other );
@@ -16,13 +16,14 @@ public:
     AMateria( std::string const& type );
 
     //Destructors
-    ~AMateria();
+    virtual ~AMateria();
 
     //Overloaded operators
     AMateria& operator=( const AMateria& other );
 
-    std::string const& getType() const; //Returns the materia type
+    //Other methods
+    std::string const& getType() const;
 
     virtual AMateria* clone() const = 0;
-    virtual void use(ICharacter& target);
+    virtual void use( ICharacter& target );
 };
