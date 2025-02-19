@@ -10,6 +10,10 @@ int main()
     std::cout << "Dog d has an idea: " << ((Dog *)d)->getBrain()->getIdea(0) << std::endl;
     Animal* dcopy = new Dog(*(Dog *)d);
     std::cout << "Dog dcopy has an idea: " << ((Dog *)dcopy)->getBrain()->getIdea(0) << std::endl;
+    ((Dog *)d)->getBrain()->setIdea("my second idea!", 1);
+    std::cout << "Dog d has an idea: " << ((Dog *)d)->getBrain()->getIdea(1) << std::endl;
+    std::cout << "Dog dcopy has an idea: " << ((Dog *)dcopy)->getBrain()->getIdea(1) << std::endl;
+    std::cout << "Dog dcopy has an idea: " << ((Dog *)dcopy)->getBrain()->getIdea(100) << std::endl;
 
     delete d;
     delete dcopy;

@@ -78,6 +78,11 @@ void Character::equip( AMateria* m )
 }
 void Character::unequip( int idx )
 {
+    if (idx < 0 || idx > 3)
+    {
+        std::cout << "Note: There are only 4 slots (indexed from 0 to 3)." << std::endl;
+        return ;
+    }
     std::cout << "The " << _slot[idx]->getType() << " was enequiped by " << _name << std::endl;
     _slot[idx]->setIsTaken(false);
     _slot[idx] = NULL;

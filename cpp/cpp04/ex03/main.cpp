@@ -39,13 +39,20 @@ int main()
     std::cout << "cure1 type is " << cure1->getType() << std::endl;
     me->equip(new Cure());
     me->equip(new Ice());
-    me->equip(new Ice());
+    me->equip(cure1);
     me->equip(new Cure());
     me->use(5, *bob);
+
+    me->unequip(5);
+    me->unequip(3);
+    me->unequip(2);
+
+    src->learnMateria(cure1);
+    src->learnMateria(ice2);
 
     delete bob;
     delete me;
     delete src;
 
-    AMateria::cleanup();
+    AMateria::cleanup(); //has to be last, cleans up the "floor"
 }
