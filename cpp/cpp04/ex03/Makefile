@@ -2,8 +2,8 @@ NAME		:= exec
 CXX			:= c++
 CPPFLAGS	:= -Wall -Werror -Wextra -std=c++98
 
-INTERFACES	:= ICharacter
-CLASSES		:= Character AMateria Ice Cure  
+INTERFACES	:= ICharacter IMateriaSource
+CLASSES		:= Character AMateria Ice Cure MateriaSource
 HEADERS		:= $(addsuffix .hpp, $(INTERFACES)) $(addsuffix .hpp, $(CLASSES)) 
 SRCS 		:= main.cpp $(addsuffix .cpp, $(CLASSES))
 OBJS 		:= $(SRCS:.cpp=.o) 
