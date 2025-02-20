@@ -43,15 +43,21 @@ int main()
     me->equip(new Cure());
     me->use(5, *bob);
 
+    ICharacter *copy = new Character(*(Character *)me);
+
     me->unequip(5);
     me->unequip(3);
     me->unequip(2);
 
-    src->learnMateria(cure1);
+    me->use(3, *bob); //cannot use
+    copy->use(3, *bob); // can use, as it was a deep copy
+
+    src->learnMateria(cure1); 
     src->learnMateria(ice2);
 
     delete bob;
     delete me;
+    delete copy;
     delete src;
 
     AMateria::cleanup(); //has to be last, cleans up the "floor"
