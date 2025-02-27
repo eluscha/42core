@@ -18,6 +18,8 @@ Character::Character( std::string const& name ) : _name(name)
 Character::Character( const Character& other )
 {
     //std::cout << "Character copy constructor is called" << std::endl;
+    for (int i = 0; i < 4; i++)
+        _slot[i] = NULL;
     *this = other;
 }
 
