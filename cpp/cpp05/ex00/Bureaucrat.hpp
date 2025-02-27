@@ -45,3 +45,5 @@ public:
 	};
 
 };
+
+std::ostream& operator<<( std::ostream& o, const Bureaucrat& brcrt );

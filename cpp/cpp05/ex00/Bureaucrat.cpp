@@ -29,6 +29,14 @@ Bureaucrat::Bureaucrat( const Bureaucrat& other ) : _name(other._name), _grade(o
 Bureaucrat::~Bureaucrat() {}
 
 //Overloaded operators
+Bureaucrat& Bureaucrat::operator=( const Bureaucrat& other )
+{
+    if (this == &other)
+        return (*this);
+    _grade = other._grade;
+    return (*this);
+}
+
 std::ostream& operator<<( std::ostream& o, const Bureaucrat& brcrt )
 {
     o << brcrt.getName() << ", bureaucrat grade " << brcrt.getGrade();
