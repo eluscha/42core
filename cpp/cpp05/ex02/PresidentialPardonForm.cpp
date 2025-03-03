@@ -3,7 +3,7 @@
 
 //Constructors
 PresidentialPardonForm::PresidentialPardonForm( const std::string& target )
-    : AForm("PresidentialPardon_for_" + target, 25, 5), _target(target) {}
+    : AForm("Presidential Pardon", 25, 5), _target(target) {}
 
 PresidentialPardonForm::PresidentialPardonForm( const PresidentialPardonForm& other )
     : AForm(other), _target(other._target) {}

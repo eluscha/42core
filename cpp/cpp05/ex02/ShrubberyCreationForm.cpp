@@ -4,7 +4,7 @@
 
 //Constructors
 ShrubberyCreationForm::ShrubberyCreationForm( const std::string& target )
-    : AForm("Shrubbery_at_" + target, 145, 137), _target(target) {}
+    : AForm("Shrubbery Creation", 145, 137), _target(target) {}
 
 ShrubberyCreationForm::ShrubberyCreationForm( const ShrubberyCreationForm& other )
     : AForm(other), _target(other._target) {}

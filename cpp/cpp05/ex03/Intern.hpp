@@ -5,8 +5,12 @@
 #include "RobotomyRequestForm.hpp"
 #include "PresidentialPardonForm.hpp"
 
+#define HASHTSIZE 6
+
 class Intern
 {
+    static std::string formnames[3];
+
 public:
     //Constructors
     Intern();
@@ -19,6 +23,7 @@ public:
     Intern& operator=( const Intern& other );
 
     //Public Methods
+
     AForm* makeForm( std::string name, std::string target) const;
 
 };

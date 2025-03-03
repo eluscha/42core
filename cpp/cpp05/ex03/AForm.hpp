@@ -34,7 +34,7 @@ public:
     //Public Methods
     bool beSigned( const Bureaucrat& brcrt );
 
-    //Pure Virtual function
+    //Pure Virtual functions
     virtual bool execute( Bureaucrat const& executor ) const = 0;
 
     //Exceptions

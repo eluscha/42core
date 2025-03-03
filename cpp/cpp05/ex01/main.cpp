@@ -15,4 +15,12 @@ int main()
         brcrts[i].signForm(lowgrade);
     }
     
+    try
+    {
+        Form("WeirdForm", 1, 0);
+    }
+    catch (std::exception& e) 
+    {
+        std::cout << "Caught an exception: " << e.what() << std::endl;
+    }
 }

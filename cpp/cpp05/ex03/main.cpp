@@ -8,7 +8,7 @@ int main()
 {
     Intern student;
 
-    AForm *form = student.makeForm("ShrubberyCreationForm", "home");
+    AForm *form = student.makeForm("Shrubbery Creation", "home");
     
     Bureaucrat Nancy("Nancy", 100);
     Nancy.signForm(*form);
@@ -16,11 +16,16 @@ int main()
 
     delete form;
 
-    form = student.makeForm("RobotomyRequestForm", "mouse");
+    form = student.makeForm("A Request", "target"); //invalid
+    delete form;
+
+    form = student.makeForm("Robotomy Request", "mouse");
     Nancy.signForm(*form);
     Nancy.executeForm(*form);
     form->beSigned(Bureaucrat(1));
     form->execute(Bureaucrat(1));
+    
     delete form;
 
+    
 }

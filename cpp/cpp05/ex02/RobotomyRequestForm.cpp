@@ -3,7 +3,7 @@
 
 //Constructors
 RobotomyRequestForm::RobotomyRequestForm( const std::string& target )
-    : AForm("RobotomyRequest_for_" + target, 72, 45), _target(target) {}
+    : AForm("Robotomy Request", 72, 45), _target(target) {}
 
 RobotomyRequestForm::RobotomyRequestForm( const RobotomyRequestForm& other )
     : AForm(other), _target(other._target) {}
