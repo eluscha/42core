@@ -95,3 +95,15 @@ const char* AForm::GradeTooHighException::what() const throw()
 {
     return _msg.c_str();
 }
+
+// Pure Virtual Function
+bool AForm::execute( Bureaucrat const& executor ) const
+{
+    if (!getIsSigned())
+    return (0);
+
+    if (executor.getGrade() > getGradeExec())
+        throw GradeTooLowException();
+    
+    return (1);
+}

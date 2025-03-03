@@ -35,7 +35,7 @@ public:
     bool beSigned( const Bureaucrat& brcrt );
 
     //Pure Virtual function
-    virtual void execute(Bureaucrat const & executor) const = 0;
+    virtual bool execute( Bureaucrat const& executor ) const = 0;
 
     //Exceptions
 	class GradeTooLowException : public std::exception
@@ -55,3 +55,4 @@ public:
 };
 
 std::ostream& operator<<( std::ostream& o, const AForm& frm );
+

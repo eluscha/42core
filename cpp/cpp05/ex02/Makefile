@@ -2,7 +2,7 @@ NAME		:= exec
 CXX			:= c++
 CPPFLAGS	:= -Wall -Werror -Wextra -std=c++98
 
-CLASSES		:= Bureaucrat AForm ShrubberyCreationForm #RobotomyRequestForm PresidentialPardonForm
+CLASSES		:= Bureaucrat AForm ShrubberyCreationForm RobotomyRequestForm #PresidentialPardonForm
 HEADERS		:= $(addsuffix .hpp, $(CLASSES))
 SRCS 		:= main.cpp $(addsuffix .cpp, $(CLASSES))
 OBJS 		:= $(SRCS:.cpp=.o) 

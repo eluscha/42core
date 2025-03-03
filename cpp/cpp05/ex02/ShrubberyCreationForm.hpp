@@ -1,4 +1,5 @@
 #include "AForm.hpp"
+#include <fstream>
 
 class ShrubberyCreationForm : public AForm
 {
@@ -19,5 +20,5 @@ public:
     ShrubberyCreationForm& operator=( const ShrubberyCreationForm& other );
 
     //Virtual Function override
-    void execute( Bureaucrat const& executor ) const;
+    bool execute( Bureaucrat const& executor ) const;
 };

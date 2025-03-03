@@ -102,3 +102,20 @@ void Bureaucrat::signForm( AForm& frm )
         std::cout << e.what() << std::endl;
     }
 }
+
+void Bureaucrat::executeForm( AForm const& frm )
+{
+    try 
+    {
+        if (frm.execute(*this))
+            std::cout << *this << ", executed " << frm << std::endl;
+        else
+            std::cout << *this << ", couldn't execute " << frm << ", because it's not signed." << std::endl;
+
+    }
+    catch (std::exception& e)
+    {
+        std::cout << *this << ", couldn't execute " << frm << ", because of error:\n";
+        std::cout << e.what() << std::endl;
+    }
+}
