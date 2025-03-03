@@ -32,5 +32,5 @@ bool RobotomyRequestForm::execute( Bureaucrat const& executor ) const
     else   
         std::cout << "Robotomy of " << _target << " has failed." << std::endl;
     return (1);
-} 
+}
 

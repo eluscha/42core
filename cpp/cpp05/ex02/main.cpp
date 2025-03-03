@@ -1,6 +1,7 @@
 #include "Bureaucrat.hpp"
 #include "ShrubberyCreationForm.hpp"
 #include "RobotomyRequestForm.hpp"
+#include "PresidentialPardonForm.hpp"
 
 int main()
 {
@@ -25,5 +26,17 @@ int main()
     Joe.signForm(RRForm);
     Joe.executeForm(RRForm);
 
-    
+    PresidentialPardonForm PPForm("Max");
+    Nancy.executeForm(PPForm);
+    Joe.signForm(PPForm);
+    Bureaucrat Ross("Ross", 5);
+    Ross.executeForm(PPForm);
+    Ross.signForm(PPForm);
+    Ross.executeForm(PPForm);
+
+    AForm *PPFptr = new PresidentialPardonForm("someone");
+    Ross.signForm(*PPFptr);
+    Ross.executeForm(*PPFptr);
+
+    delete PPFptr;
 }
