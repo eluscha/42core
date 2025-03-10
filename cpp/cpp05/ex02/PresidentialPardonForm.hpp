@@ -4,6 +4,7 @@
 
 class PresidentialPardonForm : public AForm
 {
+private:
     const std::string _target;
     
     //Private Constructors

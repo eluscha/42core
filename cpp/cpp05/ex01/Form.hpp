@@ -6,6 +6,7 @@ class Bureaucrat;
 
 class Form
 {
+private:
     const std::string _name;
     bool  _issigned;
     const int _grade_sign;

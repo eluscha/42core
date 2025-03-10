@@ -1,10 +1,14 @@
 #include "Bureaucrat.hpp"
 
 //Constructors
-Bureaucrat::Bureaucrat() : _name("noname"), _grade(150) {}
-
-Bureaucrat::Bureaucrat( int grade ) : _name("noname")
+Bureaucrat::Bureaucrat() : _name("noname"), _grade(150) 
 {
+    std::cout << "Default Bureaucrat constructor is called" << std::endl;
+}
+
+Bureaucrat::Bureaucrat( int grade ) : _name("noname"), _grade(150)
+{
+    std::cout << "Bureaucrat parametrized constructor is called with grade = " << grade << std::endl;
     if (grade > 150)
         throw GradeTooLowException();
     else if (grade < 1)
@@ -13,8 +17,14 @@ Bureaucrat::Bureaucrat( int grade ) : _name("noname")
         _grade = grade;
 }
 
-Bureaucrat::Bureaucrat( const std::string& name, int grade ) : _name(name)
+Bureaucrat::Bureaucrat( const std::string& name ) : _name(name), _grade(150) 
 {
+    std::cout << "Bureaucrat parametrized constructor is called" << std::endl;
+}
+
+Bureaucrat::Bureaucrat( const std::string& name, int grade ) : _name(name), _grade(150)
+{
+    std::cout << "Bureaucrat parametrized constructor is called with grade = " << grade << std::endl;
     if (grade > 150)
         throw GradeTooLowException();
     else if (grade < 1)

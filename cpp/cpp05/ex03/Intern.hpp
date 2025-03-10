@@ -9,6 +9,7 @@
 
 class Intern
 {
+private:
     static std::string formnames[3];
 
 public:
