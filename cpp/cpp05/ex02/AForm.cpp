@@ -2,6 +2,8 @@
 #include "Bureaucrat.hpp"
 
 //Constructors
+AForm::AForm() : _name("noname"), _issigned(false), _grade_sign(150), _grade_exec(150) {}
+
 AForm::AForm( const std::string& name, int grade_sign, int grade_exec )
     : _name(name), _issigned(false), _grade_sign(grade_sign), _grade_exec(grade_exec)
 {
@@ -38,13 +40,13 @@ AForm& AForm::operator=( const AForm& other )
 {
     if (this == &other)
         return (*this);
-    return (*this); //not clear yet what should be done here
+    //nothing to reassign
+    return (*this);
 }
 
 std::ostream& operator<<( std::ostream& o, const AForm& frm )
 {
     o << frm.getName();
-    //o << ", " << (frm.getIsSigned() ? "signed" : "not signed");
     o << ", grade to sign " << frm.getGradeSign();
     o << ", grade to execute " << frm.getGradeExec();
     return (o);

@@ -17,7 +17,8 @@ ShrubberyCreationForm& ShrubberyCreationForm::operator=( const ShrubberyCreation
 {
     if (this == &other)
         return (*this);
-    return (*this); //what shell be done ? should target not be const ? then not in the form name ?
+    //nothing to reassign
+    return (*this);
 }
 
 //Virtual Function override
