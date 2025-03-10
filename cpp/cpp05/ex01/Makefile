@@ -20,11 +20,11 @@ $(NAME):	$(OBJS) $(HEADERS)
 			@$(CXX) $(CPPFLAGS) -c $<
 
 clean:
-			@$(RM) -f $(OBJS)
+			@rm -f $(OBJS)
 			@echo "Object files removed!"
 
 fclean:			clean
-			@$(RM) -f $(NAME)
+			@rm -f $(NAME)
 			@echo "Executable file removed!"
 
 re:				fclean all

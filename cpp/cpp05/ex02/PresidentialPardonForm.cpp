@@ -2,6 +2,8 @@
 #include "Bureaucrat.hpp"
 
 //Constructors
+PresidentialPardonForm::PresidentialPardonForm() : AForm("Presidential Pardon", 25, 5), _target("noname") {}
+
 PresidentialPardonForm::PresidentialPardonForm( const std::string& target )
     : AForm("Presidential Pardon", 25, 5), _target(target) {}
 
