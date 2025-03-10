@@ -1,10 +1,14 @@
 #include "Bureaucrat.hpp"
 
 //Constructors
-Bureaucrat::Bureaucrat() : _name("noname"), _grade(150) {}
-
-Bureaucrat::Bureaucrat( int grade ) : _name("noname")
+Bureaucrat::Bureaucrat() : _name("noname"), _grade(150) 
 {
+    std::cout << "Default Bureaucrat constructor is called" << std::endl;
+}
+
+Bureaucrat::Bureaucrat( int grade ) : _name("noname"), _grade(150)
+{
+    std::cout << "Bureaucrat parametrized constructor is called with grade = " << grade << std::endl;
     if (grade > 150)
         throw GradeTooLowException();
     else if (grade < 1)
@@ -13,8 +17,14 @@ Bureaucrat::Bureaucrat( int grade ) : _name("noname")
         _grade = grade;
 }
 
-Bureaucrat::Bureaucrat( const std::string& name, int grade ) : _name(name)
+Bureaucrat::Bureaucrat( const std::string& name ) : _name(name), _grade(150) 
 {
+    std::cout << "Bureaucrat parametrized constructor is called" << std::endl;
+}
+
+Bureaucrat::Bureaucrat( const std::string& name, int grade ) : _name(name), _grade(150)
+{
+    std::cout << "Bureaucrat parametrized constructor is called with grade = " << grade << std::endl;
     if (grade > 150)
         throw GradeTooLowException();
     else if (grade < 1)
@@ -57,6 +67,7 @@ int Bureaucrat::getGrade() const
 //Public Methods
 void Bureaucrat::incrementGrade()
 {
+    std::cout << "Incrementing the grade for " << *this << std::endl;
     if (_grade == 1)
         throw GradeTooHighException();
     else
@@ -65,6 +76,7 @@ void Bureaucrat::incrementGrade()
 
 void Bureaucrat::decrementGrade()
 {
+    std::cout << "Decrementing the grade for " << *this << std::endl;
     if (_grade == 150)
         throw GradeTooLowException();
     else

@@ -29,6 +29,6 @@ int main()
             std::cout << "Caught an exception: " << e.what() << std::endl;
         }
 
-        std::cout << "Bureaucrat " << i << ": " << brcrt << std::endl;        
+        std::cout << "Now bureaucrat " << i << " is: " << brcrt << std::endl;
     }
 }
