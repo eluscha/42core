@@ -12,7 +12,7 @@ int main()
     
     Bureaucrat Nancy("Nancy", 100);
     Nancy.signForm(*form);
-    //Nancy.executeForm(*form);
+    Nancy.executeForm(*form);
 
     delete form;
 

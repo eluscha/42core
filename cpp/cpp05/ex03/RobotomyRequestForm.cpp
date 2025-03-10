@@ -2,6 +2,8 @@
 #include "Bureaucrat.hpp"
 
 //Constructors
+RobotomyRequestForm::RobotomyRequestForm() : AForm("Robotomy Request", 72, 45), _target("noname") {}
+
 RobotomyRequestForm::RobotomyRequestForm( const std::string& target )
     : AForm("Robotomy Request" + target, 72, 45), _target(target) {}
 
@@ -16,7 +18,8 @@ RobotomyRequestForm& RobotomyRequestForm::operator=( const RobotomyRequestForm& 
 {
     if (this == &other)
         return (*this);
-    return (*this); //what shell be done ? should target not be const ? then not in the form name ?
+    //nothing to reassign
+    return (*this);
 }
 
 //Virtual Function override

@@ -2,6 +2,8 @@
 #include "Bureaucrat.hpp"
 
 //Constructors
+PresidentialPardonForm::PresidentialPardonForm() : AForm("Presidential Pardon", 25, 5), _target("noname") {}
+
 PresidentialPardonForm::PresidentialPardonForm( const std::string& target )
     : AForm("Presidential Pardon" + target, 25, 5), _target(target) {}
 
@@ -16,7 +18,8 @@ PresidentialPardonForm& PresidentialPardonForm::operator=( const PresidentialPar
 {
     if (this == &other)
         return (*this);
-    return (*this); //what shell be done ? should target not be const ? then not in the form name ?
+    //nothing to reassign
+    return (*this);
 }
 
 //Virtual Function override

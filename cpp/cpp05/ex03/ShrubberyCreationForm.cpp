@@ -3,6 +3,8 @@
 
 
 //Constructors
+ShrubberyCreationForm::ShrubberyCreationForm() : AForm("Shrubbery Creation", 145, 137), _target("noname") {}
+
 ShrubberyCreationForm::ShrubberyCreationForm( const std::string& target )
     : AForm("Shrubbery Creation", 145, 137), _target(target) {}
 
@@ -17,7 +19,8 @@ ShrubberyCreationForm& ShrubberyCreationForm::operator=( const ShrubberyCreation
 {
     if (this == &other)
         return (*this);
-    return (*this); //what shell be done ? should target not be const ? then not in the form name ?
+    //nothing to reassign
+    return (*this);
 }
 
 //Virtual Function override
@@ -26,7 +29,7 @@ bool ShrubberyCreationForm::execute( Bureaucrat const& executor ) const
     if (!AForm::execute(executor))
         return (0);
 
-    std::ofstream tofile(getName().c_str(), std::ios::out);
+    std::ofstream tofile((_target + "_shrubbery").c_str(), std::ios::out);
     if (!tofile.is_open())
     {
         std::cerr << "Failed to open for writing: " << getName() << std::endl;
