@@ -64,6 +64,21 @@ int Bureaucrat::getGrade() const
     return (_grade);
 }
 
+//Exception Method Overrides
+std::string Bureaucrat::GradeTooLowException::_msg = "The smallest possible grade is 150.";
+
+const char* Bureaucrat::GradeTooLowException::what() const throw()
+{
+    return _msg.c_str();
+}
+
+std::string Bureaucrat::GradeTooHighException::_msg = "The highest possible grade is 1.";
+
+const char* Bureaucrat::GradeTooHighException::what() const throw()
+{
+    return _msg.c_str();
+}
+
 //Public Methods
 void Bureaucrat::incrementGrade()
 {
@@ -79,21 +94,6 @@ void Bureaucrat::decrementGrade()
         throw GradeTooLowException();
     else
         _grade++;
-}
-
-//Exception Method Overrides
-std::string Bureaucrat::GradeTooLowException::_msg = "The smallest possible grade is 150.";
-
-const char* Bureaucrat::GradeTooLowException::what() const throw()
-{
-    return _msg.c_str();
-}
-
-std::string Bureaucrat::GradeTooHighException::_msg = "The highest possible grade is 1.";
-
-const char* Bureaucrat::GradeTooHighException::what() const throw()
-{
-    return _msg.c_str();
 }
 
 void Bureaucrat::signForm( Form& frm )

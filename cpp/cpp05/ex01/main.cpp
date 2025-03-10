@@ -23,4 +23,13 @@ int main()
     {
         std::cout << "Caught an exception: " << e.what() << std::endl;
     }
+
+    try
+    {
+        Form("WeirdForm", 159, 1);
+    }
+    catch (std::exception& e) 
+    {
+        std::cout << "Caught an exception: " << e.what() << std::endl;
+    }
 }
