@@ -5,8 +5,6 @@
 #include "RobotomyRequestForm.hpp"
 #include "PresidentialPardonForm.hpp"
 
-#define HASHTSIZE 6
-
 class Intern
 {
 private:
