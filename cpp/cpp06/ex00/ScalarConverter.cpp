@@ -17,14 +17,17 @@ ScalarConverter& ScalarConverter::operator=( const ScalarConverter& other )
     return (*this);
 }
 
-//Static public methods
+//ScalarConverter::convert and its helpers
+
 static void charConvert( const std::string& input );
 static bool numConvert( const std::string& input );
 static void nanConvert( void );
 static bool infConvert( const std::string& input );
 static bool intConvert( const std::string& input );
-//static void floatConvert( const std::string& input );
-//static void doubleConvert( const std::string& input );
+static bool floatConvert( const std::string& input );
+static bool doubleConvert( const std::string& input );
+static void printChar( int num );
+
 void ScalarConverter::convert( const std::string& input )
 {
     bool err = 0;
@@ -50,10 +53,10 @@ void charConvert( const std::string& input )
 {
     int myInt = static_cast<int>(input[0]);
 
-    std::cout << "Char: " << input[0] << std::endl;
-    std::cout << "Int: " << myInt << std::endl;
-    std::cout << "Float: " << myInt << ".0f" << std::endl;
-    std::cout << "Double: " << myInt << ".0" << std::endl;
+    std::cout << "char: '" << input[0] << "'" << std::endl;
+    std::cout << "int: " << myInt << std::endl;
+    std::cout << "float: " << myInt << ".0f" << std::endl;
+    std::cout << "double: " << myInt << ".0" << std::endl;
 }
 
 bool numConvert( const std::string& input )
@@ -62,15 +65,18 @@ bool numConvert( const std::string& input )
         return (infConvert(input));
     else if (input.find('.', 1) == std::string::npos)
         return (intConvert(input));
-    return (0);
+    else if (input[input.length() - 1] == 'f')
+        return (floatConvert(input));
+    else
+        return (doubleConvert(input));
 }
 
 void nanConvert()
 {
-    std::cout << "Char: " << "impossible" << std::endl;
-    std::cout << "Int: " << "impossible" << std::endl;
-    std::cout << "Float: " << "nanf" << std::endl;
-    std::cout << "Double: " << "nan" << std::endl;
+    std::cout << "char: " << "impossible" << std::endl;
+    std::cout << "int: " << "impossible" << std::endl;
+    std::cout << "float: " << "nanf" << std::endl;
+    std::cout << "double: " << "nan" << std::endl;
 }
 
 bool infConvert( const std::string& input )
@@ -79,28 +85,73 @@ bool infConvert( const std::string& input )
         return (1);
     if (input[input.length() - 1] != 'f')
         return (1);
-    std::cout << "Char: " << "impossible" << std::endl;
-    std::cout << "Int: " << "impossible" << std::endl;
-    std::cout << "Float: " << input[0] << "inff" << std::endl;
-    std::cout << "Double: " << input[0] << "inf" << std::endl;
+    std::cout << "char: " << "impossible" << std::endl;
+    std::cout << "int: " << "impossible" << std::endl;
+    std::cout << "float: " << input[0] << "inff" << std::endl;
+    std::cout << "double: " << input[0] << "inf" << std::endl;
     return (0);
 }
 
 bool intConvert( const std::string& input )
 {
+    std::cout << "in int conv" << std::endl;
     std::stringstream ss;
     int myInt;
     ss << input;
     ss >> myInt;
-    if (std::isprint(myInt))
-        std::cout << "Char: " << static_cast<char>(myInt) << std::endl;
-    else
-        std::cout << "Char: " << "Impossible" << std::endl;
-    std::cout << "Int: " << myInt << std::endl;
-    std::cout << "Float: " << myInt << ".0f" << std::endl;
-    std::cout << "Double: " << myInt << ".0" << std::endl;
+    if (ss.fail())
+        return (1);
+    printChar(myInt);
+    std::cout << "int: " << myInt << std::endl;
+    std::cout << "float: " << myInt << ".0f" << std::endl;
+    std::cout << "double: " << myInt << ".0" << std::endl;
     return (0);
 }
 
-//static void floatConvert( const std::string& input );
-//static void doubleConvert( const std::string& input );
+bool floatConvert( const std::string& input )
+{
+    std::cout << "in float conv" << std::endl;
+    std::stringstream ss;
+    float myFloat;
+    ss << input;
+    ss >> myFloat;
+    if (ss.fail())
+        return (1);
+
+    if (static_cast<int>(myFloat) == myFloat)
+        std::cout << std::fixed << std::setprecision(1); 
+    
+    printChar(myFloat);
+    std::cout << "int: " << static_cast<int>(myFloat) << std::endl;
+    std::cout << "float: " << myFloat << "f" << std::endl;
+    std::cout << "double: " << myFloat << std::endl;
+    return (0);
+}
+bool doubleConvert( const std::string& input )
+{
+    std::cout << "in double conv" << std::endl;
+    std::stringstream ss;
+    double myDouble;
+    ss << input;
+    ss >> myDouble;
+    if (ss.fail())
+        return (1);
+        
+    if (static_cast<int>(myDouble) == myDouble)
+        std::cout << std::fixed << std::setprecision(1); 
+
+    printChar(myDouble);
+    std::cout << "int: " << static_cast<int>(myDouble) << std::endl;
+    std::cout << "float: " << static_cast<float>(myDouble) << "f" << std::endl;
+    std::cout << "double: " << myDouble << std::endl;
+    return (0);
+}
+void printChar( int num )
+{
+    if (num < 0 || num > 127)
+		std::cout << "char: impossible" << std::endl;
+    else if (!std::isprint(num))
+        std::cout << "char: " << "Non displayable" << std::endl;
+    else
+        std::cout << "char: '" << static_cast<char>(num) << "'" << std::endl;
+}

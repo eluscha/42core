@@ -1,4 +1,4 @@
-NAME		:= exec
+NAME		:= convert
 CXX			:= c++
 CPPFLAGS	:= -Wall -Werror -Wextra -std=c++98
 
