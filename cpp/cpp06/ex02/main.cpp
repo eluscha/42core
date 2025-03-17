@@ -21,8 +21,11 @@ int main()
     Base* BPtr = new B();
     std::cout << "BPtr type identified as: ";
     identify(BPtr);
-    std::cout << "Reference to B object identified as: ";
-    identify(*BPtr);
+    if (BPtr != NULL)
+    {
+        std::cout << "Reference to B object identified as: ";
+        identify(*BPtr);
+    }
 
     Base* CPtr = new C();
     std::cout << "CPtr type identified as: ";
@@ -35,8 +38,11 @@ int main()
     Base* Ptr = generate();
     std::cout << "Randomly generated Ptr type identified as: ";
     identify(Ptr);
-    std::cout << "When passed as reference: ";
-    identify(*Ptr);
+    if (Ptr != NULL)
+    {
+        std::cout << "When passed as reference: ";
+        identify(*Ptr);
+    }
 
     delete APtr;
     delete BPtr;

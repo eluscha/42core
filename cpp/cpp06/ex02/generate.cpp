@@ -19,6 +19,7 @@ Base* generate( void )
         case 2:
             return (new C);
         default:
+            std::cerr << "Error in rand num generation" << std::endl;
             return (NULL);
     }
 

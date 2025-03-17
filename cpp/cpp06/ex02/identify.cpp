@@ -14,6 +14,8 @@ void identify( Base* p )
         std::cout << "B" << std::endl;
     else if (dynamic_cast<C*>(p) != NULL) //Downcasting p to C*
         std::cout << "C" << std::endl;
+    else
+        std::cout << "Failed to identify" << std::endl;
 }
 
 void identify( Base& p )
