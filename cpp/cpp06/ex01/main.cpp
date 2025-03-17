@@ -9,4 +9,6 @@ int main()
     Data* deserializedPtr = Serializer::deserialize(serializedPtr);
     std::cout << "deserializedPtr->myInt: " << deserializedPtr->myInt << std::endl;
     std::cout << "deserializedPtr->myString: " << deserializedPtr->myString << std::endl;
+    if (deserializedPtr == &myData)
+        std::cout << "deserializedPtr is equal to the original ptr" << std::endl;
 }
