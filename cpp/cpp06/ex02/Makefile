@@ -4,7 +4,7 @@ CPPFLAGS	:= -Wall -Werror -Wextra -std=c++98
 
 CLASSES		:= Base A B C
 HEADERS		:= $(addsuffix .hpp, $(CLASSES))
-SRCS 		:= main.cpp generate.cpp identify.cpp
+SRCS 		:= main.cpp Base.cpp generate.cpp identify.cpp
 OBJS 		:= $(SRCS:.cpp=.o) 
 
 ###
