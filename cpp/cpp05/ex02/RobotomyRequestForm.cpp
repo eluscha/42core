@@ -29,7 +29,7 @@ bool RobotomyRequestForm::execute( Bureaucrat const& executor ) const
         return (0);
     // Get a different random number each time the program runs
     srand(time(0));
-    // Generate a random number between 0 and 100
+    // Generate randomly 0 or 1
     if (rand() % 2)
         std::cout << _target << " has been robotomized" << std::endl;
     else   
