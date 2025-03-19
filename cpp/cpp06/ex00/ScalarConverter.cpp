@@ -19,14 +19,14 @@ ScalarConverter& ScalarConverter::operator=( const ScalarConverter& other )
 
 //ScalarConverter::convert and its helpers
 
-static void charConvert( const std::string& input );
+static void charConvert( char c );
 static bool numConvert( const std::string& input );
-static void nanConvert( void );
+static bool nanConvert( const std::string& input );
 static bool infConvert( const std::string& input );
-static bool intConvert( const std::string& input );
-static bool floatConvert( const std::string& input );
-static bool doubleConvert( const std::string& input );
-static void printChar( char c );
+static bool intConvert( int num );
+static bool floatConvert( float num );
+static bool doubleConvert( double num );
+static void printChar( int num );
 
 void ScalarConverter::convert( const std::string& input )
 {
@@ -34,11 +34,11 @@ void ScalarConverter::convert( const std::string& input )
     if (!std::isdigit(input[0]))
     {
         if (input.length() == 1)
-            charConvert(input);
+            charConvert(input[0]);
         else if (input[0] == '-' || input[0] == '+')
             err = numConvert(input);
-        else if (input == "nan" || input == "nanf")
-            nanConvert();
+        else if (input.find("nan") != std::string::npos)
+            nanConvert(input);
         else
             err = 1;
     }
@@ -49,104 +49,165 @@ void ScalarConverter::convert( const std::string& input )
 }
 
 //helpers for ScalarConverter::convert
-void charConvert( const std::string& input )
+void charConvert( char c )
 {
-    int myInt = static_cast<int>(input[0]);
-
-    std::cout << "char: '" << input[0] << "'" << std::endl;
-    std::cout << "int: " << myInt << std::endl;
-    std::cout << "float: " << myInt << ".0f" << std::endl;
-    std::cout << "double: " << myInt << ".0" << std::endl;
+    std::cout << std::fixed << std::setprecision(1); 
+    std::cout << "char: '" << c << '\'' << std::endl;
+    std::cout << "int: " << static_cast<int>(c) << std::endl;
+    std::cout << "float: " << static_cast<float>(c) << 'f' << std::endl;
+    std::cout << "double: " << static_cast<double>(c) << std::endl;
 }
 
 bool numConvert( const std::string& input )
 {
+    std::stringstream ss;
+
     if (input.find("inf", 1) != std::string::npos)
         return (infConvert(input));
-    else if (input.find('.', 1) == std::string::npos)
-        return (intConvert(input));
+
+    ss << input;
+    if (input.find('.', 1) == std::string::npos)
+    {
+        int num;
+        ss >> num;
+        if (!ss.fail())
+            return (intConvert(num));
+    }
     else if (input[input.length() - 1] == 'f')
-        return (floatConvert(input));
+    {
+        float num;
+        ss >> num;
+        if (!ss.fail())
+            return (floatConvert(num));
+    }
     else
-        return (doubleConvert(input));
+    {
+        double num;
+        ss >> num;
+        if (!ss.fail())
+            return (doubleConvert(num));
+    }
+    return (1);
 }
 
-void nanConvert()
+bool nanConvert( const std::string& input )
 {
+    float nanf;
+    double nan;
+
     std::cout << "char: impossible" << std::endl;
     std::cout << "int: impossible" << std::endl;
-    std::cout << "float: " << "nanf" << std::endl;
-    std::cout << "double: " << "nan" << std::endl;
+    if (input == "nanf") 
+    {
+        nanf = NAN;
+        
+        std::cout << "float: " << nanf << 'f' << std::endl;
+        std::cout << "double: " << static_cast<double>(nanf) << std::endl;
+        return (0);
+    }
+    else if (input == "nan")
+    {
+        nan = NAN;
+
+        std::cout << "float: " << static_cast<float>(nan) << 'f' << std::endl;
+        std::cout << "double: " << nan << std::endl;
+        return (0);
+    }
+    return (1);
 }
 
 bool infConvert( const std::string& input )
 {
-    if (input.compare(1, 3, "inf") != 0 || input[input.length() - 1] != 'f')
-        return (1);
+    float inff;
+    double inf;
+    int sign = (input[0] == '+'? 1 : -1);
+
     std::cout << "char: impossible" << std::endl;
     std::cout << "int: impossible" << std::endl;
-    std::cout << "float: " << input[0] << "inff" << std::endl;
-    std::cout << "double: " << input[0] << "inf" << std::endl;
+    if (input.length() == 5 && input.find("inff", 1, 4) != std::string::npos) 
+    {
+        inff = sign * std::numeric_limits<float>::infinity();
+        
+        std::cout << "float: " << inff << 'f' << std::endl;
+        std::cout << "double: " << static_cast<double>(inff) << std::endl;
+        return (0);
+    }
+    else if (input.length() == 4 && input.find("inf", 1, 3) != std::string::npos)
+    {
+        inf = sign * std::numeric_limits<double>::infinity();
+        std::cout << "float: " << static_cast<float>(inf) << 'f' << std::endl;
+        std::cout << "double: " << inf << std::endl;
+        return (0);
+    }
+    return (1);
+}
+
+bool intConvert( int num )
+{
+    printChar(static_cast<char>(num));
+    std::cout << std::fixed << std::setprecision(1); 
+    std::cout << "int: " << num << std::endl;
+    std::cout << "float: " << static_cast<float>(num) << 'f' << std::endl;
+    std::cout << "double: " << static_cast<double>(num) << std::endl;
     return (0);
 }
 
-bool intConvert( const std::string& input )
+bool floatConvert( float num )
 {
-    std::stringstream ss;
-    int myInt;
-    ss << input;
-    ss >> myInt;
-    if (ss.fail())
-        return (1);
-    printChar(static_cast<char>(myInt));
-    std::cout << "int: " << myInt << std::endl;
-    std::cout << "float: " << static_cast<float>(myInt) << ".0f" << std::endl;
-    std::cout << "double: " << static_cast<double>(myInt) << ".0" << std::endl;
-    return (0);
-}
+    int asInt = static_cast<int>(num);
 
-bool floatConvert( const std::string& input )
-{
-    std::stringstream ss;
-    float myFloat;
-    ss << input;
-    ss >> myFloat;
-    if (ss.fail())
-        return (1);
+    if (num >= pow(2, 31) || num < -1 * pow(2,31))
+    {
+        std::cout << "char: impossible" << std::endl;
+        std::cout << "int: impossible" << std::endl;
+    }
+    else
+    {
+        asInt = static_cast<int>(num); 
+        printChar(asInt);
+        std::cout << "int: " << asInt << std::endl;
+    }
 
-    if (static_cast<int>(myFloat) == myFloat)
+    if (std::fmod(num, 1.0f) == 0.0f)
         std::cout << std::fixed << std::setprecision(1); 
     
-    printChar(static_cast<char>(myFloat));
-    std::cout << "int: " << static_cast<int>(myFloat) << std::endl;
-    std::cout << "float: " << myFloat << "f" << std::endl;
-    std::cout << "double: " << static_cast<double>(myFloat) << std::endl;
+    std::cout << "float: " << num << "f" << std::endl;
+    std::cout << "double: " << static_cast<double>(num) << std::endl;
     return (0);
 }
-bool doubleConvert( const std::string& input )
+bool doubleConvert( double num )
 {
-    std::stringstream ss;
-    double myDouble;
-    ss << input;
-    ss >> myDouble;
-    if (ss.fail())
-        return (1);
-        
-    if (static_cast<int>(myDouble) == myDouble)
-        std::cout << std::fixed << std::setprecision(1); 
+    int asInt;
 
-    printChar(static_cast<char>(myDouble));
-    std::cout << "int: " << static_cast<int>(myDouble) << std::endl;
-    std::cout << "float: " << static_cast<float>(myDouble) << "f" << std::endl;
-    std::cout << "double: " << myDouble << std::endl;
+    if (std::fmod(num, 1.0) == 0.0)
+        std::cout << std::fixed << std::setprecision(1);
+
+    if (num >= pow(2, 31) || num < INT_MIN)
+    {
+        std::cout << "char: impossible" << std::endl;
+        std::cout << "int: impossible" << std::endl;
+    }
+    else
+    {
+        asInt = static_cast<int>(num);
+        printChar(asInt);
+        std::cout << "int: " << asInt << std::endl;
+    }
+
+    if (num > FLT_MAX || num < -FLT_MAX)
+        std::cout << "float: impossible" << std::endl;
+    else
+        std::cout << "float: " << static_cast<float>(num) << "f" << std::endl;
+
+    std::cout << "double: " << num << std::endl;
     return (0);
 }
-void printChar( char c )
+void printChar( int num )
 {
-    if (c < 0 || c > 127)
+    if (num < 0 || num > 127)
 		std::cout << "char: impossible" << std::endl;
-    else if (!std::isprint(c))
+    else if (!std::isprint(num))
         std::cout << "char: Non displayable" << std::endl;
     else
-        std::cout << "char: '" << c << "'" << std::endl;
+        std::cout << "char: '" << static_cast<char>(num) << '\'' << std::endl;
 }

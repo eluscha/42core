@@ -3,6 +3,10 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <limits>
+#include <limits.h>
+#include <float.h>
+#include <cmath>
 
 class ScalarConverter
 {
