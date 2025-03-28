@@ -2,8 +2,7 @@
 */.bonus
 
 #vscode
-*/.vscode/
-*/*/.vscode
+*.vscode/
 
 #testers
 ft_printf/pft/
