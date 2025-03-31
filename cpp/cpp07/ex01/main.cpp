@@ -27,7 +27,7 @@ int main() {
     ::iter(arr2, 3, printStr);
     std::cout << std::endl;
 
-    ::iter(arr, 5, incrInt);
+    ::iter<int, void(*)(int&)>(arr, 5, incrInt);
     ::iter(arr, 5, printInt);
     std::cout << std::endl;
 
