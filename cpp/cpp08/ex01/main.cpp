@@ -66,5 +66,19 @@ int main() {
         std::cout << e.what() << std::endl;
     }
 
-    return 0;
+    std::cout << "\n***Testing container with over 10000 numbers***" << std::endl;
+
+    Span sp3(10010);
+    
+    for (int i = 0; i < 10000; ++i)
+        sp3.addNumber(i);
+    sp3.addNumber(10002);
+    sp3.addNumber(-1);
+
+    try {
+        std::cout << "Biggest difference: " << sp3.longestSpan() << std::endl;
+        std::cout << "Smallest difference: " << sp3.shortestSpan() << std::endl;
+    } catch (std::exception &e) {
+        std::cout << e.what() << std::endl;
+    }
 }
