@@ -36,12 +36,16 @@ void BitcoinExchange::loadDB( std::string path ) {
     }
 }
 
+static double get_price( std::string& line, std::size_t start );
+
 void BitcoinExchange::readInput( std::string& path ) {
     std::ifstream file(path.c_str());
     if (!file)
         throw std::runtime_error("Failed to open input file.");
     
     std::string line;
+    std::string searchKey;
+    double price;
 
     std::getline(file, line);
     if (line != "date | value")
@@ -49,12 +53,32 @@ void BitcoinExchange::readInput( std::string& path ) {
     while (std::getline(file, line)) {
         std::size_t sepPos = line.find(" | ");
         if (sepPos != std::string::npos) {
-            std::string searchKey = line.substr(0, sepPos);
-            double price = std::atof(line.substr(sepPos + 3).c_str());
-            //check for all kind of wrong stuff
-            std::map<std::string, double>::iterator it = _dbRates.find(searchKey);
-            if (it != _dbRates.end())
-                std::cout << searchKey << " => " << it->second << " = " <<  it->second * price << std::endl;
+            searchKey = line.substr(0, sepPos);
+            
+            try {
+                price = get_price(line, sepPos + 3);
+                std::map<std::string, double>::iterator it = _dbRates.find(searchKey);
+                if (it != _dbRates.end())
+                    std::cout << searchKey << " => " << it->second << " = " <<  it->second * price << std::endl;
+            } catch (const std::exception& e) {
+                std::cerr << "Error: " << e.what() << std::endl;
+            }
+
         }
     }
+}
+
+// static helpers
+double get_price( std::string& line, std::size_t start ) {
+    std::stringstream ss;
+    ss << line.substr(start);
+    double price;
+    ss >> price;
+    if (ss.fail())
+        throw std::runtime_error("not a number.");
+    else if (price > 1000)
+        throw std::runtime_error("not a positive number.");
+    else if (price < 0)
+        throw std::runtime_error("too large a number.");
+    return (std::atof(line.substr(start).c_str()));
 }
