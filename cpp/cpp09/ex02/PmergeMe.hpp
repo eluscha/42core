@@ -2,14 +2,19 @@
 
 #include <iostream>
 #include <list>
+#include <vector>
+
 
 class PmergeMe {
 private:
-    std::list<int> _chain;
+    std::list<std::size_t> _chain;
 
     //Private methods
     template <typename RACont>
-    void mergeInsertion( RACont& Cont, RACont& resCont, std::size_t step = 1);
+    void mergeInsertion( RACont& Cont, std::size_t step = 1);
+
+    template <typename RACont>
+    void insert( RACont& Cont, std::vector<int>& pend  );
 
 public:
     // Orthdox Canoncial Form
@@ -19,8 +24,6 @@ public:
     PmergeMe& operator=( const PmergeMe& other );
 
     // Public Methods
-    std::list<int>& getChain( void );
-
     template <typename RACont>
     RACont getSort( RACont& Cont );
 
@@ -28,13 +31,16 @@ public:
 
 template <typename RACont>
 RACont PmergeMe::getSort( RACont& Cont ) {
+    _chain.clear();
     RACont result;
-    mergeInsertion( Cont, result );
+    mergeInsertion(Cont);
+    for (std::list<std::size_t>::iterator it = _chain.begin(); it != _chain.end(); ++it)
+        result.push_back(Cont[*it]);
     return (result);
 }
 
 template <typename RACont>
-void PmergeMe::mergeInsertion( RACont& Cont, RACont& resCont, std::size_t step ) {
+void PmergeMe::mergeInsertion( RACont& Cont, std::size_t step ) {
     typedef typename RACont::iterator iterator;
     std::size_t size = Cont.size() / step;
 
@@ -60,50 +66,49 @@ void PmergeMe::mergeInsertion( RACont& Cont, RACont& resCont, std::size_t step )
     }
 
     //recursive call
-    mergeInsertion(Cont, resCont, step * 2);
+    mergeInsertion(Cont, step * 2);
+    std::vector<int> pend;
+    pend.reserve(_chain.size() + hasOddElem); //cannot be bigger than that
 
-    RACont pend;
-    if (!resCont.size())
+    if (!_chain.size())
     {
-        resCont.push_back(Cont[step]);
-        resCont.push_back(Cont[0]);
+        _chain.push_back(Cont[step +  step / 2]);
+        _chain.push_back(Cont[step]);
+        _chain.push_back(Cont[0]);
     }
-    else {   
-        for (std::size_t i = 1; i < size - hasOddElem; ++i) {
-            if ((i * step) % (step * 2) == 0)
-                continue;
-            if (i % 2 == 0)
-                resCont.push_back(Cont[i * step]);
-            else
-                pend.push_back(Cont[i * step]);
-        }
+    else {
+        for (std::list<std::size_t>::iterator it = _chain.begin(); it != _chain.end(); ++it)
+            pend.push_back(Cont[*it + step]); //get a loser counterpart
     }
     if (hasOddElem)
         pend.push_back(*(Cont.end() - step));
 
     std::cout << "Main chain is: ";
-    for (iterator it = resCont.begin(); it != resCont.end(); ++it)
+    for (std::list<std::size_t>::iterator it = _chain.begin(); it != _chain.end(); ++it)
         std::cout << *it << " ";
 
     std::cout << "\nPending elments: ";
-    for (iterator it = pend.begin(); it != pend.end(); ++it)
+    for (std::vector<int>::iterator it = pend.begin(); it != pend.end(); ++it)
         std::cout << *it << " ";
     std::cout << std::endl;
 
     
-    for (iterator itp = pend.begin(); itp != pend.end(); ++itp) {
+    
+}
+
+template <typename RACont>
+void PmergeME::insert( RACont& Cont, std::vector<int>& pend  ) {
+    for (std::vector<int>::iterator itp = pend.begin(); itp != pend.end(); ++itp) {
         std::cout << "inserting " << *itp <<std::endl;
         bool found = false;
-        for (iterator itc = resCont.begin(); itc != resCont.end(); ++itc) {
-            itc = resCont.begin()
+        for (std::list<size_t>::iterator itc = _chain.begin(); itc != _chain.end(); ++itc) {
             if (*itp < *itc ) {
-                resCont.insert(itc, *itp); //for deque though push_front is possible..
+                _chain.insert(itc, *itp); //for deque though push_front is possible..
                 found = true;
                 break ;
             }
         }
         if (!found)
-            resCont.push_back(*itp);
+            _chain.push_back(*itp);
     }
-    
 }

@@ -1,5 +1,6 @@
 #include "PmergeMe.hpp"
 
+
 // Orthdox Canoncial Form
 PmergeMe::PmergeMe( void ) {}
 
@@ -12,9 +13,5 @@ PmergeMe& PmergeMe::operator=( const PmergeMe& other ) {
     if (this != &other)
         _chain = other._chain;
     return (*this);
-}
-
-std::list<int>& PmergeMe::getChain( void ) {
-    return (_chain);
 }
 
