@@ -4,18 +4,27 @@
 #include <list>
 #include <vector>
 
+#include <bits/stdc++.h>
+
+
 
 class PmergeMe {
 private:
 
     static const std::size_t _jacobsthalValues[];
     std::size_t _chainSize;
+    std::size_t _numCompar;
+    int compare ( int val, int ref );
     //Private methods tenmplates
     template <typename RACont>
-    bool mergeInsertion( RACont& inputCont, RACont& resCont, std::size_t step = 1);
+    bool mergeInsertion( RACont& inputCont, RACont& resCont, std::size_t step = 1 );
 
     template <typename RACont>
-    bool insert_group(RACont& Cont, RACont& chain, std::vector<int>& pend, std::size_t prev_end, std::size_t round);
+    bool insert_group( RACont& Cont, RACont& chain, std::vector<int>& pend, std::size_t prev_end, std::size_t round );
+
+    template <typename RACont>
+    std::size_t binary_search( RACont& Cont, RACont& chain, int pend_val, std::size_t start_idx, std::size_t end_idx );
+
 
 public:
     // Orthdox Canoncial Form
@@ -34,6 +43,7 @@ template <typename RACont>
 RACont PmergeMe::getSort( RACont copy ) {
     typedef typename RACont::iterator iterator;
     _chainSize = 0;
+    _numCompar = 0;
 
     if (copy.size() < 2)
         return copy;
@@ -46,6 +56,7 @@ RACont PmergeMe::getSort( RACont copy ) {
     for (iterator it = idxCont.begin(); it != idxCont.end(); ++it)
         ret.push_back(copy[*it]);
 
+    std::cout << "Number of comparisons: " << _numCompar << std::endl;
     return (ret);
 }
 
@@ -69,7 +80,7 @@ bool PmergeMe::mergeInsertion( RACont& inputCont, RACont& resCont, std::size_t s
 
     //split into pairs (bigger, smaller)
     for (iterator it = inputCont.begin(); it < inputCont.end() - step * (1 + hasOddElem); it += 2 * step) {
-        if (*it < *(it + step)) {
+        if (compare(*it, *(it + step)) == -1) {
             if (step != 1)
                 std::swap_ranges(it, it + step, it + step);
             else
@@ -109,10 +120,11 @@ bool PmergeMe::mergeInsertion( RACont& inputCont, RACont& resCont, std::size_t s
     return (0);
 }
 
+
+
 template <typename RACont>
 bool PmergeMe::insert_group(RACont& Cont, RACont& chain, std::vector<int>& pend, std::size_t prev_end, std::size_t round)
 {
-    typedef typename RACont::iterator iterator;
     bool last_round = false;
 
     if (!pend.size())
@@ -132,22 +144,53 @@ bool PmergeMe::insert_group(RACont& Cont, RACont& chain, std::vector<int>& pend,
     (void)chain;
 
     for (int idx = (int)end_idx - 1; idx >= (int)prev_end; --idx) {
-        std::cout << "inserting " << Cont[pend[idx]] <<std::endl;
-        bool found = false;
 
-        for (iterator itc = chain.begin(); itc != chain.end(); ++itc) {
-            std::cout << "comparing " << Cont[pend[idx]] << " to " << Cont[*itc] << std::endl;
-            if (Cont[pend[idx]] < Cont[*itc] ) {
-                chain.insert(itc, pend[idx]); //for deque though push_front is possible..
-                found = true;
-                break ;
-            }
-        }
-        if (!found)
+        int pend_val = Cont[pend[idx]];
+        std::cout << "inserting " << pend_val << std::endl;
+    
+        std::size_t found_chain_pos = binary_search(Cont, chain, pend_val, 0, pow(2, round + 2) - 1);
+
+        if (found_chain_pos == _chainSize)
             chain.push_back(pend[idx]);
+        else if (found_chain_pos > _chainSize)
+            std::cerr << "sth went wrong" <<std::endl;
+        else 
+            chain.insert(chain.begin() + found_chain_pos, pend[idx]); //for deque though push_front is possible..
         _chainSize++;
+
+        typedef typename RACont::iterator iterator;
+        std::cout << "Main chain is: ";
+        for (iterator it = chain.begin(); it != chain.end(); ++it)
+            std::cout << Cont[*it] << " ";
+        std::cout << std::endl;
     }
     if (!last_round)
         return (insert_group(Cont, chain, pend, end_idx, round + 1));
     return (0);
+}
+
+template <typename RACont>
+std::size_t PmergeMe::binary_search( RACont& Cont, RACont& chain, int pend_val, std::size_t start, std::size_t end) {
+    
+    if (start == end)
+        return (start);
+
+    if (end > _chainSize)
+        end = _chainSize;
+
+    std::size_t mid = start + (end - start) / 2;
+
+    std::cout << "mid is " << mid << " end is " << end << std::endl; 
+    
+    switch (compare(pend_val, Cont[chain[mid]])) {
+        case 0: return (mid);
+        case 1:
+            std::cout << "bigger than" << std::endl; 
+            return (binary_search(Cont, chain, pend_val, mid + 1, end));
+        case -1:
+            std::cout << "smaller than" << std::endl;  
+            return (binary_search(Cont, chain, pend_val, start, mid));
+        default: throw std::runtime_error("Sth went wrong");
+    }
+
 }

@@ -11,16 +11,28 @@ const std::size_t PmergeMe::_jacobsthalValues[] = {
     839903314u, 1679937678u, 3359854306u
 };
 
-// Orthdox Canoncial Form
-PmergeMe::PmergeMe( void ) : _chainSize(0) {}
+int PmergeMe::compare( int val, int ref ) {
+    _numCompar++;
+    if (val == ref)
+        return (0);
+    else if (val > ref)
+        return (1);
+    else   
+        return (-1);
+}
 
-PmergeMe::PmergeMe( const PmergeMe& other ) : _chainSize(other._chainSize) {}
+// Orthdox Canoncial Form
+PmergeMe::PmergeMe( void ) : _chainSize(0), _numCompar(0) {}
+
+PmergeMe::PmergeMe( const PmergeMe& other ) : _chainSize(0), _numCompar(0) {
+    (void)other;
+}
 
 PmergeMe::~PmergeMe() {}
 
 PmergeMe& PmergeMe::operator=( const PmergeMe& other ) {
-    if (this != &other)
-        _chainSize = other._chainSize;
+    (void)other;
     return (*this);
 }
+
 
