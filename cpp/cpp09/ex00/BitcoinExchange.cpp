@@ -62,11 +62,15 @@ void BitcoinExchange::readInput( std::string& path ) {
             price = get_price(line, sepPos + 3);
             date = get_date(line, sepPos);
             std::map<std::string, double>::iterator it;
-            it = _dbRates.find(date);
-            if (it != _dbRates.end())
+            it = _dbRates.upper_bound(date);
+            if (it == _dbRates.begin())
+                std::cout << "No earlier date available for " << date << std::endl;
+            else {
+                --it;
                 std::cout << date << " => " << price << " = " <<  it->second * price << std::endl;
+            }
         } catch (const std::exception& e) {
-            std::cerr << "Error: " << e.what() << std::endl;
+            std::cout << "Error: " << e.what() << std::endl;
         }
     }
 }
@@ -90,7 +94,7 @@ double  get_price( std::string& line, std::size_t start ) {
         throw std::runtime_error("too large a number.");
     else if (price < 0)
         throw std::runtime_error("not a positive number.");
-    return (std::atof(line.substr(start).c_str()));
+    return (price);
 }
 
 std::string get_date( std::string& line, std::size_t end ) {
@@ -101,6 +105,10 @@ std::string get_date( std::string& line, std::size_t end ) {
 }
 
 bool    is_valid_date( const std::string& date ) {
+
+    static const int daysInMonth[] = { 31, 28, 31, 30, 31, 30,
+                                       31, 31, 30, 31, 30, 31 };
+
     if (date.length() != 10) return (false);
     if (date[4] != '-' || date[7] != '-') return (false);
 
@@ -114,11 +122,17 @@ bool    is_valid_date( const std::string& date ) {
     for (int i = 0; i < 2; ++i)
         if (!isdigit(monthStr[i]) || !isdigit(dayStr[i])) return (false);
 
+    int year = std::atoi(yearStr.c_str());
     int month = std::atoi(monthStr.c_str());
     int day = std::atoi(dayStr.c_str());
 
-    if (month < 1 || month > 12) return (false);
-    if (day < 1 || day > 31) return (false); //not calender accurate
+    if (month < 1 || month > 12 || day < 1) return (false);
 
-    return true;
+    int maxDay = daysInMonth[month - 1];
+
+    if (month == 2) {
+        if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))
+            maxDay = 29;
+    }
+    return (day <= maxDay);
 }
