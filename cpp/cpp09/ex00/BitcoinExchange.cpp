@@ -14,7 +14,7 @@ BitcoinExchange& BitcoinExchange::operator=( const BitcoinExchange& other ) {
     return (*this);
 }
 
-// loadDB() : Method for loading a CSV database with dates and exchange rates
+// .loadDB() : Method for loading a CSV database with dates and exchange rates
 void BitcoinExchange::loadDB( std::string path ) {
     std::ifstream file(path.c_str());
     if (!file)
@@ -36,7 +36,7 @@ void BitcoinExchange::loadDB( std::string path ) {
     }
 }
 
-// .readInput() Method for reading input file line by line and search DB for every date
+// .readInput() : Method for reading input file line by line and search DB for every date
 // with static helpers 
 static size_t get_sep_position( std::string& line );
 static double get_price( std::string& line, std::size_t start );
@@ -62,10 +62,7 @@ void BitcoinExchange::readInput( std::string& path ) {
             price = get_price(line, sepPos + 3);
             date = get_date(line, sepPos);
             std::map<std::string, double>::iterator it;
-            if (!date.length())
-                it = _dbRates.end();
-            else 
-                it = _dbRates.find(date);
+            it = _dbRates.find(date);
             if (it != _dbRates.end())
                 std::cout << date << " => " << price << " = " <<  it->second * price << std::endl;
         } catch (const std::exception& e) {
