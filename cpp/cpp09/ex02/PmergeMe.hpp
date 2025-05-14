@@ -19,8 +19,9 @@ private:
     template <typename RACont>
     bool mergeInsertion( RACont& inputCont, RACont& resCont, std::size_t step = 1 );
 
+
     template <typename RACont>
-    bool insert_group( RACont& Cont, RACont& chain, std::vector<int>& pend, std::size_t prev_end, std::size_t round );
+    bool insert_back( RACont& Cont, RACont& chain, std::vector<int>& pend );
 
     template <typename RACont>
     std::size_t binary_search( RACont& Cont, RACont& chain, int pend_val, std::size_t start_idx, std::size_t end_idx );
@@ -103,71 +104,71 @@ bool PmergeMe::mergeInsertion( RACont& inputCont, RACont& resCont, std::size_t s
             pend.push_back(*it + step); //get idx of a loser counterpart
     if (hasOddElem){
         pend.push_back((size - 1) * step);
-        std::cout << "has odd elem " << inputCont[(size - 1) * step] << std::endl;
+        //std::cout << "has odd elem " << inputCont[(size - 1) * step] << std::endl;
     }
 
-    std::cout << "Main chain is: ";
-    for (iterator it = resCont.begin(); it != resCont.end(); ++it)
-        std::cout << inputCont[*it] << " ";
+    // std::cout << "Main chain is: ";
+    // for (iterator it = resCont.begin(); it != resCont.end(); ++it)
+    //     std::cout << inputCont[*it] << " ";
 
-    std::cout << "\nPending elments: ";
-    for (std::vector<int>::iterator it = pend.begin(); it != pend.end(); ++it)
-        std::cout << inputCont[*it] << " ";
-    std::cout << std::endl;
+    // std::cout << "\nPending elments: ";
+    // for (std::vector<int>::iterator it = pend.begin(); it != pend.end(); ++it)
+    //     std::cout << inputCont[*it] << " ";
+    // std::cout << std::endl;
 
-    if (insert_group(inputCont, resCont, pend, 0, 0) == 1)
+    if (insert_back(inputCont, resCont, pend) == 1)
         return (1);
     return (0);
 }
-
 
 
 template <typename RACont>
-bool PmergeMe::insert_group(RACont& Cont, RACont& chain, std::vector<int>& pend, std::size_t prev_end, std::size_t round)
+bool PmergeMe::insert_back(RACont& Cont, RACont& chain, std::vector<int>& pend)
 {
-    bool last_round = false;
-
     if (!pend.size())
         return (0);
 
-    if (round == 32)
-        return (1);
-
-    std::size_t end_idx = prev_end + _jacobsthalValues[round];
-
-    if (pend.size() <= end_idx) {
-        end_idx = pend.size();
-        last_round = true;
-    }
-   
-    std::cout << "end_idx is " << end_idx << std::endl;
-    (void)chain;
-
-    for (int idx = (int)end_idx - 1; idx >= (int)prev_end; --idx) {
-
-        int pend_val = Cont[pend[idx]];
-        std::cout << "inserting " << pend_val << std::endl;
+    bool last_round = false;
+    int end_idx, round = 0, prev_end = 0;
     
-        std::size_t found_chain_pos = binary_search(Cont, chain, pend_val, 0, pow(2, round + 2) - 1);
+    while (!last_round) {
+        if (round == 32)
+            return (1);
 
-        if (found_chain_pos == _chainSize)
-            chain.push_back(pend[idx]);
-        else if (found_chain_pos > _chainSize)
-            std::cerr << "sth went wrong" <<std::endl;
-        else 
-            chain.insert(chain.begin() + found_chain_pos, pend[idx]); //for deque though push_front is possible..
-        _chainSize++;
+        end_idx = prev_end + _jacobsthalValues[round];
 
-        typedef typename RACont::iterator iterator;
-        std::cout << "Main chain is: ";
-        for (iterator it = chain.begin(); it != chain.end(); ++it)
-            std::cout << Cont[*it] << " ";
-        std::cout << std::endl;
+        if ((int)pend.size() <= end_idx) {
+            end_idx = (int)pend.size();
+            last_round = true;
+        }
+
+        for (int idx = end_idx - 1; idx >= prev_end; --idx) {
+
+            int pend_val = Cont[pend[idx]];
+            //std::cout << "inserting " << pend_val << std::endl;
+        
+            std::size_t found_chain_pos = binary_search(Cont, chain, pend_val, 0, pow(2, round + 2) - 1);
+
+            if (found_chain_pos == _chainSize)
+                chain.push_back(pend[idx]);
+            else if (found_chain_pos > _chainSize)
+                std::cerr << "sth went wrong" <<std::endl;
+            else 
+                chain.insert(chain.begin() + found_chain_pos, pend[idx]); //for deque though push_front is possible..
+            _chainSize++;
+
+            // typedef typename RACont::iterator iterator;
+            // std::cout << "Main chain is: ";
+            // for (iterator it = chain.begin(); it != chain.end(); ++it)
+            //     std::cout << Cont[*it] << " ";
+            // std::cout << std::endl;
+        }
+        ++round;
+        prev_end = end_idx;
     }
-    if (!last_round)
-        return (insert_group(Cont, chain, pend, end_idx, round + 1));
     return (0);
 }
+
 
 template <typename RACont>
 std::size_t PmergeMe::binary_search( RACont& Cont, RACont& chain, int pend_val, std::size_t start, std::size_t end) {
@@ -180,15 +181,15 @@ std::size_t PmergeMe::binary_search( RACont& Cont, RACont& chain, int pend_val, 
 
     std::size_t mid = start + (end - start) / 2;
 
-    std::cout << "mid is " << mid << " end is " << end << std::endl; 
+    //std::cout << "mid is " << mid << " end is " << end << std::endl; 
     
     switch (compare(pend_val, Cont[chain[mid]])) {
         case 0: return (mid);
         case 1:
-            std::cout << "bigger than" << std::endl; 
+            //std::cout << "bigger than" << std::endl; 
             return (binary_search(Cont, chain, pend_val, mid + 1, end));
         case -1:
-            std::cout << "smaller than" << std::endl;  
+            //std::cout << "smaller than" << std::endl;  
             return (binary_search(Cont, chain, pend_val, start, mid));
         default: throw std::runtime_error("Sth went wrong");
     }
