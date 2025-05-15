@@ -54,6 +54,9 @@ void RPN::performOperation( char c ) {
         _stck.push(vals[1] - vals[0]);
     else if (c == '*')
         _stck.push(vals[1] * vals[0]);    
-    else
+    else {
+        if (!vals[0])
+            throw std::runtime_error("Math error: Attempted to divide by Zero");
         _stck.push(vals[1] / vals[0]);
+    }
 }
