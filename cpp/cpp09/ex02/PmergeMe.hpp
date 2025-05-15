@@ -5,13 +5,14 @@
 #include <vector>
 
 #include <bits/stdc++.h>
+#include <limits.h>
 
-
+#define JACOBSTHAL_NUMBERS_AMOUNT 64
 
 class PmergeMe {
 private:
 
-    static const std::size_t _jacobsthalValues[];
+    std::size_t _jacobsthalValues[JACOBSTHAL_NUMBERS_AMOUNT];
     std::size_t _chainSize;
     std::size_t _numCompar;
     int compare ( int val, int ref );
@@ -57,7 +58,7 @@ RACont PmergeMe::getSort( RACont copy ) {
     for (iterator it = idxCont.begin(); it != idxCont.end(); ++it)
         ret.push_back(copy[*it]);
 
-    std::cout << "Number of comparisons: " << _numCompar << std::endl;
+    //std::cout << "Number of comparisons: " << _numCompar << std::endl;
     return (ret);
 }
 
@@ -68,9 +69,6 @@ bool PmergeMe::mergeInsertion( RACont& inputCont, RACont& resCont, std::size_t s
 
     //base case
     if (size == 1) {
-        for (iterator it = inputCont.begin(); it != inputCont.end(); ++it)
-            std::cout << *it << " ";
-        std::cout << std::endl;
         resCont.push_back(0);
         _chainSize++;
         return (0);
@@ -132,7 +130,7 @@ bool PmergeMe::insert_back(RACont& Cont, RACont& chain, std::vector<int>& pend)
     int end_idx, round = 0, prev_end = 0;
     
     while (!last_round) {
-        if (round == 32)
+        if (round == JACOBSTHAL_NUMBERS_AMOUNT)
             return (1);
 
         end_idx = prev_end + _jacobsthalValues[round];
