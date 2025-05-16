@@ -15,8 +15,7 @@ int PmergeMe::compare( int val, int ref ) {
 PmergeMe::PmergeMe( void ) : _chainSize(0), _numCompar(0) {
     size_t val = 2;
     size_t poweroftwo = 2;
-    _jacobsthalValues[0] = 2;
-    for (int i = 1; i < JACOBSTHAL_NUMBERS_AMOUNT; ++i) {
+    for (int i = 0; i < JACOBSTHAL_NUMBERS_AMOUNT; ++i) {
         _jacobsthalValues[i] = val;
         poweroftwo *= 2;
         val = poweroftwo - val;

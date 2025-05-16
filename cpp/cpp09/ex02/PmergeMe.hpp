@@ -5,7 +5,7 @@
 #include <vector>
 #include <cmath>
 
-#define JACOBSTHAL_NUMBERS_AMOUNT 64
+#define JACOBSTHAL_NUMBERS_AMOUNT 63
 
 class PmergeMe {
 private:
