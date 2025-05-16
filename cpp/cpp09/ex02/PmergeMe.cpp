@@ -1,8 +1,5 @@
 #include "PmergeMe.hpp"
 
-//Jakobsthal
-std::size_t _jacobsthalValues[JACOBSTHAL_NUMBERS_AMOUNT] = {0};
-
 int PmergeMe::compare( int val, int ref ) {
     _numCompar++;
     //std::cout << "comparing " << val << " to " << ref << std::endl;
@@ -16,8 +13,6 @@ int PmergeMe::compare( int val, int ref ) {
 
 // Orthdox Canoncial Form
 PmergeMe::PmergeMe( void ) : _chainSize(0), _numCompar(0) {
-    if (_jacobsthalValues[0] == 2)
-        return ;
     size_t val = 2;
     size_t poweroftwo = 2;
     _jacobsthalValues[0] = 2;

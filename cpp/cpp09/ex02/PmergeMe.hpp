@@ -1,32 +1,31 @@
 #pragma once
 
 #include <iostream>
-#include <list>
+#include <iomanip>
 #include <vector>
-
-#include <bits/stdc++.h>
-#include <limits.h>
+#include <cmath>
 
 #define JACOBSTHAL_NUMBERS_AMOUNT 64
 
 class PmergeMe {
 private:
 
-    std::size_t _jacobsthalValues[JACOBSTHAL_NUMBERS_AMOUNT];
     std::size_t _chainSize;
     std::size_t _numCompar;
+    std::size_t _jacobsthalValues[JACOBSTHAL_NUMBERS_AMOUNT];
+    
+    //wrapper to count comparisons in _numCompar
     int compare ( int val, int ref );
+
     //Private methods tenmplates
     template <typename RACont>
     bool mergeInsertion( RACont& inputCont, RACont& resCont, std::size_t step = 1 );
-
 
     template <typename RACont>
     bool insert_back( RACont& Cont, RACont& chain, std::vector<int>& pend );
 
     template <typename RACont>
     std::size_t binary_search( RACont& Cont, RACont& chain, int pend_val, std::size_t start_idx, std::size_t end_idx );
-
 
 public:
     // Orthdox Canoncial Form
@@ -38,7 +37,6 @@ public:
     // Public Methods templates
     template <typename RACont>
     RACont getSort( RACont Cont );
-
 };
 
 template <typename RACont>

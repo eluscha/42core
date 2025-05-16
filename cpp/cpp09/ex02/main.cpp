@@ -2,13 +2,14 @@
 
 #include <vector>
 #include <deque>
-
-#include <sstream>
-#include <string>
-
+#include <ctime>
 #include <cstdlib>
+#include <cerrno>
+#include <limits.h>
 
-int get_num(char *str) {
+//./PmergeMe $(shuf -i 1-1000 -n 10 | tr '\n' ' ') //to test
+
+static int get_num(char *str) {
     if (!str || *str == '\0') {
         std::cerr << "Error: NULL or empty string in argv" << std::endl;
         return (0);
@@ -27,7 +28,7 @@ int get_num(char *str) {
     return(static_cast<int>(val));
 }
 
-bool vec_equal_deq(std::vector<int>& vec, std::deque<int>& deq, bool check_sorted) {
+static bool vec_equal_deq(std::vector<int>& vec, std::deque<int>& deq, bool check_sorted) {
     if (vec.size() != deq.size())
         return (false);
     
@@ -48,7 +49,7 @@ bool vec_equal_deq(std::vector<int>& vec, std::deque<int>& deq, bool check_sorte
     return (true);
 }
 
-void print_vec(std::vector<int>& vec, bool print_all) {
+static void print_vec(std::vector<int>& vec, bool print_all) {
     size_t print_amount = 30;
     size_t limit = vec.size();
     if (!print_all && vec.size() > print_amount)
@@ -78,7 +79,7 @@ int main(int argc, char **argv) {
         deq.push_back(num);
     }
 
-    if (!vec_equal_deq(vec, deq, false)) {
+    if (!vec_equal_deq(vec, deq, false)) { //compare vector and deque without checking for them being sorted
         std::cerr << "Error: vector and deque content not equal" << std::endl;
         return (1);
     }
@@ -87,18 +88,19 @@ int main(int argc, char **argv) {
     print_vec(vec, false);
 
     PmergeMe PM;
-
     std::clock_t start = std::clock();
     vec = PM.getSort(vec); 
     std::clock_t end = std::clock();
     double elapsed_us_vec = 1e6 * (end - start) / CLOCKS_PER_SEC;
 
+    PmergeMe PM2;
+
     start = std::clock();
-    deq = PM.getSort(deq);
+    deq = PM2.getSort(deq);
     end = std::clock();
     double elapsed_us_deq = 1e6 * (end - start) / CLOCKS_PER_SEC;
 
-    if (!vec_equal_deq(vec, deq, true)) {
+    if (!vec_equal_deq(vec, deq, true)) { //compare vector and deque AND check for them being sorted
         std::cerr << "Error: vector and deque content not equal" << std::endl;
         return (1);
     }
